@@ -1,0 +1,5 @@
+<?php
+namespace App\Nova;
+use App\Models\Lead as Model;
+use Laravel\Nova\Fields\{DateTime,ID,Select,Text,Textarea}; use Laravel\Nova\Resource;
+class Lead extends Resource { public static $model=Model::class; public static $title='full_name'; public static $group='Operations'; public static $search=['id','full_name','phone','email','project_type','status']; public function fields($request){return [ID::make()->sortable(),Select::make('Type')->options(['quote'=>'Quote','career'=>'Career'])->displayUsingLabels(),Text::make('Full Name','full_name')->rules('required'),Text::make('Phone'),Text::make('Email'),Text::make('Project Type','project_type'),Text::make('Estimated Budget','estimated_budget'),Text::make('Position'),Text::make('Attachment','attachment_path'),Textarea::make('Message'),Select::make('Status')->options(['new'=>'New','contacted'=>'Contacted','qualified'=>'Qualified','quoting'=>'Quoting','won'=>'Won','lost'=>'Lost'])->displayUsingLabels(),DateTime::make('Created At','created_at')->exceptOnForms()];} }
