@@ -73,7 +73,6 @@ FROM node:${NODE_VERSION} as node_modules_go_brrr
 RUN mkdir -p /app
 WORKDIR /app
 COPY . .
-# COPY --from=base /var/www/html/vendor /app/vendor
 
 RUN if [ -f "vite.config.js" ] || [ -f "vite.config.ts" ]; then \
         ASSET_CMD="build"; \
@@ -102,6 +101,7 @@ FROM base
 COPY --from=node_modules_go_brrr /app/public /var/www/html/public-npm
 RUN rsync -ar /var/www/html/public-npm/ /var/www/html/public/ \
     && rm -rf /var/www/html/public-npm \
+    && composer install --no-dev --optimize-autoloader --no-interaction \
     && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
     && chown -R www-data:www-data /var/www/html \
     && chmod -R 775 storage bootstrap/cache
