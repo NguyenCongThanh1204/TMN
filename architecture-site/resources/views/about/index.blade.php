@@ -2,765 +2,232 @@
 
 @section('content')
 
-<div class="page-transition">
+@php
+    $slides = [
+        [
+            'id' => 1,
+            'image' => 'https://www.tanminhnhan.com.vn/images/sppagebuilder/van-phong-tan-minh-nhan-2021.jpg',
+            'title' => 'Văn phòng Tân Minh Nhân',
+        ],
+        [
+            'id' => 2,
+            'image' => 'https://sunparadiseland.com/_next/image?url=https%3A%2F%2Fsun-ecommerce-cdn.azureedge.net%2Fecommerce%2Fservice-sites%2Fasset%2FSunParadiseLandPhuQuoc%2Fgoogle-doc%2Fpost_id_13826%2FAD_4nXfIqa0nuIpmvb94PHoYb7e0CIyPJ4TnFSOjom37ap3-nRmZYfj5hcd4-NvrfDcsZFEdibsRxpsnJGU22RP6hCnB3QqUpqh2U2d0kd-c3irjDOhJpGmTZuXSmeCdrpondtc7SFYoA6z_Khvc4Vj2g_M8VpgVs2ZWlgSxePGUdmu_eGHi.webp&w=1200&q=80',
+            'title' => 'Sun Paradise Land Phú Quốc',
+        ],
+        [
+            'id' => 3,
+            'image' => 'https://sun-ecommerce-cdn.azureedge.net/ecommerce/service-sites/thumbnail/SunGroup/B%C3%A0i%20vi%E1%BA%BFt%202025/Th%C3%A1ng%2010%20-2025/Thumb/21784/image-thumb__21784__1600/B%E1%BA%A3n%20sao%20c%E1%BB%A7a%20Sun%20World%20Ba%20Na%20Hills%20%284%29.jpg',
+            'title' => 'Sun World Ba Na Hills',
+        ],
+        [
+            'id' => 4,
+            'image' => 'https://sun-ecommerce-cdn.azureedge.net/ecommerce/service-sites/thumbnail/SunGroup/B%C3%A0i%20vi%E1%BA%BFt%202025/1.%20OLD/D%E1%BB%B1%20%C3%A1n/DNDT/21336/image-thumb__21336__1600/phoi-canh-du-an-da-nang-downtown.jpg',
+            'title' => 'Da Nang Downtown',
+        ],
+        [
+            'id' => 5,
+            'image' => 'https://sunurbancity.vn/wp-content/uploads/2024/10/BCG_27-Photo-min-scaled.jpg',
+            'title' => 'Sun Urban City',
+        ],
+    ];
+@endphp
 
-    {{-- =====================================================
-         ABOUT HERO
-         ===================================================== --}}
-    <section class="relative overflow-hidden bg-slate-950 pt-36 text-white sm:pt-44">
+<div
+    class="bg-[#F8FAFC] min-h-screen text-slate-900 select-none"
+    x-data="{
+        activeTab: 'overview',
+        currentIndex: 0,
+        totalSlides: {{ count($slides) }},
+        timer: null,
+        interval: 6000,
 
-        <div class="container-page relative z-10">
+        init() {
+            this.startTimer();
+        },
 
-            <div class="grid min-h-[650px] items-end gap-12 pb-20 lg:grid-cols-[1fr_0.65fr] lg:pb-24">
+        startTimer() {
+            if (this.timer) clearInterval(this.timer);
+            this.timer = setInterval(() => {
+                this.next();
+            }, this.interval);
+        },
 
-                <div>
+        next() {
+            this.currentIndex = (this.currentIndex + 1) % this.totalSlides;
+        },
 
-                    <p class="eyebrow !text-red-400">
-                        Về chúng tôi
-                    </p>
+        prev() {
+            this.currentIndex = (this.currentIndex - 1 + this.totalSlides) % this.totalSlides;
+        },
 
-                    <h1
-                        class="mt-7 max-w-5xl font-display text-6xl font-semibold leading-[0.88] tracking-[-0.07em] text-white sm:text-7xl lg:text-9xl"
-                    >
-                        CHÜNG TÔI XÂY DỰNG
-                        <br>
-                        VỚI
-                        <br>
-                        MỤC ĐÍCH.
-                    </h1>
+        switchTab(tabId) {
+            this.activeTab = tabId;
+            this.$nextTick(() => {
+                const target = this.$refs.tabSection;
+                if (target) {
+                    const yOffset = -90;
+                    const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                    window.scrollTo({ top: y, behavior: 'smooth' });
+                }
+            });
+        }
+    }"
+>
 
-                    <p class="mt-8 max-w-2xl text-base leading-8 text-white/55 sm:text-lg">
-                        Chúng tôi kết hợp kiến trúc, kỹ thuậ t và xây dựng
-                        để tạo ra những nơi một cách ý nghĩa,
-                        chịu đựng và được tạo ra để tồn tại lâu dài.
-                    </p>
-
+    {{-- 1. FULLSCREEN HERO SLIDESHOW --}}
+    <section class="relative w-full h-screen overflow-hidden bg-slate-950 group">
+        <div class="relative w-full h-full">
+            @foreach($slides as $index => $slide)
+                <div
+                    x-show="currentIndex === {{ $index }}"
+                    x-transition:enter="transition ease-out duration-1000"
+                    x-transition:enter-start="opacity-0 scale-105"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    x-transition:leave="transition ease-in duration-700"
+                    x-transition:leave-start="opacity-100 scale-100"
+                    x-transition:leave-end="opacity-0 scale-95"
+                    class="absolute inset-0 w-full h-full"
+                    style="{{ $index === 0 ? '' : 'display: none;' }}"
+                >
+                    <img
+                        src="{{ $slide['image'] }}"
+                        alt="{{ $slide['title'] }}"
+                        class="w-full h-full object-cover object-center pointer-events-none"
+                        loading="{{ $index === 0 ? 'eager' : 'lazy' }}"
+                    />
                 </div>
-
-
-                <div class="lg:pb-2">
-
-                    <div class="border-l border-white/20 pl-6">
-
-                        <p class="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-                            Phương pháp tiếp cận của chúng tôi
-                        </p>
-
-                        <p class="mt-4 font-display text-2xl font-medium leading-tight tracking-[-0.035em] text-white">
-                            Thiết kế với mục đích.
-                            Xây dựng với độ chín chỼ.
-                            Giao hàng với trách nhiệm.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
+            @endforeach
         </div>
 
+        <div class="absolute inset-0 bg-black/20 pointer-events-none"></div>
 
-        {{-- Architectural grid --}}
-        <div
-            class="pointer-events-none absolute inset-0 opacity-10"
-            aria-hidden="true"
+        <button
+            type="button"
+            @click="prev(); startTimer();"
+            aria-label="Slide trước"
+            class="absolute left-4 sm:left-10 top-1/2 -translate-y-1/2 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-[#EB323A] backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-2xl focus:outline-none"
         >
+            <svg class="w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+        </button>
 
-            <div
-                class="absolute inset-y-0 left-[18%] w-px bg-white"
-            ></div>
+        <button
+            type="button"
+            @click="next(); startTimer();"
+            aria-label="Slide tiếp theo"
+            class="absolute right-4 sm:right-10 top-1/2 -translate-y-1/2 z-20 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/10 hover:bg-[#EB323A] backdrop-blur-md border border-white/20 text-white flex items-center justify-center hover:scale-110 transition-all duration-300 shadow-2xl focus:outline-none"
+        >
+            <svg class="w-6 h-6 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+            </svg>
+        </button>
 
-            <div
-                class="absolute inset-y-0 left-[50%] w-px bg-white"
-            ></div>
-
-            <div
-                class="absolute inset-y-0 left-[82%] w-px bg-white"
-            ></div>
-
-            <div
-                class="absolute left-0 right-0 top-[45%] h-px bg-white"
-            ></div>
-
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+            @foreach($slides as $index => $slide)
+                <button
+                    type="button"
+                    @click="currentIndex = {{ $index }}; startTimer();"
+                    class="h-1.5 rounded-full transition-all duration-300"
+                    :class="currentIndex === {{ $index }} ? 'w-8 bg-[#EB323A]' : 'w-2 bg-white/50 hover:bg-white'"
+                ></button>
+            @endforeach
         </div>
-
     </section>
 
+    {{-- 2. KHU VỰC TAB NAVIGATION & NỘI DUNG (ĐÃ NỚI RỘNG CHUẨN 1440PX) --}}
+    <div x-ref="tabSection" class="w-full max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 pt-6 pb-24">
 
-    {{-- =====================================================
-         INTRO / BRAND STORY
-         ===================================================== --}}
-    <section class="section bg-white">
+        {{-- Thanh Tab Cố Định --}}
+        <div class="sticky top-16 sm:top-20 z-30 bg-[#F8FAFC] pt-3 pb-[1px] border-b border-slate-200 shadow-xs">
+            <div class="flex items-center gap-2 overflow-x-auto no-scrollbar" style="scrollbar-width: none;">
 
-        <div class="container-page">
-
-            <div class="grid gap-14 lg:grid-cols-[0.65fr_1.35fr]">
-
-                <div>
-
-                    <p class="eyebrow">
-                        Câu chuyện của chúng tôi
-                    </p>
-
-                    <p class="mt-6 max-w-xs text-sm leading-7 text-slate-500">
-                        Một đội ngành nhiều mãng nghiề cam kết để tạo ra
-                        những nơi tốt hơn thông qua thiết kế lược
-                        và xây dựng trách nhiệm.
-                    </p>
-
-                </div>
-
-
-                <div>
-
-                    <h2
-                        class="max-w-5xl font-display text-4xl font-semibold leading-[1.02] tracking-[-0.055em] sm:text-5xl lg:text-7xl"
-                    >
-                        Kiến trúc không chỉ là về
-                        cách tòa nhà có hình thóp.
-                        Nó là cách nó hoạt động,
-                        tuổi và sống.
-                    </h2>
-
-
-                    <div class="mt-10 grid gap-8 md:grid-cols-2">
-
-                        <p class="text-base leading-8 text-slate-500">
-                            Mọi dự án bắt đầu với bối cảnh. Chúng tôi định
-                            khám phá kổ vệ, hiểu những người sờ dụng
-                            nó và xác định các yêu cầu kỹ thuậ t trước
-                            khi chuyển sang thiết kế và thực hiện.
-                        </p>
-
-                        <p class="text-base leading-8 text-slate-500">
-                            Các đội ngành của chúng tôi làm việc trên
-                            kiến trúc, kỹ thuậ t, mua sắm và xây dựng
-                            để đảm bảo tính liên tục từ bản vẽ đầu tiên
-                            đến bàn giao cuối cùng.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         VISION / MISSION
-         ===================================================== --}}
-    <section class="section bg-slate-50">
-
-        <div class="container-page">
-
-            <div class="grid gap-5 lg:grid-cols-2">
-
-                {{-- Vision --}}
-                <div class="relative overflow-hidden bg-slate-950 p-8 text-white sm:p-12 lg:p-16">
-
-                    <span
-                        class="font-display text-[11px] font-bold uppercase tracking-[0.15em] text-red-400"
-                    >
-                        01 / Vision
-                    </span>
-
-                    <div class="mt-20">
-
-                        <h2
-                            class="max-w-xl font-display text-4xl font-semibold leading-[0.98] tracking-[-0.05em] text-white sm:text-5xl"
-                        >
-                            Create enduring
-                            spaces for
-                            generations.
-                        </h2>
-
-                        <p class="mt-7 max-w-xl leading-7 text-white/50">
-                            We believe the best buildings balance ambition
-                            with responsibility, combining design quality,
-                            technical performance and long-term value.
-                        </p>
-
-                    </div>
-
-                    <div
-                        class="absolute -bottom-20 -right-12 h-56 w-56 rounded-full border border-white/10"
-                    ></div>
-
-                    <div
-                        class="absolute -bottom-32 -right-24 h-72 w-72 rounded-full border border-white/5"
-                    ></div>
-
-                </div>
-
-
-                {{-- Mission --}}
-                <div class="relative overflow-hidden bg-white p-8 ring-1 ring-slate-200 sm:p-12 lg:p-16">
-
-                    <span
-                        class="font-display text-[11px] font-bold uppercase tracking-[0.15em] text-blue-700"
-                    >
-                        02 / Mission
-                    </span>
-
-                    <div class="mt-20">
-
-                        <h2
-                            class="max-w-xl font-display text-4xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-5xl"
-                        >
-                            Turn complex
-                            requirements
-                            into clear outcomes.
-                        </h2>
-
-                        <p class="mt-7 max-w-xl leading-7 text-slate-500">
-                            We simplify complexity through clear
-                            coordination, rigorous documentation and
-                            accountable project delivery.
-                        </p>
-
-                    </div>
-
-                    <div class="absolute right-8 top-8 h-14 w-14 border-r border-t border-slate-200"></div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         METRICS
-         ===================================================== --}}
-    <section class="section bg-slate-950 text-white">
-
-        <div class="container-page">
-
-            <div class="mb-14 max-w-3xl">
-
-                <p class="eyebrow !text-white/50">
-                    By the numbers
-                </p>
-
-                <h2
-                    class="mt-5 font-display text-4xl font-semibold leading-[1] tracking-[-0.055em] text-white sm:text-6xl"
+                {{-- Tab 1 --}}
+                <button
+                    type="button"
+                    @click="switchTab('overview')"
+                    class="relative flex items-center gap-2 px-5 py-3 rounded-t-lg text-xs md:text-sm font-bold uppercase tracking-wider transition-all whitespace-nowrap focus:outline-none"
+                    :class="activeTab === 'overview'
+                        ? 'bg-white text-[#EB323A] border-t-2 border-x border-[#EB323A] border-x-slate-200 border-b-white -mb-[1px] shadow-sm z-10'
+                        : 'bg-slate-100/80 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 border border-slate-200'"
                 >
-                    Experience measured
-                    in real outcomes.
-                </h2>
-
-            </div>
-
-
-            <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-
-                <div class="metric">
-
-                    <div class="metric-number">
-                        25+
-                    </div>
-
-                    <p class="mt-3 max-w-[180px] text-sm leading-6 text-white/45">
-                        Years delivering architecture and construction.
-                    </p>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-number">
-                        180+
-                    </div>
-
-                    <p class="mt-3 max-w-[180px] text-sm leading-6 text-white/45">
-                        Projects completed across multiple sectors.
-                    </p>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-number">
-                        98%
-                    </div>
-
-                    <p class="mt-3 max-w-[180px] text-sm leading-6 text-white/45">
-                        Client satisfaction and repeat collaboration.
-                    </p>
-
-                </div>
-
-
-                <div class="metric">
-
-                    <div class="metric-number">
-                        100%
-                    </div>
-
-                    <p class="mt-3 max-w-[180px] text-sm leading-6 text-white/45">
-                        Commitment to construction safety standards.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         CAPABILITIES
-         ===================================================== --}}
-    <section class="section bg-white">
-
-        <div class="container-page">
-
-            <div class="grid gap-12 lg:grid-cols-[0.65fr_1.35fr]">
-
-                <div>
-
-                    <p class="eyebrow">
-                        Engineering capability
-                    </p>
-
-                    <h2 class="mt-5 max-w-md font-display text-4xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-5xl">
-                        Built on technical
-                        discipline.
-                    </h2>
-
-                </div>
-
-
-                <div>
-
-                    <p class="max-w-3xl text-lg leading-8 text-slate-500">
-                        Our capability extends beyond architectural design.
-                        We coordinate technical disciplines and construction
-                        operations to ensure that every design decision can
-                        be executed with confidence.
-                    </p>
-
-
-                    <div class="mt-12">
-
-                        {{-- Capability 01 --}}
-                        <div class="service-item">
-
-                            <span class="service-number">
-                                01
-                            </span>
-
-                            <div>
-
-                                <h3 class="service-title">
-                                    BIM & Digital Coordination
-                                </h3>
-
-                                <p class="service-description">
-                                    Integrated digital workflows for
-                                    coordination, clash detection and
-                                    technical documentation.
-                                </p>
-
-                            </div>
-
-                            <span class="text-sm font-semibold text-slate-400">
-                                BIM
-                            </span>
-
-                        </div>
-
-
-                        {{-- Capability 02 --}}
-                        <div class="service-item">
-
-                            <span class="service-number">
-                                02
-                            </span>
-
-                            <div>
-
-                                <h3 class="service-title">
-                                    Structural Engineering
-                                </h3>
-
-                                <p class="service-description">
-                                    Structural systems engineered for
-                                    performance, constructability and
-                                    long-term reliability.
-                                </p>
-
-                            </div>
-
-                            <span class="text-sm font-semibold text-slate-400">
-                                STR
-                            </span>
-
-                        </div>
-
-
-                        {{-- Capability 03 --}}
-                        <div class="service-item">
-
-                            <span class="service-number">
-                                03
-                            </span>
-
-                            <div>
-
-                                <h3 class="service-title">
-                                    Quality Control
-                                </h3>
-
-                                <p class="service-description">
-                                    Inspection, documentation and quality
-                                    management throughout construction.
-                                </p>
-
-                            </div>
-
-                            <span class="text-sm font-semibold text-slate-400">
-                                QC
-                            </span>
-
-                        </div>
-
-
-                        {{-- Capability 04 --}}
-                        <div class="service-item">
-
-                            <span class="service-number">
-                                04
-                            </span>
-
-                            <div>
-
-                                <h3 class="service-title">
-                                    Safety Management
-                                </h3>
-
-                                <p class="service-description">
-                                    Proactive safety planning and site
-                                    management with a zero-compromise
-                                    approach.
-                                </p>
-
-                            </div>
-
-                            <span class="text-sm font-semibold text-slate-400">
-                                HSE
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         LEADERSHIP
-         ===================================================== --}}
-    <section class="section bg-slate-50">
-
-        <div class="container-page">
-
-            <div class="mb-14">
-
-                <p class="eyebrow">
-                    Leadership
-                </p>
-
-                <h2 class="section-title max-w-4xl">
-                    People behind
-                    every project.
-                </h2>
-
-                <p class="section-description">
-                    A multidisciplinary leadership team bringing together
-                    architectural vision, engineering expertise and
-                    construction experience.
-                </p>
-
-            </div>
-
-
-            <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-
-                {{-- Leader 01 --}}
-                <article class="arch-card group">
-
-                    <div class="aspect-[4/5] overflow-hidden bg-slate-200">
-
-                        <div class="flex h-full items-end bg-gradient-to-br from-slate-300 to-slate-500 p-7">
-
-                            <div>
-
-                                <span class="font-display text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
-                                    Executive Leadership
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="p-6">
-
-                        <p class="font-display text-xl font-semibold tracking-[-0.03em]">
-                            Managing Director
-                        </p>
-
-                        <p class="mt-2 text-sm text-slate-500">
-                            Executive Leadership
-                        </p>
-
-                    </div>
-
-                </article>
-
-
-                {{-- Leader 02 --}}
-                <article class="arch-card group">
-
-                    <div class="aspect-[4/5] overflow-hidden bg-slate-200">
-
-                        <div class="flex h-full items-end bg-gradient-to-br from-slate-400 to-slate-600 p-7">
-
-                            <div>
-
-                                <span class="font-display text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
-                                    Architecture
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="p-6">
-
-                        <p class="font-display text-xl font-semibold tracking-[-0.03em]">
-                            Chief Architect
-                        </p>
-
-                        <p class="mt-2 text-sm text-slate-500">
-                            Architecture & Design
-                        </p>
-
-                    </div>
-
-                </article>
-
-
-                {{-- Leader 03 --}}
-                <article class="arch-card group">
-
-                    <div class="aspect-[4/5] overflow-hidden bg-slate-200">
-
-                        <div class="flex h-full items-end bg-gradient-to-br from-slate-300 to-slate-600 p-7">
-
-                            <div>
-
-                                <span class="font-display text-[10px] font-bold uppercase tracking-[0.15em] text-white/60">
-                                    Engineering
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <div class="p-6">
-
-                        <p class="font-display text-xl font-semibold tracking-[-0.03em]">
-                            Chief Project Engineer
-                        </p>
-
-                        <p class="mt-2 text-sm text-slate-500">
-                            Engineering & Construction
-                        </p>
-
-                    </div>
-
-                </article>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         CERTIFICATIONS
-         ===================================================== --}}
-    <section class="section bg-white">
-
-        <div class="container-page">
-
-            <div class="grid gap-12 lg:grid-cols-[0.65fr_1.35fr]">
-
-                <div>
-
-                    <p class="eyebrow">
-                        Standards
-                    </p>
-
-                    <h2 class="mt-5 max-w-md font-display text-4xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-5xl">
-                        Standards
-                        matter.
-                    </h2>
-
-                </div>
-
-
-                <div>
-
-                    <p class="max-w-2xl leading-8 text-slate-500">
-                        We believe trust is built through measurable
-                        standards, documented processes and a culture
-                        of continuous improvement.
-                    </p>
-
-
-                    <div class="mt-10 divide-y divide-slate-200 border-y border-slate-200">
-
-                        <div class="flex items-center justify-between gap-6 py-6">
-
-                            <div>
-
-                                <p class="font-display text-lg font-semibold">
-                                    ISO Quality Management
-                                </p>
-
-                                <p class="mt-1 text-sm text-slate-500">
-                                    Quality management systems
-                                </p>
-
-                            </div>
-
-                            <span class="tag">
-                                ISO
-                            </span>
-
-                        </div>
-
-
-                        <div class="flex items-center justify-between gap-6 py-6">
-
-                            <div>
-
-                                <p class="font-display text-lg font-semibold">
-                                    Occupational Safety
-                                </p>
-
-                                <p class="mt-1 text-sm text-slate-500">
-                                    Health & safety management
-                                </p>
-
-                            </div>
-
-                            <span class="tag">
-                                HSE
-                            </span>
-
-                        </div>
-
-
-                        <div class="flex items-center justify-between gap-6 py-6">
-
-                            <div>
-
-                                <p class="font-display text-lg font-semibold">
-                                    Sustainable Construction
-                                </p>
-
-                                <p class="mt-1 text-sm text-slate-500">
-                                    Responsible material and site practices
-                                </p>
-
-                            </div>
-
-                            <span class="tag">
-                                ESG
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         CTA
-         ===================================================== --}}
-    <section class="section section-blueprint">
-
-        <div class="container-page relative z-10">
-
-            <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
-
-                <div>
-
-                    <p class="eyebrow !text-white/60">
-                        Work with us
-                    </p>
-
-                    <h2 class="mt-6 max-w-5xl font-display text-5xl font-semibold leading-[0.92] tracking-[-0.06em] text-white sm:text-7xl lg:text-8xl">
-                        LET'S CREATE
-                        SOMETHING
-                        THAT LASTS.
-                    </h2>
-
-                </div>
-
-
-                <a
-                    href="{{ route('contact.index') }}"
-                    class="btn-white group min-w-[210px]"
+                    <svg class="w-4 h-4 stroke-current" :class="activeTab === 'overview' ? 'text-[#EB323A]' : 'text-slate-400'" fill="none" viewBox="0 0 24 24" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                    </svg>
+                    <span>Tổng quan công ty</span>
+                </button>
+
+                {{-- Tab 2 --}}
+                <button
+                    type="button"
+                    @click="switchTab('leadership')"
+                    class="relative flex items-center gap-2 px-5 py-3 rounded-t-lg text-xs md:text-sm font-bold uppercase tracking-wider transition-all whitespace-nowrap focus:outline-none"
+                    :class="activeTab === 'leadership'
+                        ? 'bg-white text-[#EB323A] border-t-2 border-x border-[#EB323A] border-x-slate-200 border-b-white -mb-[1px] shadow-sm z-10'
+                        : 'bg-slate-100/80 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 border border-slate-200'"
                 >
+                    <svg class="w-4 h-4 stroke-current" :class="activeTab === 'leadership' ? 'text-[#EB323A]' : 'text-slate-400'" fill="none" viewBox="0 0 24 24" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                    </svg>
+                    <span>Cán bộ chủ chốt</span>
+                </button>
 
-                    Start a conversation
+                {{-- Tab 3 --}}
+                <button
+                    type="button"
+                    @click="switchTab('policy')"
+                    class="relative flex items-center gap-2 px-5 py-3 rounded-t-lg text-xs md:text-sm font-bold uppercase tracking-wider transition-all whitespace-nowrap focus:outline-none"
+                    :class="activeTab === 'policy'
+                        ? 'bg-white text-[#EB323A] border-t-2 border-x border-[#EB323A] border-x-slate-200 border-b-white -mb-[1px] shadow-sm z-10'
+                        : 'bg-slate-100/80 text-slate-600 hover:text-slate-900 hover:bg-slate-200/70 border border-slate-200'"
+                >
+                    <svg class="w-4 h-4 stroke-current" :class="activeTab === 'policy' ? 'text-[#EB323A]' : 'text-slate-400'" fill="none" viewBox="0 0 24 24" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                    </svg>
+                    <span>Chính sách nhân sự</span>
+                </button>
 
-                    <span class="transition-transform duration-300 group-hover:translate-x-1">
-                        →
-                    </span>
+            </div>
+        </div>
 
-                </a>
+        {{-- Khung trắng bọc nội dung --}}
+        <div class="w-full bg-white border-x border-b border-slate-200 rounded-b-2xl shadow-sm">
 
+            <div
+                x-show="activeTab === 'overview'"
+                class="w-full block"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+            >
+                @includeIf('about.components.company-overview')
+            </div>
+
+            <div
+                x-show="activeTab === 'leadership'"
+                class="w-full block"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                style="display: none;"
+            >
+                @includeIf('about.components.leadership-hierarchy')
+            </div>
+
+            <div
+                x-show="activeTab === 'policy'"
+                class="w-full block"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 translate-y-2"
+                x-transition:enter-end="opacity-100 translate-y-0"
+                style="display: none;"
+            >
+                @includeIf('about.components.hr-policy')
             </div>
 
         </div>
 
-    </section>
+    </div>
 
 </div>
 

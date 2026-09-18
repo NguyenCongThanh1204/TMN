@@ -2,845 +2,251 @@
 
 @section('content')
 
-<div class="page-transition">
+@php
+use Illuminate\Support\Facades\Storage;
 
-    {{-- =====================================================
-         PROJECT HERO
-         ===================================================== --}}
-    <section class="relative overflow-hidden bg-slate-950 text-white">
+// Helper chuẩn hóa đường dẫn ảnh an toàn qua Storage Facade
+$resolveImageUrl = function ($path) {
+if (empty($path)) {
+return null;
+}
+if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+return $path;
+}
+return Storage::disk('public')->url(ltrim($path, '/'));
+};
 
-        <div class="container-page">
+// Helper format diện tích an toàn cho varchar
+$formatArea = function ($area) {
+if (empty($area)) {
+return null;
+}
+if (is_numeric($area)) {
+return number_format((float)$area, 0, ',', '.') . ' m²';
+}
+return (string)$area;
+};
 
-            <div class="grid min-h-[720px] items-end gap-12 pb-16 pt-36 lg:grid-cols-[1fr_.42fr] lg:pb-20">
+$coverImg = $resolveImageUrl($project->cover_image);
 
-                <div>
+// Lấy danh sách ảnh chi tiết từ quan hệ media (ProjectMedia model)
+$galleryImages = $project->media->map(function ($mediaItem) use ($resolveImageUrl) {
+return $resolveImageUrl($mediaItem->file_path);
+})->filter()->values();
+@endphp
 
-                    <div class="flex flex-wrap items-center gap-3">
+<div class="page-transition bg-[#F8FAFC] text-[#0F172A] select-none font-sans min-h-screen relative pt-20 sm:pt-24 pb-20">
 
-                        <span class="tag border-white/20 bg-white/5 text-white/70">
-                            {{ $project->category->name ?? 'Architecture' }}
-                        </span>
+    {{-- Background Grid Pattern mờ --}}
+    <div
+        class="absolute inset-0 opacity-[0.03] pointer-events-none"
+        style="background-image: linear-gradient(to right, #000000 1px, transparent 1px), linear-gradient(to bottom, #000000 1px, transparent 1px); background-size: 32px 32px;"></div>
 
-                        @if($project->year)
-                            <span class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-white/40">
-                                {{ $project->year }}
-                            </span>
-                        @endif
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
 
-                    </div>
-
-
-                    <h1 class="mt-7 max-w-6xl font-display text-6xl font-semibold leading-[0.88] tracking-[-0.07em] text-white sm:text-7xl lg:text-[8rem]">
-                        {{ $project->title }}
-                    </h1>
-
-
-                    @if($project->location)
-                        <div class="mt-8 flex items-center gap-3 text-sm text-white/50">
-                            <span class="h-1.5 w-1.5 rounded-full bg-red-500"></span>
-                            {{ $project->location }}
-                        </div>
-                    @endif
-
-                </div>
-
-
-                {{-- Project summary --}}
-                <div class="lg:pb-2">
-
-                    <div class="border-l border-white/20 pl-6">
-
-                        <p class="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-                            Project overview
-                        </p>
-
-                        <p class="mt-4 text-base leading-7 text-white/55">
-                            A project delivered through coordinated
-                            architectural design, engineering and
-                            construction execution.
-                        </p>
-
-
-                        <div class="mt-8 flex items-center gap-3">
-
-                            <span class="h-px w-10 bg-red-500"></span>
-
-                            <a
-                                href="#project-information"
-                                class="font-display text-[10px] font-bold uppercase tracking-[0.12em] text-white/70 hover:text-white"
-                            >
-                                Explore project
-                            </a>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
+        {{-- BREADCRUMBS & ĐIỀU HƯỚNG QUAY LẠI --}}
+        <div class="flex items-center justify-between py-6 border-b border-slate-200/80 mb-8">
+            <a
+                href="{{ route('projects.index') }}"
+                class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-[#EB323A] transition-colors">
+                <svg class="w-4 h-4 stroke-current" fill="none" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                Quay lại danh sách dự án
+            </a>
+            <div class="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                <span>Dự án</span>
+                <span>/</span>
+                <span class="text-[#0F172A] font-bold truncate max-w-[200px]">{{ $project->title }}</span>
             </div>
-
         </div>
 
-
-        {{-- Architectural grid --}}
-        <div class="pointer-events-none absolute inset-0 opacity-[0.08]">
-
-            <div class="absolute inset-y-0 left-[20%] w-px bg-white"></div>
-            <div class="absolute inset-y-0 left-[50%] w-px bg-white"></div>
-            <div class="absolute inset-y-0 left-[80%] w-px bg-white"></div>
-
-            <div class="absolute left-0 right-0 top-[55%] h-px bg-white"></div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         PROJECT INFORMATION
-         ===================================================== --}}
-    <section id="project-information" class="border-b border-slate-200 bg-white">
-
-        <div class="container-page">
-
-            <div class="grid divide-y divide-slate-200 md:grid-cols-2 md:divide-x md:divide-y-0 lg:grid-cols-5">
-
-                {{-- Client --}}
-                <div class="py-8 md:px-6 md:first:pl-0">
-
-                    <p class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                        Client
-                    </p>
-
-                    <p class="mt-3 font-display text-sm font-semibold">
-                        {{ $project->client_name ?: 'Private Client' }}
-                    </p>
-
-                </div>
-
-
-                {{-- Location --}}
-                <div class="py-8 md:px-6">
-
-                    <p class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                        Location
-                    </p>
-
-                    <p class="mt-3 font-display text-sm font-semibold">
-                        {{ $project->location ?: '—' }}
-                    </p>
-
-                </div>
-
-
-                {{-- Area --}}
-                <div class="py-8 md:px-6">
-
-                    <p class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                        Gross floor area
-                    </p>
-
-                    <p class="mt-3 font-display text-sm font-semibold">
-                        @if($project->area_sqm)
-                            {{ number_format($project->area_sqm) }} m²
-                        @else
-                            —
-                        @endif
-                    </p>
-
-                </div>
-
-
-                {{-- Year --}}
-                <div class="py-8 md:px-6">
-
-                    <p class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                        Completion
-                    </p>
-
-                    <p class="mt-3 font-display text-sm font-semibold">
-                        {{ $project->year ?: '—' }}
-                    </p>
-
-                </div>
-
-
-                {{-- Structure --}}
-                <div class="py-8 md:px-6 md:last:pr-0">
-
-                    <p class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                        Structure
-                    </p>
-
-                    <p class="mt-3 font-display text-sm font-semibold">
-                        {{ $project->structural_type ?: 'General Construction' }}
-                    </p>
-
-                </div>
-
+        {{-- TIÊU ĐỀ & THÔNG TIN CƠ BẢN --}}
+        <div class="mb-8">
+            <div class="flex flex-wrap items-center gap-2.5 mb-3">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-[#EB323A] bg-red-50 px-3 py-1 rounded-full border border-red-200 shadow-xs">
+                    {{ optional($project->category)->name ?? 'Công trình kiến trúc' }}
+                </span>
+                @if($project->year)
+                <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+                    Năm {{ $project->year }}
+                </span>
+                @endif
             </div>
 
+            <h1 class="text-2xl sm:text-4xl md:text-5xl font-black text-[#0F172A] leading-tight tracking-tight mb-4 uppercase">
+                {{ $project->title }}
+            </h1>
+
+            @if(!empty($project->location))
+            <div class="flex items-center gap-2 text-xs sm:text-sm text-slate-600 font-medium">
+                <svg class="w-4 h-4 text-[#EB323A] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                </svg>
+                <span>{{ $project->location }}</span>
+            </div>
+            @endif
         </div>
 
-    </section>
-
-
-    {{-- =====================================================
-         COVER IMAGE
-         ===================================================== --}}
-    @if($project->cover_image)
-
-        <section class="bg-white py-6 sm:py-8 lg:py-10">
-
-            <div class="container-page">
-
-                <figure class="group relative overflow-hidden bg-slate-200">
-
-                    <div class="aspect-[16/9] sm:aspect-[2/1]">
-
-                        <img
-                            src="{{ asset('storage/' . $project->cover_image) }}"
-                            alt="{{ $project->title }}"
-                            class="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-[1.025]"
-                        >
-
-                    </div>
-
-
-                    <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/30 to-transparent"></div>
-
-                </figure>
-
-            </div>
-
-        </section>
-
-    @endif
-
-
-    {{-- =====================================================
-         ARCHITECTURAL STORY
-         ===================================================== --}}
-    <section class="section bg-white">
-
-        <div class="container-page">
-
-            <div class="grid gap-14 lg:grid-cols-[0.55fr_1.45fr]">
-
-                <div>
-
-                    <p class="eyebrow">
-                        Project story
-                    </p>
-
-                    <p class="mt-6 max-w-xs text-sm leading-7 text-slate-500">
-                        Architecture, technical discipline and execution
-                        brought together around the specific needs of
-                        the project.
-                    </p>
-
-                </div>
-
-
-                <article class="prose prose-slate max-w-none">
-
-                    @if($project->body_content)
-
-                        {!! $project->body_content !!}
-
-                    @else
-
-                        <h2>
-                            Designed around purpose.
-                        </h2>
-
-                        <p>
-                            This project was developed with a focus on
-                            functionality, material expression and
-                            long-term performance. Architectural intent
-                            was coordinated closely with engineering
-                            requirements and construction realities.
-                        </p>
-
-                        <p>
-                            From the earliest planning stages through
-                            execution, the project team maintained a
-                            clear focus on quality, buildability and
-                            responsible delivery.
-                        </p>
-
-                    @endif
-
-                </article>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         PROJECT STATS / TIMELINE
-         ===================================================== --}}
-    <section class="bg-slate-50 py-16 sm:py-20">
-
-        <div class="container-page">
-
-            <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-
-                <div class="process-step">
-
-                    <span class="process-step-number">
-                        AREA
-                    </span>
-
-                    <h3 class="mt-8 font-display text-3xl font-semibold tracking-[-0.04em]">
-
-                        @if($project->area_sqm)
-                            {{ number_format($project->area_sqm) }}
-                            <span class="text-lg text-slate-400">m²</span>
-                        @else
-                            —
-                        @endif
-
-                    </h3>
-
-                    <p class="process-step-description">
-                        Gross floor area
-                    </p>
-
-                </div>
-
-
-                <div class="process-step">
-
-                    <span class="process-step-number">
-                        YEAR
-                    </span>
-
-                    <h3 class="mt-8 font-display text-3xl font-semibold tracking-[-0.04em]">
-                        {{ $project->year ?: '—' }}
-                    </h3>
-
-                    <p class="process-step-description">
-                        Completion year
-                    </p>
-
-                </div>
-
-
-                <div class="process-step">
-
-                    <span class="process-step-number">
-                        TYPE
-                    </span>
-
-                    <h3 class="mt-8 font-display text-3xl font-semibold tracking-[-0.04em]">
-                        {{ $project->category->name ?? 'Architecture' }}
-                    </h3>
-
-                    <p class="process-step-description">
-                        Project category
-                    </p>
-
-                </div>
-
-
-                <div class="process-step">
-
-                    <span class="process-step-number">
-                        STRUCTURE
-                    </span>
-
-                    <h3 class="mt-8 font-display text-2xl font-semibold tracking-[-0.04em]">
-                        {{ $project->structural_type ?: 'General Construction' }}
-                    </h3>
-
-                    <p class="process-step-description">
-                        Structural approach
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         GALLERY
-         ===================================================== --}}
-    @if(isset($project->gallery) && is_array($project->gallery) && count($project->gallery))
-
-        <section
-            class="section bg-white"
+        {{-- HỆ THỐNG HIỂN THỊ ẢNH CHÍNH & THUMBNAIL (SỬ DỤNG ALPINE.JS) --}}
+        @if($coverImg)
+        <div
+            class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-12"
             x-data="{
-                open: false,
-                active: 0,
-                images: @js(
-                    collect($project->gallery)->map(function ($image) {
-                        return asset('storage/' . $image);
-                    })->values()
-                )
-            }"
-            @keydown.escape.window="open = false"
-            @keydown.arrow-right.window="if(open) active = (active + 1) % images.length"
-            @keydown.arrow-left.window="if(open) active = (active - 1 + images.length) % images.length"
-        >
-
-            <div class="container-page">
-
-                <div class="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-
-                    <div>
-
-                        <p class="eyebrow">
-                            Project gallery
-                        </p>
-
-                        <h2 class="section-title">
-                            Built in detail.
-                        </h2>
-
-                    </div>
-
-                    <p class="max-w-md text-sm leading-7 text-slate-500">
-                        Explore selected views and visual details from
-                        the project.
-                    </p>
-
-                </div>
-
-
-                <div class="grid gap-5 md:grid-cols-2">
-
-                    @foreach($project->gallery as $index => $image)
-
-                        <button
-                            type="button"
-                            @click="active = {{ $index }}; open = true"
-                            class="group relative overflow-hidden bg-slate-100 text-left focus:outline-none"
-                        >
-
-                            <div class="aspect-[4/3] overflow-hidden">
-
-                                <img
-                                    src="{{ asset('storage/' . $image) }}"
-                                    alt="{{ $project->title }} — image {{ $index + 1 }}"
-                                    class="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
-                                    loading="lazy"
-                                >
-
-                            </div>
-
-
-                            <div class="absolute inset-0 bg-slate-950/0 transition-colors duration-300 group-hover:bg-slate-950/20"></div>
-
-
-                            <span
-                                class="absolute bottom-5 right-5 flex h-11 w-11 items-center justify-center rounded-full bg-white text-slate-950 opacity-0 shadow-lg transition-all duration-300 group-hover:opacity-100"
-                            >
-                                +
-                            </span>
-
-                        </button>
-
-                    @endforeach
-
-                </div>
-
+                    activeImage: '{{ $coverImg }}',
+                    openLightbox: false,
+                    lightboxImg: ''
+                }">
+            {{-- Khung ảnh lớn --}}
+            <div class="lg:col-span-9 aspect-[16/10] rounded-2xl overflow-hidden bg-slate-200 relative group shadow-sm border border-slate-200/80">
+                <img
+                    :src="activeImage"
+                    alt="{{ $project->title }}"
+                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
             </div>
 
+            {{-- Danh sách Thumbnail bên cạnh (Bao gồm ảnh bìa + các ảnh trong project_media) --}}
+            @php
+            $allThumbnails = collect([$coverImg])->merge($galleryImages)->unique()->values();
+            @endphp
 
-            {{-- =================================================
-                 LIGHTBOX
-                 ================================================= --}}
-            <div
-                x-cloak
-                x-show="open"
-                x-transition.opacity
-                class="fixed inset-0 z-[200] flex items-center justify-center bg-slate-950/95 p-4 sm:p-8"
-            >
-
+            @if($allThumbnails->count() > 1)
+            <div class="lg:col-span-3 flex lg:flex-col gap-3 overflow-x-auto lg:overflow-y-auto lg:overflow-x-hidden lg:max-h-[540px] pr-1">
+                @foreach($allThumbnails as $thumbUrl)
                 <button
                     type="button"
-                    @click="open = false"
-                    class="absolute right-5 top-5 z-10 flex h-12 w-12 items-center justify-center rounded-full border border-white/20 text-xl text-white transition-colors hover:bg-white hover:text-slate-950"
-                    aria-label="Close gallery"
-                >
-                    ×
+                    @click="activeImage = '{{ $thumbUrl }}'"
+                    class="flex-shrink-0 w-24 sm:w-32 lg:w-full aspect-[16/10] rounded-xl overflow-hidden border-2 transition-all cursor-pointer focus:outline-none"
+                    :class="activeImage === '{{ $thumbUrl }}' ? 'border-[#EB323A] shadow-md scale-[1.02]' : 'border-transparent opacity-70 hover:opacity-100'">
+                    <img src="{{ $thumbUrl }}" alt="Thumbnail" class="w-full h-full object-cover" />
                 </button>
-
-
-                <button
-                    type="button"
-                    @click="active = (active - 1 + images.length) % images.length"
-                    class="absolute left-4 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 text-xl text-white transition-colors hover:bg-white hover:text-slate-950 sm:left-8"
-                    aria-label="Previous image"
-                >
-                    ←
-                </button>
-
-
-                <div class="flex h-full w-full items-center justify-center">
-
-                    <img
-                        :src="images[active]"
-                        alt="{{ $project->title }}"
-                        class="max-h-[90vh] max-w-[90vw] object-contain"
-                    >
-
-                </div>
-
-
-                <button
-                    type="button"
-                    @click="active = (active + 1) % images.length"
-                    class="absolute right-4 top-1/2 z-10 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/20 text-xl text-white transition-colors hover:bg-white hover:text-slate-950 sm:right-8"
-                    aria-label="Next image"
-                >
-                    →
-                </button>
-
-
-                <div class="absolute bottom-5 left-1/2 -translate-x-1/2 font-display text-xs uppercase tracking-[0.15em] text-white/50">
-                    <span x-text="String(active + 1).padStart(2, '0')"></span>
-                    /
-                    <span x-text="String(images.length).padStart(2, '0')"></span>
-                </div>
-
+                @endforeach
             </div>
+            @endif
 
-        </section>
+        </div>
+        @endif
 
-    @endif
+        {{-- NỘI DUNG CHÍNH & KHUNG THÔNG SỐ KỸ THUẬT BÊN PHẢI --}}
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
 
-
-    {{-- =====================================================
-         MEDIA FALLBACK
-         ===================================================== --}}
-    @if(!isset($project->gallery) || !is_array($project->gallery) || !count($project->gallery))
-
-        <section class="section bg-slate-50">
-
-            <div class="container-page">
-
-                <div class="border border-dashed border-slate-300 bg-white p-10 text-center sm:p-16">
-
-                    <p class="eyebrow">
-                        Project gallery
-                    </p>
-
-                    <h2 class="mt-5 font-display text-3xl font-semibold tracking-[-0.04em]">
-                        Project media will appear here.
+            {{-- Cột trái: Nội dung chi tiết dự án --}}
+            <div class="lg:col-span-8 space-y-8">
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-6 md:p-8 shadow-xs">
+                    <h2 class="text-lg font-black uppercase tracking-tight text-[#0F172A] mb-4 pb-3 border-b border-slate-100 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-[#EB323A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+                        </svg>
+                        Tổng quan dự án
                     </h2>
-
-                    <p class="mx-auto mt-4 max-w-lg text-sm leading-7 text-slate-500">
-                        Add gallery images through the project management
-                        interface to showcase this project's construction
-                        and architectural details.
-                    </p>
-
+                    <div class="prose prose-slate max-w-none text-slate-700 leading-relaxed">
+                        @if($project->body_content)
+                        {!! $project->body_content !!}
+                        @else
+                        <p class="text-slate-500 italic">Nội dung chi tiết dự án đang được cập nhật.</p>
+                        @endif
+                    </div>
                 </div>
-
             </div>
 
-        </section>
+            {{-- Cột phải: Thông số kỹ thuật chuẩn hồ sơ năng lực (Sticky Sidebar) --}}
+            <div class="lg:col-span-4 lg:sticky lg:top-28 z-20 self-start space-y-6">
+                <div class="bg-white border border-slate-200/80 rounded-2xl p-6 shadow-sm space-y-4">
+                    <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 pb-3 border-b border-slate-100 mb-2">
+                        Thông tin dự án
+                    </h3>
 
-    @endif
-
-
-    {{-- =====================================================
-         PROJECT DELIVERY
-         ===================================================== --}}
-    <section class="section bg-slate-950 text-white">
-
-        <div class="container-page">
-
-            <div class="grid gap-12 lg:grid-cols-[0.6fr_1.4fr]">
-
-                <div>
-
-                    <p class="eyebrow !text-white/50">
-                        Delivery
-                    </p>
-
-                    <p class="mt-6 max-w-xs text-sm leading-7 text-white/40">
-                        The same disciplined approach is applied from
-                        concept development through construction and
-                        final handover.
-                    </p>
-
-                </div>
-
-
-                <div>
-
-                    <h2 class="max-w-5xl font-display text-4xl font-semibold leading-[1] tracking-[-0.055em] text-white sm:text-6xl">
-                        Clear coordination.
-                        Measurable quality.
-                        Responsible execution.
-                    </h2>
-
-
-                    <div class="mt-10 grid gap-4 md:grid-cols-3">
-
-                        <div class="border border-white/10 p-6">
-
-                            <span class="font-display text-[10px] font-bold uppercase tracking-[0.15em] text-red-400">
-                                01
-                            </span>
-
-                            <p class="mt-10 font-display text-lg font-semibold text-white">
-                                Design
-                            </p>
-
-                            <p class="mt-2 text-sm leading-6 text-white/40">
-                                Context, concept and technical definition.
-                            </p>
-
+                    <div class="space-y-3 text-xs">
+                        <div>
+                            <span class="text-slate-400 block mb-0.5 uppercase tracking-wider text-[10px]">Chủ đầu tư</span>
+                            <span class="font-bold text-[#0F172A] text-sm">{{ $project->client_name ?: ($project->client ?? 'Tân Minh Nhân') }}</span>
                         </div>
 
-
-                        <div class="border border-white/10 p-6">
-
-                            <span class="font-display text-[10px] font-bold uppercase tracking-[0.15em] text-red-400">
-                                02
-                            </span>
-
-                            <p class="mt-10 font-display text-lg font-semibold text-white">
-                                Engineering
-                            </p>
-
-                            <p class="mt-2 text-sm leading-6 text-white/40">
-                                Coordination, documentation and compliance.
-                            </p>
-
+                        <div class="pt-2 border-t border-slate-100">
+                            <span class="text-slate-400 block mb-0.5 uppercase tracking-wider text-[10px]">Vị trí công trình</span>
+                            <span class="font-bold text-[#0F172A]">{{ $project->location ?? 'Chưa cập nhật' }}</span>
                         </div>
 
-
-                        <div class="border border-white/10 p-6">
-
-                            <span class="font-display text-[10px] font-bold uppercase tracking-[0.15em] text-red-400">
-                                03
-                            </span>
-
-                            <p class="mt-10 font-display text-lg font-semibold text-white">
-                                Construction
-                            </p>
-
-                            <p class="mt-2 text-sm leading-6 text-white/40">
-                                Quality, safety and controlled execution.
-                            </p>
-
+                        <div class="pt-2 border-t border-slate-100">
+                            <span class="text-slate-400 block mb-0.5 uppercase tracking-wider text-[10px]">Quy mô sàn</span>
+                            <span class="font-bold text-[#0F172A]">{{ $formatArea($project->area_sqm) ?? 'Quy mô lớn' }}</span>
                         </div>
 
+                        <div class="pt-2 border-t border-slate-100">
+                            <span class="text-slate-400 block mb-0.5 uppercase tracking-wider text-[10px]">Phạm vi công việc</span>
+                            <span class="font-bold text-[#EB323A]">{{ optional($project->category)->name ?? 'Tổng thầu thi công' }}</span>
+                        </div>
+
+                        @if(!empty($project->year))
+                        <div class="pt-2 border-t border-slate-100">
+                            <span class="text-slate-400 block mb-0.5 uppercase tracking-wider text-[10px]">Năm thực hiện</span>
+                            <span class="font-bold text-[#0F172A]">{{ $project->year }}</span>
+                        </div>
+                        @endif
                     </div>
-
                 </div>
-
             </div>
 
         </div>
 
-    </section>
-
-
-    {{-- =====================================================
-         RELATED PROJECTS
-         ===================================================== --}}
-    @if(isset($relatedProjects) && $relatedProjects->count())
-
-        <section class="section bg-white">
-
-            <div class="container-page">
-
-                <div class="mb-12 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-
-                    <div>
-
-                        <p class="eyebrow">
-                            Continue exploring
-                        </p>
-
-                        <h2 class="section-title">
-                            Related projects.
-                        </h2>
-
-                    </div>
-
-
-                    <a
-                        href="{{ route('projects.index') }}"
-                        class="group inline-flex items-center gap-3 font-display text-xs font-bold uppercase tracking-[0.1em]"
-                    >
-
-                        All projects
-
-                        <span class="flex h-9 w-9 items-center justify-center rounded-full border border-slate-300 transition-all duration-300 group-hover:translate-x-1 group-hover:border-slate-950 group-hover:bg-slate-950 group-hover:text-white">
-                            →
-                        </span>
-
-                    </a>
-
-                </div>
-
-
-                <div class="grid gap-5 md:grid-cols-3">
-
-                    @foreach($relatedProjects as $related)
-
-                        <a
-                            href="{{ route('projects.show', $related->slug) }}"
-                            class="project-card group"
-                        >
-
-                            <div class="aspect-[4/3] overflow-hidden">
-
-                                @if($related->cover_image)
-
-                                    <img
-                                        src="{{ asset('storage/' . $related->cover_image) }}"
-                                        alt="{{ $related->title }}"
-                                        class="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                        loading="lazy"
-                                    >
-
-                                @else
-
-                                    <div class="flex h-full items-center justify-center bg-slate-200">
-                                        <span class="font-display text-xs uppercase tracking-[0.12em] text-slate-400">
-                                            Project
-                                        </span>
-                                    </div>
-
-                                @endif
-
-                            </div>
-
-
-                            <div class="image-overlay"></div>
-
-
-                            <div class="project-card-content">
-
-                                <div class="project-meta">
-
-                                    <span>
-                                        {{ $related->category->name ?? 'Architecture' }}
-                                    </span>
-
-                                    @if($related->year)
-                                        <span>
-                                            {{ $related->year }}
-                                        </span>
-                                    @endif
-
-                                </div>
-
-
-                                <h3 class="mt-3 font-display text-2xl font-semibold tracking-[-0.035em] text-white">
-                                    {{ $related->title }}
-                                </h3>
-
-
-                                <div class="mt-4 flex items-center justify-between gap-4">
-
-                                    <span class="text-xs text-white/50">
-                                        {{ $related->location ?? '—' }}
-                                    </span>
-
-                                    <span class="text-lg">
-                                        →
-                                    </span>
-
-                                </div>
-
-                            </div>
-
-                        </a>
-
-                    @endforeach
-
-                </div>
-
-            </div>
-
-        </section>
-
-    @endif
-
-
-    {{-- =====================================================
-         FINAL CTA
-         ===================================================== --}}
-    <section class="section section-blueprint">
-
-        <div class="container-page relative z-10">
-
-            <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
-
-                <div>
-
-                    <p class="eyebrow !text-white/60">
-                        Start your project
-                    </p>
-
-                    <h2 class="mt-6 max-w-5xl font-display text-5xl font-semibold leading-[0.92] tracking-[-0.06em] text-white sm:text-7xl lg:text-8xl">
-                        HAVE A SIMILAR
-                        <br>
-                        PROJECT?
-                    </h2>
-
-                    <p class="mt-7 max-w-xl text-sm leading-7 text-white/55">
-                        Tell us about your site, requirements and timeline.
-                        Our team will help define the right path forward.
-                    </p>
-
-                </div>
-
-
+        {{-- DỰ ÁN KHÁC / LIÊN QUAN --}}
+        @if(isset($relatedProjects) && $relatedProjects->count() > 0)
+        <div class="mt-16">
+            <div class="flex items-center justify-between gap-4 mb-6">
+                <h3 class="text-xl sm:text-2xl font-black text-[#0F172A] uppercase tracking-tight">
+                    Dự án khác
+                </h3>
                 <a
-                    href="{{ route('contact.index') }}"
-                    class="btn-white group min-w-[220px]"
-                >
-
-                    Request a Quote
-
-                    <span class="transition-transform duration-300 group-hover:translate-x-1">
-                        →
-                    </span>
-
+                    href="{{ route('projects.index') }}"
+                    class="text-xs font-bold uppercase tracking-wider text-[#EB323A] hover:text-red-700">
+                    Xem tất cả
                 </a>
-
             </div>
 
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                @foreach($relatedProjects as $item)
+                @php
+                $relImg = $resolveImageUrl($item->cover_image);
+                @endphp
+                <a
+                    href="{{ route('projects.show', $item->slug ?? $item->id) }}"
+                    class="group block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-md">
+                    <div class="aspect-[4/3] overflow-hidden bg-slate-200">
+                        @if($relImg)
+                        <img
+                            src="{{ $relImg }}"
+                            alt="{{ $item->title }}"
+                            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        @else
+                        <div class="w-full h-full flex items-center justify-center text-slate-400 text-xs font-medium">
+                            Chưa có hình ảnh
+                        </div>
+                        @endif
+                    </div>
+
+                    <div class="p-4">
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-[#EB323A]">
+                                {{ $item->location ?? 'Dự án' }}
+                            </span>
+                            @if($item->year)
+                            <span class="text-[10px] text-slate-500">
+                                {{ $item->year }}
+                            </span>
+                            @endif
+                        </div>
+                        <h4 class="text-base sm:text-lg font-bold text-[#0F172A] line-clamp-2 leading-snug">
+                            {{ $item->title }}
+                        </h4>
+                    </div>
+                </a>
+                @endforeach
+            </div>
         </div>
+        @endif
 
-    </section>
-
+    </div>
 </div>
-
-
-{{-- =========================================================
-     PROJECT JSON-LD
-     ========================================================= --}}
-<script type="application/ld+json">
-{!! json_encode([
-    '@context' => 'https://schema.org',
-    '@type' => 'Project',
-    'name' => $project->title,
-    'url' => url()->current(),
-    'description' => strip_tags($project->body_content ?? ''),
-    'locationCreated' => $project->location,
-    'image' => $project->cover_image
-        ? asset('storage/' . $project->cover_image)
-        : null,
-], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT) !!}
-</script>
 
 @endsection

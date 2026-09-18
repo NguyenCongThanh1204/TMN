@@ -4,7 +4,7 @@
 
 <section
     id="featured-projects"
-    class="relative overflow-hidden bg-white py-24 sm:py-28"
+    class="relative overflow-hidden bg-white pt-[32px] pb-[16px] md:pt-[50px] md:pb-[20px]"
 >
 
     {{-- Background decoration --}}

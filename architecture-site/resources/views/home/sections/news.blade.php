@@ -1,247 +1,241 @@
 {{-- =========================================================
-     HOME - NEWS & INSIGHTS (FIXED CONTRAST & TYPOGRAPHY)
+     HOME - NEWS SLIDESHOW & SIDEBAR (FIXED BLACK SPACES)
+     resources/views/sections/news.blade.php
 ========================================================= --}}
 
 @php
-    $homeNews = isset($latestPosts)
-        ? $latestPosts
-        : (isset($posts) ? $posts : collect());
+    $homeNews = isset($latestPosts) ? $latestPosts : (isset($posts) ? $posts : collect());
 
     $homeNews = $homeNews
         ->filter(function ($post) {
             return $post->published_at && $post->published_at->lte(now());
         })
         ->sortByDesc('published_at')
+        ->take(8)
         ->values();
 
-    $featuredNews = $homeNews->first();
-    $gridNews = $homeNews->skip(1)->take(3);
+    $getImageUrl = function ($path) {
+        if (empty($path)) return null;
+        return str_starts_with($path, 'http') ? $path : asset('storage/' . ltrim($path, '/'));
+    };
 @endphp
 
-<section id="news" class="relative overflow-hidden bg-[#f8fafc] py-20 sm:py-28 lg:py-32 select-none border-b border-slate-200/80">
-
-    {{-- Decorative background --}}
+<section id="news" class="relative overflow-hidden bg-white pt-[36px] pb-[28px] md:pt-[54px] md:pb-[40px] select-none border-b border-slate-200/80 font-sans">
+    
+    {{-- Lớp nền Ambient Glow mềm mại --}}
     <div class="pointer-events-none absolute inset-0 overflow-hidden">
-        <div class="absolute -right-40 top-20 h-96 w-96 rounded-full bg-red-100/40 blur-3xl"></div>
-        <div class="absolute -left-40 bottom-0 h-96 w-96 rounded-full bg-slate-200/50 blur-3xl"></div>
-        <div class="absolute inset-x-0 top-0 h-px bg-slate-200"></div>
+        <div class="absolute -right-40 top-20 h-96 w-96 rounded-full bg-blue-100/40 blur-3xl"></div>
+        <div class="absolute -left-40 bottom-0 h-96 w-96 rounded-full bg-red-100/30 blur-3xl"></div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+    {{-- KHUNG CHỨA 1440PX --}}
+    <div class="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 relative z-10">
 
-        {{-- =====================================================
-             HEADER & XEM TẤT CẢ
-        ====================================================== --}}
-        <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between pb-8 border-b border-slate-200/90">
-            <div>
-                <div class="mb-3 inline-flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.25em] text-[#EB323A]">
-                    <span class="h-0.5 w-6 bg-[#EB323A]"></span>
-                    Tin tức & Hoạt động
+        @if($homeNews->isEmpty())
+            <div class="p-12 text-center bg-slate-50 border border-slate-200 rounded-lg text-slate-500">
+                Chưa có bài viết tin tức nào được xuất bản.
+            </div>
+        @else
+            <div 
+                class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-stretch"
+                x-data="{
+                    activeIdx: 0,
+                    postsCount: {{ $homeNews->count() }},
+                    isHovered: false,
+                    timer: null,
+                    init() {
+                        this.startAutoplay();
+                    },
+                    startAutoplay() {
+                        this.timer = setInterval(() => {
+                            if (!this.isHovered && this.postsCount > 1) {
+                                this.activeIdx = (this.activeIdx + 1) % this.postsCount;
+                            }
+                        }, 5000);
+                    },
+                    stopAutoplay() {
+                        clearInterval(this.timer);
+                    },
+                    nextSlide() {
+                        this.activeIdx = (this.activeIdx + 1) % this.postsCount;
+                    },
+                    prevSlide() {
+                        this.activeIdx = (this.activeIdx - 1 + this.postsCount) % this.postsCount;
+                    },
+                    selectSlide(index) {
+                        this.activeIdx = index;
+                    }
+                }"
+                @mouseenter="isHovered = true; stopAutoplay()"
+                @mouseleave="isHovered = false; startAutoplay()"
+            >
+                
+                {{-- ================= CỘT TRÁI: SLIDESHOW TIN TỨC (8/12) ================= --}}
+                <div class="lg:col-span-8 flex flex-col justify-between">
+                    <div>
+                        {{-- Header Tin Tức --}}
+                        <div class="mb-5 flex items-end justify-between">
+                            <div>
+                                <div class="mb-2.5 inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-[#EB323A]">
+                                    <span class="h-0.5 w-6 bg-[#EB323A]"></span>
+                                    Tin tức & Hoạt động
+                                </div>
+                                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                                    Góc nhìn <span class="font-light text-slate-400">Tân Minh Nhân</span>
+                                </h2>
+                            </div>
+                            <a href="{{ route('news.index') }}" class="hidden sm:inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-500 hover:text-[#EB323A] transition-colors pb-2">
+                                Xem tất cả &rarr;
+                            </a>
+                        </div>
+
+                        <div class="border border-slate-200 shadow-xl overflow-hidden bg-[#0e2e60] rounded-sm flex flex-col justify-between">
+                            {{-- 📸 KHUNG SLIDESHOW CHÍNH (Tối ưu tốc độ tải ảnh đầu tiên) --}}
+                            <div class="relative w-full aspect-[16/10] overflow-hidden bg-[#0e2e60] group">
+                                
+                                @foreach($homeNews as $idx => $post)
+                                    @php
+                                        $imgUrl = $getImageUrl($post->thumbnail);
+                                    @endphp
+                                    <div 
+                                        class="absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"
+                                        x-show="activeIdx === {{ $idx }}"
+                                        x-transition:enter="transition ease-out duration-300"
+                                        x-transition:enter-start="opacity-0 transform scale-105"
+                                        x-transition:enter-end="opacity-100 transform scale-100"
+                                        style="display: {{ $idx === 0 ? 'block' : 'none' }};"
+                                    >
+                                        <a href="{{ route('news.show', $post) }}" class="block w-full h-full relative">
+                                            @if($imgUrl)
+                                                <img
+                                                    src="{{ $imgUrl }}"
+                                                    alt="{{ $post->title }}"
+                                                    class="w-full h-full object-cover object-center pointer-events-none transition-transform duration-700 group-hover:scale-105"
+                                                    @if($idx === 0)
+                                                        loading="eager"
+                                                        fetchpriority="high"
+                                                    @else
+                                                        loading="lazy"
+                                                    @endif
+                                                />
+                                            @else
+                                                <div class="w-full h-full bg-[#0e2e60] flex items-center justify-center text-slate-400 font-mono text-sm uppercase tracking-widest">
+                                                    TMN News
+                                                </div>
+                                            @endif
+
+                                            {{-- Lớp phủ Gradient mờ tinh tế giúp ảnh sáng rực rỡ hơn --}}
+                                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-transparent"></div>
+                                        </a>
+
+                                        {{-- Danh mục bài viết (Badge) --}}
+                                        @if(optional($post->category)->name)
+                                            <div class="absolute top-4 left-4 z-10 pointer-events-none">
+                                                <span class="rounded-xs bg-[#EB323A] px-3.5 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-white shadow-md">
+                                                    {{ $post->category->name }}
+                                                </span>
+                                            </div>
+                                        @endif
+
+                                        {{-- Tiêu đề đè lên ảnh --}}
+                                        <div class="absolute bottom-5 left-5 right-5 z-10 pointer-events-auto">
+                                            <div class="flex items-center gap-2 mb-1.5 text-xs font-mono text-slate-300 tracking-wider">
+                                                <span class="text-[#EB323A] font-bold">{{ optional($post->published_at)->format('d/m/Y') }}</span>
+                                            </div>
+                                            <a href="{{ route('news.show', $post) }}" class="hover:text-red-400 transition-colors block">
+                                                <p class="font-extrabold text-base sm:text-xl leading-snug line-clamp-2 text-white drop-shadow-md">
+                                                    {{ $post->title }}
+                                                </p>
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            {{-- Thanh Thumbnail bên dưới --}}
+                            <div class="p-[5px] bg-[#0a224a] grid grid-flow-col auto-cols-fr gap-1.5 overflow-x-auto scrollbar-none border-t border-[1px] border-white/10">
+                                @foreach($homeNews as $idx => $post)
+                                    @php
+                                        $thumbUrl = $getImageUrl($post->thumbnail);
+                                    @endphp
+                                    <button
+                                        type="button"
+                                        @click="selectSlide({{ $idx }})"
+                                        class="relative w-full aspect-[16/10] overflow-hidden transition-all cursor-pointer rounded-xs bg-slate-900"
+                                        :class="activeIdx === {{ $idx }} ? 'border-[#EB323A] opacity-100 scale-105 ring-1 ring-[#EB323A] z-10' : 'border-transparent opacity-50 hover:opacity-100'"
+                                    >
+                                        @if($thumbUrl)
+                                            <img src="{{ $thumbUrl }}" alt="{{ $post->title }}" class="w-full h-full object-cover pointer-events-none" loading="lazy" />
+                                        @else
+                                            <div class="w-full h-full bg-slate-800"></div>
+                                        @endif
+                                    </button>
+                                @endforeach
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-950">
-                    Góc nhìn <span class="text-[#EB323A]">Tân Minh Nhân.</span>
-                </h2>
-
-                <p class="mt-3 text-sm sm:text-base text-slate-500 font-normal">
-                    Những chuyển động mới nhất về dự án, công nghệ thi công và văn hóa doanh nghiệp.
-                </p>
-            </div>
-
-            {{-- Link sang trang Tin tức --}}
-            <div class="shrink-0">
-                <a
-                    href="{{ route('news.index') }}"
-                    class="group inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-950 hover:text-[#EB323A] transition-colors pb-1.5 border-b-2 border-slate-950 hover:border-[#EB323A]"
-                >
-                    <span>Xem tất cả tin tức</span>
-                    <span class="transition-transform duration-300 group-hover:translate-x-1 font-mono text-sm">→</span>
-                </a>
-            </div>
-        </div>
-
-        {{-- =====================================================
-             BÀI VIẾT TIÊU ĐIỂM (ÉP MÀU TRẮNG SÁNG TOÀN BỘ TEXT)
-        ====================================================== --}}
-        @if($featuredNews)
-            <div class="mt-12 overflow-hidden rounded-2xl bg-[#0b1329] border border-slate-800 shadow-[0_20px_50px_rgba(15,23,42,0.12)]">
-                <div class="grid lg:grid-cols-12 items-stretch">
-
-                    {{-- Image Thumbnail (7 Cột) --}}
-                    <a
-                        href="{{ route('news.show', $featuredNews) }}"
-                        class="group relative min-h-[300px] sm:min-h-[380px] lg:min-h-[440px] lg:col-span-7 overflow-hidden bg-slate-900 block"
-                    >
-                        @php
-                            $featuredImage = null;
-                            if ($featuredNews->thumbnail) {
-                                $featuredImage = str_starts_with($featuredNews->thumbnail, 'http')
-                                    ? $featuredNews->thumbnail
-                                    : asset('storage/' . ltrim($featuredNews->thumbnail, '/'));
-                            }
-                        @endphp
-
-                        @if($featuredImage)
-                            <img
-                                src="{{ $featuredImage }}"
-                                alt="{{ $featuredNews->title }}"
-                                class="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                                loading="lazy"
-                            />
-                        @else
-                            <div class="absolute inset-0 flex items-center justify-center bg-slate-800 text-slate-400 font-mono text-xs uppercase tracking-widest">
-                                TMN News
-                            </div>
-                        @endif
-
-                        <div class="absolute inset-0 bg-gradient-to-t from-[#0b1329]/90 via-transparent to-transparent"></div>
-
-                        {{-- Badges --}}
-                        <div class="absolute bottom-5 left-5 right-5 flex items-center justify-between z-10">
-                            <span class="rounded-full bg-[#EB323A] px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white shadow-md">
-                                Mới nhất
-                            </span>
-                            @if(optional($featuredNews->category)->name)
-                                <span class="rounded-full bg-white/20 px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-md border border-white/20">
-                                    {{ $featuredNews->category->name }}
-                                </span>
-                            @endif
-                        </div>
-                    </a>
-
-                    {{-- Content Cột Phải (5 Cột) --}}
-                    <div class="lg:col-span-5 flex flex-col justify-between p-8 sm:p-10 lg:p-12 bg-[#0b1329]">
-                        <div>
-                            {{-- Ngày đăng & Tác giả --}}
-                            <div class="flex items-center gap-2.5 text-xs font-mono font-bold uppercase tracking-wider">
-                                <span class="text-[#EB323A]">{{ optional($featuredNews->published_at)->format('d/m/Y') }}</span>
-                                <span class="text-white/30">•</span>
-                                <span class="text-slate-300 font-sans tracking-normal text-[11px]">{{ $featuredNews->author_name ?? 'Đội ngũ chuyên môn' }}</span>
-                            </div>
-
-                            {{-- Tiêu đề lớn: Khóa màu trắng tinh --}}
-                            <h3 class="mt-4 text-2xl sm:text-3xl font-extrabold leading-snug !text-white tracking-tight">
-                                <a href="{{ route('news.show', $featuredNews) }}" class="!text-white hover:!text-red-400 transition-colors">
-                                    {{ $featuredNews->title }}
-                                </a>
+                {{-- ================= CỘT PHẢI: VIDEO & TUYỂN DỤNG (4/12) ================= --}}
+                <div class="lg:col-span-4 flex flex-col justify-between h-full pt-0 lg:pt-[52px]">
+                    
+                    {{-- KHỐI 1: VIDEO --}}
+                    <div>
+                        <div class="mb-4">
+                            <h3 class="text-xl font-bold uppercase tracking-wider text-slate-900">
+                                Video Nổi Bật
                             </h3>
-
-                            {{-- Đoạn trích dẫn ngắn --}}
-                            @if($featuredNews->excerpt)
-                                <p class="mt-4 text-xs sm:text-sm leading-relaxed !text-slate-300 font-normal line-clamp-3">
-                                    {{ $featuredNews->excerpt }}
-                                </p>
-                            @endif
+                            <div class="w-12 h-[3px] bg-[#EB323A] mt-1.5"></div>
                         </div>
 
-                        {{-- Nút Đọc bài viết --}}
-                        <div class="mt-8 pt-6 border-t border-white/10">
-                            <a
-                                href="{{ route('news.show', $featuredNews) }}"
-                                class="group inline-flex items-center gap-2.5 rounded-full bg-[#EB323A] hover:bg-[#d4272f] px-6 py-3 text-xs font-bold uppercase tracking-wider !text-white transition-all duration-300 shadow-lg shadow-red-950/40"
-                            >
-                                <span class="!text-white">Đọc bài viết</span>
-                                <span class="transition-transform duration-300 group-hover:translate-x-1 font-mono text-sm !text-white">→</span>
-                            </a>
+                        <div class="space-y-3">
+                            <p class="text-slate-700 font-semibold text-sm line-clamp-1">
+                                Tân Minh Nhân - Hành trình phát triển
+                            </p>
+                            <div class="aspect-video w-full overflow-hidden rounded-sm shadow-xl border border-slate-200 bg-black">
+                                <iframe
+                                    class="w-full h-full"
+                                    src="https://www.youtube.com/embed/Yjfn2Ra1CC8"
+                                    title="Video giới thiệu"
+                                    loading="lazy"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowfullscreen
+                                ></iframe>
+                            </div>
                         </div>
                     </div>
 
-                </div>
-            </div>
-        @endif
+                    {{-- KHỐI 2: TUYỂN DỤNG --}}
+                    <div class="mt-6 lg:mt-6">
+                        <div class="mb-4">
+                            <h3 class="text-xl font-bold uppercase tracking-wider text-slate-900">
+                                Tuyển dụng
+                            </h3>
+                            <div class="w-12 h-[3px] bg-[#EB323A] mt-1.5"></div>
+                        </div>
 
-        {{-- =====================================================
-             DANH SÁCH 3 BÀI TIẾP THEO
-        ====================================================== --}}
-        @if($gridNews->count())
-            <div class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                @foreach($gridNews as $post)
-                    <article class="group flex flex-col justify-between overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-slate-300 hover:shadow-xl hover:shadow-slate-900/5">
-
-                        <div>
-                            {{-- Thumbnail --}}
-                            <a
-                                href="{{ route('news.show', $post) }}"
-                                class="relative block aspect-[16/10] overflow-hidden bg-slate-100"
-                            >
-                                @php
-                                    $postImage = null;
-                                    if ($post->thumbnail) {
-                                        $postImage = str_starts_with($post->thumbnail, 'http')
-                                            ? $post->thumbnail
-                                            : asset('storage/' . ltrim($post->thumbnail, '/'));
-                                    }
-                                @endphp
-
-                                @if($postImage)
-                                    <img
-                                        src="{{ $postImage }}"
-                                        alt="{{ $post->title }}"
-                                        class="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                                        loading="lazy"
-                                    />
-                                @else
-                                    <div class="flex h-full w-full items-center justify-center bg-slate-100 text-slate-400 font-mono text-xs uppercase tracking-wider">
-                                        TMN News
-                                    </div>
-                                @endif
-
-                                @if(optional($post->category)->name)
-                                    <div class="absolute left-4 top-4">
-                                        <span class="rounded-full bg-white/95 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-800 shadow-sm border border-slate-200/60 backdrop-blur-sm">
-                                            {{ $post->category->name }}
-                                        </span>
-                                    </div>
-                                @endif
-                            </a>
-
-                            {{-- Text Content --}}
-                            <div class="p-6">
-                                <div class="flex items-center gap-2 text-[11px] font-mono text-slate-400">
-                                    <span class="font-bold text-slate-500">{{ optional($post->published_at)->format('d/m/Y') }}</span>
-                                    <span>•</span>
-                                    <span class="truncate font-sans">{{ $post->author_name ?? 'Ban Biên tập' }}</span>
-                                </div>
-
-                                <h3 class="mt-3 line-clamp-2 text-base sm:text-lg font-bold leading-snug text-slate-950 transition-colors duration-200 group-hover:text-[#EB323A]">
-                                    <a href="{{ route('news.show', $post) }}">
-                                        {{ $post->title }}
-                                    </a>
-                                </h3>
-
-                                @if($post->excerpt)
-                                    <p class="mt-2.5 line-clamp-2 text-xs leading-relaxed text-slate-500 font-normal">
-                                        {{ $post->excerpt }}
-                                    </p>
-                                @endif
+                        <a
+                            href="{{ url('/careers') }}"
+                            class="block aspect-[16/10] overflow-hidden rounded-sm border border-slate-200 shadow-xl group relative bg-[#0e2e60]"
+                        >
+                            <img
+                                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlDTkXwnwVmBb9swD4vgDv8_gucYa_NnBQoy30TCfwHA&s"
+                                alt="Tuyển dụng"
+                                class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90"
+                                loading="lazy"
+                            />
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#0a224a]/95 via-transparent to-transparent flex items-end p-5">
+                                <span class="text-white text-sm font-bold uppercase tracking-wider group-hover:text-[#EB323A] transition-colors flex items-center gap-1.5">
+                                    Gia nhập đội ngũ <span class="transition-transform duration-300 group-hover:translate-x-1">&rarr;</span>
+                                </span>
                             </div>
-                        </div>
+                        </a>
+                    </div>
 
-                        {{-- Footer Link --}}
-                        <div class="px-6 pb-6 pt-2">
-                            <a
-                                href="{{ route('news.show', $post) }}"
-                                class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-900 group-hover:text-[#EB323A] transition-colors"
-                            >
-                                <span>Chi tiết</span>
-                                <span class="transition-transform duration-200 group-hover:translate-x-1 font-mono text-sm">→</span>
-                            </a>
-                        </div>
+                </div>
 
-                    </article>
-                @endforeach
-            </div>
-        @endif
-
-        {{-- Trạng thái trống --}}
-        @if($homeNews->count() === 0)
-            <div class="mt-12 rounded-2xl border border-dashed border-slate-200 bg-white px-6 py-16 text-center">
-                <p class="font-mono text-xs uppercase tracking-widest text-slate-400">Tân Minh Nhân</p>
-                <h3 class="mt-2 text-lg font-bold text-slate-900">Chưa có bài viết mới</h3>
-                <p class="mt-1 text-xs text-slate-500">Các tin tức và hoạt động mới nhất sẽ sớm được cập nhật tại đây.</p>
             </div>
         @endif
 
     </div>
-
 </section>

@@ -47,7 +47,7 @@ class HomeController extends Controller
             ->whereNotNull('published_at')
             ->where('published_at', '<=', now())
             ->latest('published_at')
-            ->take(4)
+            ->take(8)
             ->get();
 
 

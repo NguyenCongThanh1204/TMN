@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-
+@push('preloads')
+        <link rel="preload" as="image" href="{{ asset('images/ANH-WEB.webp') }}" fetchpriority="high">
+    @endpush
     {{-- 1. HERO --}}
     @include('home.sections.hero')
 
@@ -16,10 +18,10 @@
     @include('home.sections.projects')
     
      {{-- 5. PROCESS --}}
-    @include('home.sections.process')
+    <!-- @include('home.sections.process') -->
 
     {{-- 2. STATS --}}
-    @include('home.sections.stats')
+    <!-- @include('home.sections.stats') -->
 
 
    

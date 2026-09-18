@@ -1,18 +1,36 @@
 {{-- =========================================================
-     HOME - PROJECTS SECTION (LUXURY ARCHITECTURAL ACCORDION WALL)
+     HOME - PROJECTS SECTION (LUXURY ARCHITECTURAL ACCORDION WALL - 1440PX)
      resources/views/sections/projects.blade.php
 ========================================================= --}}
 
+@php
+$displayProjects = \App\Models\Project::query()
+->with('category')
+->where('status', 'published')
+->where('is_featured', true)
+->latest('updated_at')
+->take(5)
+->get();
+
+if ($displayProjects->isEmpty()) {
+$displayProjects = \App\Models\Project::query()
+->with('category')
+->where('status', 'published')
+->latest('created_at')
+->take(5)
+->get();
+}
+@endphp
+
 <section
     id="projects"
-    class="relative bg-[#FAFAFA] py-24 sm:py-32 border-b border-slate-200/80 text-slate-900 overflow-hidden"
+    class="relative bg-white pt-[36px] pb-[28px] md:pt-[54px] md:pb-[40px] border-b border-slate-200/80 text-slate-900 overflow-hidden select-none"
     x-data="{
-        activeId: {{ $featuredProjects->first()?->id ?? 1 }},
-        activeCategory: 'all',
+        activeId: {{ $displayProjects->first()?->id ?? 1 }},
         projects: [
-            @foreach($featuredProjects as $project)
+            @foreach($displayProjects as $project)
             @php
-                $cover = $project->cover_image;
+                $cover = $project->cover_url ?? $project->cover_image;
                 if ($cover && !Illuminate\Support\Str::startsWith($cover, ['http://', 'https://', '/'])) {
                     $cover = asset('storage/' . ltrim($cover, '/'));
                 }
@@ -21,185 +39,121 @@
                 id: {{ $project->id }},
                 title: '{{ addslashes($project->title) }}',
                 location: '{{ addslashes($project->location ?? 'Đà Nẵng') }}',
-                category: '{{ optional($project->category)->name ?? 'Công trình' }}',
-                categorySlug: '{{ optional($project->category)->slug ?? '' }}',
+                category: '{{ optional($project->category)->name ?? 'Tổng thầu thi công' }}',
                 year: '{{ $project->year ?? '' }}',
-                area: '{{ $project->area_sqm ? number_format($project->area_sqm, 0, ',', '.') . ' m²' : '' }}',
-                image: '{{ $cover ?? 'https://images.unsplash.com/photo-1541888946425-d0fbb186156f?auto=format&fit=crop&w=1400&q=80' }}',
+                area: '{{ $project->area_sqm ? (is_numeric($project->area_sqm) ? number_format((float)$project->area_sqm, 0, ',', '.') . ' m²' : addslashes($project->area_sqm)) : '' }}',
+                image: '{{ $cover ?? 'https://images.unsplash.com/photo-1541888946425-d0fbb186156f?auto=format&fit=crop&w=1600&q=80' }}',
                 url: '{{ route('projects.show', $project) }}'
             },
             @endforeach
         ],
-
-        get filteredProjects() {
-            if (this.activeCategory === 'all') return this.projects.slice(0, 5);
-            const list = this.projects.filter(p => p.categorySlug === this.activeCategory);
-            return list.length ? list.slice(0, 5) : this.projects.slice(0, 5);
+        get currentProject() {
+            return this.projects.find(p => p.id === this.activeId) || this.projects[0];
+        },
+        get currentIndex() {
+            return this.projects.findIndex(p => p.id === this.activeId);
         }
-    }"
->
-    {{-- Background Hairline CAD Grid mờ sang trọng --}}
-    <div class="pointer-events-none absolute inset-0 opacity-[0.025]"
-         style="background-image: linear-gradient(#0f172a 1px, transparent 1px), linear-gradient(90deg, #0f172a 1px, transparent 1px); background-size: 64px 64px;">
+    }">
+    {{-- Nền ánh sáng mờ mịn sang trọng (Không dùng đường kẻ) --}}
+    <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute -top-32 -left-32 w-[520px] h-[520px] bg-blue-100/45 rounded-full blur-[120px]"></div>
+        <div class="absolute -bottom-32 -right-32 w-[480px] h-[480px] bg-red-100/30 rounded-full blur-[110px]"></div>
     </div>
 
-    <div class="relative mx-auto max-w-7xl px-6 md:px-12 z-10">
+    {{-- CONTAINER CHUẨN 1440PX ĐỒNG BỘ TOÀN BỘ TRANG --}}
+    <div class="relative mx-auto max-w-[1440px] px-6 sm:px-10 lg:px-12 z-10">
 
-        {{-- =====================================================
-             SECTION HEADER (EDITORIAL ARCHITECTURE STYLE)
-        ====================================================== --}}
-         <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-slate-200/90 pb-8">
+        {{-- Header --}}
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-slate-200 pb-6">
             <div>
-                <div class="flex items-center gap-2.5 mb-2.5">
+                <div class="flex items-center gap-2.5 mb-2">
                     <span class="h-0.5 w-6 bg-[#EB323A]"></span>
                     <span class="text-xs font-bold uppercase tracking-[0.25em] text-[#EB323A]">
                         Hồ Sơ Thực Thi
                     </span>
                 </div>
-                <!-- <h2 class="font-heading text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-950 leading-none">
-                    Dấu ấn <span class="font-light text-slate-400">kiến trúc.</span>
-                </h2> -->
+                <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                    Công Trình & Dự Án <span class="font-light text-slate-400">Tiêu Biểu</span>
+                </h2>
             </div>
 
+            <a href="{{ route('projects.index') }}"
+                class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.18em] text-slate-600 hover:text-[#EB323A] transition-colors pb-1 group">
+                <span>Tất cả dự án</span>
+                <span class="transition-transform duration-300 group-hover:translate-x-1 font-mono text-sm">→</span>
+            </a>
         </div>
 
-        {{-- =====================================================
-             CATEGORY FILTER TABS (TỐI GIẢN CHUẨN THIẾT KẾ Ý)
-        ====================================================== --}}
-        <!-- <div class="mt-8 flex flex-wrap items-center gap-8 border-b border-slate-100 pb-3">
-            <button
-                type="button"
-                @click="activeCategory = 'all'"
-                class="relative pb-3 text-xs font-bold uppercase tracking-[0.18em] transition-colors focus:outline-none cursor-pointer"
-                :class="activeCategory === 'all' ? 'text-[#EB323A]' : 'text-slate-400 hover:text-slate-900'"
-            >
-                <span>Mới nhất (Tất cả)</span>
-                <span
-                    class="absolute bottom-0 left-0 right-0 h-[2px] bg-[#EB323A] transition-transform duration-300"
-                    :class="activeCategory === 'all' ? 'scale-x-100' : 'scale-x-0'"
-                ></span>
-            </button>
-
-            @if($projectCategories->count())
-                @foreach($projectCategories as $category)
-                    <button
-                        type="button"
-                        @click="activeCategory = '{{ $category->slug }}'"
-                        class="relative pb-3 text-xs font-bold uppercase tracking-[0.18em] transition-colors focus:outline-none cursor-pointer"
-                        :class="activeCategory === '{{ $category->slug }}' ? 'text-[#EB323A]' : 'text-slate-400 hover:text-slate-900'"
-                    >
-                        <span>{{ $category->name }}</span>
-                        <span
-                            class="absolute bottom-0 left-0 right-0 h-[2px] bg-[#EB323A] transition-transform duration-300"
-                            :class="activeCategory === '{{ $category->slug }}' ? 'scale-x-100' : 'scale-x-0'"
-                        ></span>
-                    </button>
-                @endforeach
-            @endif
-        </div> -->
-
-        {{-- =====================================================
-             DESKTOP: ARCHITECTURAL EXPANDING WALL (580PX)
-        ====================================================== --}}
-        <div class="mt-12 hidden lg:flex h-[580px] w-full gap-2.5 overflow-hidden">
-            <template x-for="(project, index) in filteredProjects" :key="project.id">
+        {{-- Desktop Accordion Wall (Nâng lên 620px bung nở cùng chiều rộng 1440px) --}}
+        <div class="mt-8 hidden lg:flex h-[620px] w-full gap-3 overflow-hidden">
+            <template x-for="(project, index) in projects" :key="project.id">
                 <div
                     @mouseenter="activeId = project.id"
                     class="relative h-full overflow-hidden cursor-pointer rounded-xs border transition-all duration-700 select-none"
-                    :style="'transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);'"
+                    :style="'transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);' + (activeId !== project.id ? 'background-color: #0e2e60 !important;' : '')"
                     :class="activeId === project.id 
-                        ? 'flex-[5.5] border-slate-300 shadow-[0_25px_60px_rgba(15,23,42,0.15)] z-20' 
-                        : 'flex-[1] border-slate-200/80 hover:border-slate-400 bg-slate-950 z-10'"
-                >
-                    {{-- Ảnh nền công trình --}}
-                    <img
-                        :src="project.image"
-                        :alt="project.title"
-                        class="absolute inset-0 h-full w-full object-cover transition-all duration-1000 ease-out"
-                        :class="activeId === project.id 
-                            ? 'scale-105 brightness-[0.98] contrast-[1.03]' 
-                            : 'scale-100 brightness-[0.55] contrast-[1.1] grayscale hover:grayscale-0'"
-                        loading="lazy"
-                    />
+                        ? 'flex-[6] border-slate-300 shadow-[0_20px_50px_rgba(14,46,96,0.14)] z-20' 
+                        : 'flex-[1] border-[#18468a] z-10'">
+                    {{-- Ảnh nền lớn của từng cột khi Active --}}
+                    <div x-show="activeId === project.id" class="absolute inset-0 h-full w-full">
+                        <img
+                            :src="project.image"
+                            :alt="project.title"
+                            class="w-full h-full object-cover object-center transition-all duration-700 ease-out"
+                            loading="eager"
+                            fetchpriority="high" />
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-70 pointer-events-none"></div>
+                    </div>
 
-                    {{-- Gradient phủ điện ảnh khi Active --}}
-                    <div
-                        class="absolute inset-0 transition-opacity duration-700 pointer-events-none"
-                        :class="activeId === project.id 
-                            ? 'bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent opacity-95' 
-                            : 'bg-slate-950/40 opacity-100'"
-                    ></div>
-
-                    {{-- =================================================
-                         1. TRẠNG THÁI THU NHỎ (INACTIVE STRIP): MONOLITH KÍNH SANG TRỌNG
-                    ================================================== --}}
+                    {{-- 1. TRẠNG THÁI THU GỌN: MÀU NỀN #0e2e60 --}}
                     <div
                         x-show="activeId !== project.id"
-                        x-transition:enter="transition ease-out duration-300"
-                        x-transition:enter-start="opacity-0"
-                        x-transition:enter-end="opacity-100"
-                        class="absolute inset-0 p-5 flex flex-col justify-between items-center z-10"
-                    >
-                        {{-- Số thứ tự kỹ thuật trên đầu cột --}}
-                        <div class="flex flex-col items-center">
-                            <span
-                                class="font-mono text-sm font-extrabold text-white/90 tracking-widest"
-                                x-text="'0' + (index + 1)"
-                            ></span>
-                            <span class="w-2.5 h-[1px] bg-white/40 mt-1"></span>
+                        class="absolute inset-0 p-4 flex flex-col justify-between items-center z-10"
+                        style="background-color: #0e2e60 !important;">
+                        {{-- Thumbnail đơn --}}
+                        <div class="flex flex-col items-center gap-2.5 w-full">
+                            <div class="w-full aspect-[16/10] rounded-xs overflow-hidden border border-white/20 bg-black/30 shadow">
+                                <img :src="project.image" class="w-full h-full object-cover brightness-95" />
+                            </div>
+                            <span class="font-mono text-xs font-bold text-white tracking-widest" x-text="'0' + (index + 1)"></span>
                         </div>
 
-                        {{-- Tên công trình chạy dọc không bị cụt hay lỗi font --}}
-                        <div class="h-3/4 flex items-center justify-center overflow-hidden">
+                        {{-- Tên dự án dọc --}}
+                        <div class="h-3/5 flex items-center justify-center overflow-hidden">
                             <span
-                                class="text-xs font-bold uppercase tracking-[0.28em] text-white/80 [writing-mode:vertical-lr] rotate-180 drop-shadow-md whitespace-nowrap"
-                                x-text="project.title"
-                            ></span>
+                                class="text-xs font-bold uppercase tracking-[0.24em] text-white [writing-mode:vertical-lr] rotate-180 whitespace-nowrap"
+                                x-text="project.title"></span>
                         </div>
 
-                        {{-- Vệt chỉ đỏ kỹ thuật dưới chân cột --}}
-                        <div class="flex flex-col items-center gap-1.5">
-                            <span class="h-1 w-1 rounded-full bg-[#EB323A]"></span>
-                            <span class="h-5 w-[1px] bg-[#EB323A]/80"></span>
+                        {{-- Vệt đỏ chân thẻ --}}
+                        <div class="flex flex-col items-center gap-1 pb-1">
+                            <span class="h-1.5 w-1.5 rounded-full bg-[#EB323A]"></span>
+                            <span class="h-6 w-[1.5px] bg-[#EB323A]"></span>
                         </div>
                     </div>
 
-                    {{-- =================================================
-                         2. TRẠNG THÁI MỞ RỘNG (ACTIVE HERO STRIP): ĐẲNG CẤP VƯỢT TRỘI
-                    ================================================== --}}
+                    {{-- 2. TRẠNG THÁI MỞ RỘNG: CARD KÍNH TRONG SUỐT ĐỒNG NHẤT --}}
                     <div
                         x-show="activeId === project.id"
-                        x-transition:enter="transition ease-out duration-500 delay-150"
-                        x-transition:enter-start="opacity-0 translate-y-4"
-                        x-transition:enter-end="opacity-100 translate-y-0"
-                        class="absolute inset-0 p-8 sm:p-10 flex flex-col justify-between z-20 pointer-events-none"
-                    >
-                        {{-- Top Bar: Badge danh mục & Số watermark khổng lồ --}}
+                        class="absolute inset-0 p-8 sm:p-10 lg:p-12 flex flex-col justify-between z-20 pointer-events-none">
+                        {{-- Top Header --}}
                         <div class="flex items-start justify-between">
-                            <span class="bg-white/95 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-950 border border-slate-200/80 shadow-sm">
-                                <span class="text-[#EB323A] mr-1.5">●</span>
-                                <span x-text="project.category"></span>
-                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="bg-white/95 backdrop-blur-md px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-900 border border-white/60 shadow-sm rounded-xs">
+                                    <span class="text-[#EB323A] mr-1.5">●</span>
+                                    <span x-text="project.category"></span>
+                                </span>
+                            </div>
 
-                            <span
-                                class="font-mono text-7xl sm:text-8xl font-black text-white/15 leading-none select-none"
-                                x-text="'0' + (index + 1)"
-                            ></span>
                         </div>
 
-                        {{-- Bottom Spec Card: Thẻ thông số kính mờ nổi bật --}}
+                        {{-- Card thông tin chi tiết --}}
                         <div class="max-w-2xl pointer-events-auto">
-                            <div class="bg-slate-950/60 backdrop-blur-md p-6 sm:p-7 rounded-xs border border-white/15 shadow-2xl">
-                                
-                                {{-- Hàng metadata --}}
-                                <div class="flex flex-wrap items-center gap-3 text-xs text-slate-300 font-medium mb-3">
-                                    <span class="text-white font-bold" x-text="project.location"></span>
-                                    <template x-if="project.area">
-                                        <span class="flex items-center gap-2">
-                                            <span class="text-[#EB323A]">•</span>
-                                            <span x-text="project.area"></span>
-                                        </span>
-                                    </template>
+                            <div
+                                class="relative p-6 sm:p-8 rounded-xs border border-white/60 shadow-xl backdrop-blur-sm"
+                                style="background-color: rgba(255, 255, 255, 0.4) !important;">
+                                <div class="flex flex-wrap items-center gap-3 text-xs text-slate-800 font-semibold mb-2.5">
+                                    <span class="font-bold text-[#EB323A]" x-text="project.location"></span>
                                     <template x-if="project.year">
                                         <span class="flex items-center gap-2">
                                             <span class="text-[#EB323A]">•</span>
@@ -208,26 +162,33 @@
                                     </template>
                                 </div>
 
-                                {{-- Tiêu đề dự án lớn sắc nét --}}
-                                <p class="text-2xl sm:text-3xl font-extrabold text-red-600 tracking-tight leading-snug drop-shadow-sm">
-                                    <span x-text="project.title"></span>
-                                </p>
-
-                                {{-- CTA Link --}}
-                                <div class="mt-5 pt-4 border-t border-white/10 flex items-center justify-between">
+                                <!-- TIÊU ĐỀ: Bọc trong thẻ a để bấm vào chuyển trang -->
+                                <h3 class="mb-4">
                                     <a
                                         :href="project.url"
-                                        class="group/link inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] text-white hover:text-[#EB323A] transition-colors"
-                                    >
-                                        <span class="text-white">Khám phá hồ sơ chi tiết</span>
-                                        <span class="transition-transform duration-300 group-hover/link:translate-x-1.5 text-white">→</span>
+                                        class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-snug transition-colors hover:text-[#EB323A] block"
+                                        style="color: #264abc !important;">
+                                        <span x-text="project.title"></span>
+                                    </a>
+                                </h3>
+
+                                <div class="mt-4 pt-3.5 border-t border-slate-900/10 flex items-center justify-between">
+                                    <a
+                                        :href="project.url"
+                                        class="group/link inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.2em] transition-colors"
+                                        style="color: #264abc;">
+                                        <span class="group-hover/link:text-[#EB323A] transition-colors">Khám phá hồ sơ chi tiết</span>
+                                        <span class="transition-transform duration-300 group-hover/link:translate-x-1.5 text-[#EB323A]">→</span>
                                     </a>
 
-                                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white text-xs border border-white/20">
+                                    <!-- ICON MŨI TÊN: Chuyển thành thẻ a có chung :href để click chuyển trang -->
+                                    <a
+                                        :href="project.url"
+                                        class="flex h-8 w-8 items-center justify-center rounded-full bg-white/85 hover:bg-[#264abc] text-slate-700 hover:text-white text-xs border border-white/90 shadow-sm transition-colors"
+                                        title="Xem chi tiết">
                                         ↗
-                                    </div>
+                                    </a>
                                 </div>
-
                             </div>
                         </div>
 
@@ -236,27 +197,21 @@
             </template>
         </div>
 
-        {{-- =====================================================
-             MOBILE & TABLET: BỐ CỤC THẺ SÁNG TÁCH BẠCH
-        ====================================================== --}}
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden mt-8">
-            <template x-for="(project, index) in filteredProjects" :key="project.id">
-                <a :href="project.url" class="group block relative aspect-[16/11] overflow-hidden rounded-xs border border-slate-200 bg-slate-950 shadow-sm">
-                    <img
-                        :src="project.image"
-                        :alt="project.title"
-                        class="h-full w-full object-cover brightness-[0.9] transition-transform duration-700 group-hover:scale-105"
-                        loading="lazy"
-                    />
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent"></div>
-                    
-                    <div class="absolute top-4 left-4">
-                        <span class="bg-white/95 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-950" x-text="project.category"></span>
+        {{-- Mobile & Tablet --}}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden mt-6">
+            <template x-for="project in projects" :key="project.id">
+                <a :href="project.url" class="group block relative aspect-[16/11] overflow-hidden rounded-xs border border-slate-200 bg-white shadow-md">
+                    <img :src="project.image" :alt="project.title" class="h-full w-full object-cover object-center brightness-[0.95]" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-white/90 via-white/30 to-transparent"></div>
+
+                    <div class="absolute top-4 left-4 flex items-center gap-2">
+                        <span class="bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-950 shadow" x-text="project.category"></span>
+                        <span class="bg-[#EB323A] text-white px-2 py-1 text-[10px] font-bold uppercase tracking-wider shadow">★ Tiêu biểu</span>
                     </div>
 
-                    <div class="absolute bottom-5 left-5 right-5 text-white">
-                        <p class="text-[11px] text-slate-300 mb-1" x-text="project.location + (project.year ? ' • ' + project.year : '')"></p>
-                        <h3 class="text-lg font-bold leading-snug" x-text="project.title"></h3>
+                    <div class="absolute bottom-4 left-4 right-4 text-slate-900">
+                        <p class="text-[11px] text-slate-700 mb-1 font-semibold" x-text="project.location + (project.year ? ' • ' + project.year : '')"></p>
+                        <h3 class="text-base font-bold" style="color: #264abc !important;" x-text="project.title"></h3>
                     </div>
                 </a>
             </template>

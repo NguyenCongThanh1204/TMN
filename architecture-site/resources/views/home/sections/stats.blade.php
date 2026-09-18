@@ -1,32 +1,30 @@
 {{-- =========================================================
-     HOME - TRUST / METRICS SECTION (ANIMATED NUMBERS)
+     HOME - TRUST / METRICS (PURE ARCHITECTURAL LEDGER)
 ========================================================= --}}
 
 <section
     id="home-stats"
-    class="relative overflow-hidden border-b border-slate-200 bg-white py-20 lg:py-28 select-none"
+    class="relative overflow-hidden bg-white pt-[32px] pb-[16px] md:pt-[50px] md:pb-[20px] select-none border-b border-slate-200"
     x-data="{
         started: false,
         counters: {
             experience: '0',
-            projects: '0',
-            satisfaction: '0',
-            locations: '0'
+            staff: '0',
+            revenue2025: '0',
+            target2026: '0'
         },
         targets: {
             experience: 15,
-            projects: 900,
-            satisfaction: 4000,
-            locations: 19500
+            staff: 900,
+            revenue2025: 4000,
+            target2026: 19500
         },
         startCounter() {
             if (this.started) return;
             this.started = true;
 
-            const duration = 2000; // Thời gian chạy: 2 giây
+            const duration = 2000;
             const startTime = performance.now();
-
-            // Hàm làm chậm dần về đích (easeOutExpo)
             const easeOutExpo = (x) => (x === 1 ? 1 : 1 - Math.pow(2, -10 * x));
 
             const update = (currentTime) => {
@@ -36,7 +34,6 @@
 
                 Object.keys(this.targets).forEach(key => {
                     const currentVal = Math.round(easedProgress * this.targets[key]);
-                    // Tự động định dạng dấu phẩy hàng nghìn (19,500 và 4,000)
                     this.counters[key] = currentVal.toLocaleString('en-US');
                 });
 
@@ -54,7 +51,6 @@
     }"
     x-intersect.once="startCounter()"
     x-init="
-        // Dự phòng nếu trình duyệt chưa cài plugin x-intersect: tự kiểm tra scroll
         window.addEventListener('scroll', () => {
             const rect = $el.getBoundingClientRect();
             if (rect.top < window.innerHeight && rect.bottom >= 0) {
@@ -63,238 +59,160 @@
         }, { passive: true });
     "
 >
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
-    {{-- Gradient Ambient Glow nền mờ tạo chiều sâu không gian --}}
-    <div class="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-red-100/60 blur-3xl"></div>
-    <div class="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 rounded-full bg-blue-50/80 blur-3xl"></div>
-
-    <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
-
-        {{-- Header --}}
-        <div class="mb-14 flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-
+        {{-- Header Section: Tinh gọn, tích hợp nút tải Profile --}}
+        <div class="mb-14 sm:mb-20 flex flex-col lg:flex-row lg:items-end justify-between gap-6 border-b-2 border-slate-950 pb-8">
             <div>
-
-                <div class="mb-5 flex items-center gap-3">
-
-                    <span class="h-px w-10 bg-red-600"></span>
-
-                    <span class="text-xs font-bold uppercase tracking-[0.25em] text-red-600">
-                        Những con số
-                    </span>
-
+                <div class="mb-2 flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.25em] text-[#EB323A]">
+                    <span class="h-2 w-2 bg-[#EB323A]"></span>
+                    <span>NĂNG LỰC & CHỈ SỐ QUY MÔ</span>
                 </div>
 
-                <h2 class="max-w-2xl text-3xl font-semibold tracking-[-0.03em] text-slate-950 sm:text-4xl lg:text-5xl">
-                    Kinh nghiệm được xây dựng
-                    <span class="text-slate-400">qua từng công trình.</span>
+                <h2 class="text-3xl sm:text-5xl font-black uppercase tracking-tight text-slate-950 leading-tight">
+                    Năng Lực Thực Chứng <br>
+                    <span class="text-[#EB323A]">Qua Từng Con Số</span>
                 </h2>
-
             </div>
 
+            <div class="flex flex-col sm:flex-row sm:items-center gap-5 lg:pb-1">
+                <p class="max-w-xs font-mono text-xs text-slate-500 leading-relaxed border-l-2 border-slate-200 pl-4">
+                    Minh chứng cho tiềm lực tài chính, kỷ luật thi công và quy mô hoàn thiện công trình trên toàn quốc.
+                </p>
 
-            <p class="max-w-md text-sm leading-7 text-slate-500 lg:text-right">
-                Mỗi dự án là một cam kết về chất lượng, tiến độ,
-                an toàn và giá trị lâu dài cho khách hàng.
-            </p>
+                {{-- Nút Tải Hồ Sơ Năng Lực PDF trực tiếp --}}
+                <a 
+                    href="{{ asset('downloads/Ho-So-Nang-Luc-Tan-Minh-Nhan.pdf') }}" 
+                    download="Ho-So-Nang-Luc-Tan-Minh-Nhan.pdf"
+                    class="inline-flex items-center gap-2.5 px-5 py-3 rounded-lg bg-slate-950 hover:bg-[#EB323A] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all duration-300 shadow-md shrink-0 cursor-pointer group"
+                >
+                    <svg class="w-4 h-4 transition-transform group-hover:translate-y-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    <span>Tải Hồ Sơ Năng Lực (PDF)</span>
+                </a>
+            </div>
+        </div>
+
+        {{-- Lưới 4 Cột Hairline Divider (Phong cách Bản vẽ kiến trúc) --}}
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200 border-b border-slate-200 pb-12 sm:pb-16">
+
+            {{-- 01. NĂM KINH NGHIỆM --}}
+            <div class="p-6 sm:p-8 flex flex-col justify-between group hover:bg-slate-50/70 transition-colors">
+                <div>
+                    <div class="flex items-center justify-between font-mono text-xs text-slate-400 mb-6">
+                        <span>[ 01 // HERITAGE ]</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-[#EB323A] transition-colors"></span>
+                    </div>
+
+                    <div class="flex items-baseline gap-1">
+                        <span 
+                            class="font-mono text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-950 group-hover:text-[#EB323A] transition-colors"
+                            x-text="counters.experience"
+                        >0</span>
+                        <span class="font-mono text-2xl sm:text-3xl font-bold text-[#EB323A]">+</span>
+                    </div>
+
+                    <h3 class="mt-4 font-bold text-base sm:text-lg uppercase tracking-tight text-slate-900">
+                        Năm Kinh Nghiệm
+                    </h3>
+                </div>
+
+                <p class="mt-6 pt-4 border-t border-slate-100 font-mono text-xs text-slate-500 leading-relaxed">
+                    Hơn một thập kỷ đồng hành cùng các chủ đầu tư kiến tạo công trình biểu tượng.
+                </p>
+            </div>
+
+            {{-- 02. CÁN BỘ KỸ SƯ --}}
+            <div class="p-6 sm:p-8 flex flex-col justify-between group hover:bg-slate-50/70 transition-colors">
+                <div>
+                    <div class="flex items-center justify-between font-mono text-xs text-slate-400 mb-6">
+                        <span>[ 02 // PERSONNEL ]</span>
+                        <span class="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-[#EB323A] transition-colors"></span>
+                    </div>
+
+                    <div class="flex items-baseline gap-1">
+                        <span 
+                            class="font-mono text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-950 group-hover:text-[#EB323A] transition-colors"
+                            x-text="counters.staff"
+                        >0</span>
+                        <span class="font-mono text-2xl sm:text-3xl font-bold text-[#EB323A]">+</span>
+                    </div>
+
+                    <h3 class="mt-4 font-bold text-base sm:text-lg uppercase tracking-tight text-slate-900">
+                        Cán Bộ Nhân Viên
+                    </h3>
+                </div>
+
+                <p class="mt-6 pt-4 border-t border-slate-100 font-mono text-xs text-slate-500 leading-relaxed">
+                    Đội ngũ chỉ huy trưởng, kỹ sư hiện trường và chuyên viên QA/QC thực chiến.
+                </p>
+            </div>
+
+            {{-- 03. DOANH THU 2025 --}}
+            <div class="p-6 sm:p-8 flex flex-col justify-between group hover:bg-slate-50/70 transition-colors">
+                <div>
+                    <div class="flex items-center justify-between font-mono text-xs text-slate-400 mb-6">
+                        <span>[ 03 // ACTUAL 2025 ]</span>
+                        <span class="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">ĐẠT ĐƯỢC</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-1.5">
+                        <span 
+                            class="font-mono text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-950 group-hover:text-[#EB323A] transition-colors"
+                            x-text="counters.revenue2025"
+                        >0</span>
+                        <span class="font-mono text-xl sm:text-2xl font-bold text-[#EB323A] uppercase">Tỷ</span>
+                    </div>
+
+                    <h3 class="mt-4 font-bold text-base sm:text-lg uppercase tracking-tight text-slate-900">
+                        Doanh Thu Năm 2025
+                    </h3>
+                </div>
+
+                <p class="mt-6 pt-4 border-t border-slate-100 font-mono text-xs text-slate-500 leading-relaxed">
+                    Sản lượng thi công thực chứng hoàn thành và quyết toán đúng cam kết.
+                </p>
+            </div>
+
+            {{-- 04. MỤC TIÊU 2026 --}}
+            <div class="p-6 sm:p-8 flex flex-col justify-between group hover:bg-slate-50/70 transition-colors">
+                <div>
+                    <div class="flex items-center justify-between font-mono text-xs text-slate-400 mb-6">
+                        <span class="text-[#EB323A] font-bold">[ 04 // TARGET 2026 ]</span>
+                        <span class="text-[10px] font-bold text-white bg-[#EB323A] px-2 py-0.5 rounded">KỲ VỌNG</span>
+                    </div>
+
+                    <div class="flex items-baseline gap-1.5">
+                        <span 
+                            class="font-mono text-5xl sm:text-6xl lg:text-7xl font-black tracking-tight text-slate-950 group-hover:text-[#EB323A] transition-colors"
+                            x-text="counters.target2026"
+                        >0</span>
+                        <span class="font-mono text-xl sm:text-2xl font-bold text-[#EB323A] uppercase">Tỷ</span>
+                    </div>
+
+                    <h3 class="mt-4 font-bold text-base sm:text-lg uppercase tracking-tight text-slate-900">
+                        Mục Tiêu Năm 2026
+                    </h3>
+                </div>
+
+                <p class="mt-6 pt-4 border-t border-slate-100 font-mono text-xs text-slate-500 leading-relaxed">
+                    Bứt phá quy mô, hướng đến trở thành tập đoàn xây dựng đa năng hàng đầu.
+                </p>
+            </div>
 
         </div>
 
-
-        {{-- Metrics Cards --}}
-        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-
-            {{-- =================================================
-                 EXPERIENCE
-            ================================================== --}}
-            <div class="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50/60 p-8 shadow-sm backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-red-200 hover:bg-white hover:shadow-xl hover:shadow-red-600/5 lg:p-9">
-
-                <div class="absolute inset-x-0 top-0 h-1 origin-center scale-x-0 bg-red-600 transition-transform duration-500 ease-out group-hover:scale-x-100"></div>
-
-                <div class="mb-8 flex items-center justify-between">
-
-                    <span class="font-mono text-xs font-bold tracking-widest text-slate-400 transition-colors duration-300 group-hover:text-red-600">
-                        01
-                    </span>
-
-                    <span class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-500 shadow-sm transition-all duration-300 group-hover:border-red-600 group-hover:bg-red-600 group-hover:text-white group-hover:rotate-90">
-                        +
-                    </span>
-
-                </div>
-
-
-                <div class="flex items-baseline gap-1">
-
-                    <span
-                        class="font-mono text-5xl font-bold tracking-tight text-slate-950 transition-colors lg:text-6xl"
-                        x-text="counters.experience"
-                    >
-                        0
-                    </span>
-
-                    <span class="text-2xl font-bold text-red-600">
-                        +
-                    </span>
-
-                </div>
-
-
-                <p class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-800 transition-colors group-hover:text-red-600">
-                    Năm kinh nghiệm
-                </p>
-
-                <p class="mt-3 text-sm leading-6 text-slate-500">
-                    Đồng hành cùng nhiều công trình
-                    từ thiết kế đến hoàn thiện.
-                </p>
-
+        {{-- Thanh thông tin kiểm toán chuẩn bản vẽ phía dưới --}}
+        <div class="mt-6 flex flex-col sm:flex-row items-center justify-between font-mono text-[11px] text-slate-400 gap-3">
+            <div class="flex items-center gap-2">
+                <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                <span>DỮ LIỆU TÀI CHÍNH ĐƯỢC CHUẨN HÓA VÀ XÁC THỰC</span>
             </div>
-
-
-            {{-- =================================================
-                 STAFF
-            ================================================== --}}
-            <div class="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50/60 p-8 shadow-sm backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-red-200 hover:bg-white hover:shadow-xl hover:shadow-red-600/5 lg:p-9">
-
-                <div class="absolute inset-x-0 top-0 h-1 origin-center scale-x-0 bg-red-600 transition-transform duration-500 ease-out group-hover:scale-x-100"></div>
-
-                <div class="mb-8 flex items-center justify-between">
-
-                    <span class="font-mono text-xs font-bold tracking-widest text-slate-400 transition-colors duration-300 group-hover:text-red-600">
-                        02
-                    </span>
-
-                    <span class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-500 shadow-sm transition-all duration-300 group-hover:border-red-600 group-hover:bg-red-600 group-hover:text-white group-hover:scale-110">
-                        ◆
-                    </span>
-
-                </div>
-
-
-                <div class="flex items-baseline gap-1">
-
-                    <span
-                        class="font-mono text-5xl font-bold tracking-tight text-slate-950 transition-colors lg:text-6xl"
-                        x-text="counters.projects"
-                    >
-                        0
-                    </span>
-
-                    <span class="text-2xl font-bold text-red-600">
-                        +
-                    </span>
-
-                </div>
-
-
-                <p class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-800 transition-colors group-hover:text-red-600">
-                    Cán bộ nhân viên
-                </p>
-
-                <p class="mt-3 text-sm leading-6 text-slate-500">
-                    Đội ngũ chuyên môn đa dạng, giàu kinh nghiệm
-                    và tận tâm với từng dự án.
-                </p>
-
+            <div class="flex items-center gap-4">
+                <span>TÂN MINH NHÂN // GENERAL CONTRACTOR</span>
             </div>
-
-
-            {{-- =================================================
-                 REVENUE 2025
-            ================================================== --}}
-            <div class="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50/60 p-8 shadow-sm backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-red-200 hover:bg-white hover:shadow-xl hover:shadow-red-600/5 lg:p-9">
-
-                <div class="absolute inset-x-0 top-0 h-1 origin-center scale-x-0 bg-red-600 transition-transform duration-500 ease-out group-hover:scale-x-100"></div>
-
-                <div class="mb-8 flex items-center justify-between">
-
-                    <span class="font-mono text-xs font-bold tracking-widest text-slate-400 transition-colors duration-300 group-hover:text-red-600">
-                        03
-                    </span>
-
-                    <span class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-500 shadow-sm transition-all duration-300 group-hover:border-red-600 group-hover:bg-red-600 group-hover:text-white">
-                        ✓
-                    </span>
-
-                </div>
-
-
-                <div class="flex items-baseline gap-1">
-
-                    <span
-                        class="font-mono text-5xl font-bold tracking-tight text-slate-950 transition-colors lg:text-6xl"
-                        x-text="counters.satisfaction"
-                    >
-                        0
-                    </span>
-
-                    <span class="text-xl font-bold text-red-600 uppercase">
-                        tỷ
-                    </span>
-
-                </div>
-
-
-                <p class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-800 transition-colors group-hover:text-red-600">
-                    Doanh thu năm 2025
-                </p>
-
-                <p class="mt-3 text-sm leading-6 text-slate-500">
-                    Doanh thu năm đạt được từ các dự án thiết kế và thi công xây dựng.
-                </p>
-
-            </div>
-
-
-            {{-- =================================================
-                 TARGET 2026
-            ================================================== --}}
-            <div class="group relative overflow-hidden rounded-2xl border border-slate-200/80 bg-slate-50/60 p-8 shadow-sm backdrop-blur-sm transition-all duration-500 hover:-translate-y-1.5 hover:border-red-200 hover:bg-white hover:shadow-xl hover:shadow-red-600/5 lg:p-9">
-
-                <div class="absolute inset-x-0 top-0 h-1 origin-center scale-x-0 bg-red-600 transition-transform duration-500 ease-out group-hover:scale-x-100"></div>
-
-                <div class="mb-8 flex items-center justify-between">
-
-                    <span class="font-mono text-xs font-bold tracking-widest text-slate-400 transition-colors duration-300 group-hover:text-red-600">
-                        04
-                    </span>
-
-                    <span class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-500 shadow-sm transition-all duration-300 group-hover:border-red-600 group-hover:bg-red-600 group-hover:text-white group-hover:scale-110">
-                        ◎
-                    </span>
-
-                </div>
-
-
-                <div class="flex items-baseline gap-1">
-
-                    <span
-                        class="font-mono text-5xl font-bold tracking-tight text-slate-950 transition-colors lg:text-6xl"
-                        x-text="counters.locations"
-                    >
-                        0
-                    </span>
-
-                    <span class="text-xl font-bold text-red-600 uppercase">
-                        tỷ
-                    </span>
-
-                </div>
-
-
-                <p class="mt-4 text-sm font-semibold uppercase tracking-wider text-slate-800 transition-colors group-hover:text-red-600">
-                    Doanh thư dự kiến (năm 2026)
-                </p>
-
-                <p class="mt-3 text-sm leading-6 text-slate-500">
-                    Dự kiến doanh thu vượt bậc, đánh dấu sự tăng trưởng và uy tín của công ty trong ngành xây dựng.
-                </p>
-
-            </div>
-
         </div>
 
     </div>
-
 </section>

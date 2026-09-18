@@ -1,474 +1,439 @@
 @extends('layouts.app')
 
+@php
+    use Illuminate\Support\Facades\Storage;
+
+    // Helper closure chuẩn hóa đường dẫn ảnh công trình
+    $resolveImageUrl = function ($path) {
+        if (empty($path)) {
+            return null;
+        }
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+        return Storage::disk('public')->url(ltrim($path, '/'));
+    };
+
+    // Helper format diện tích an toàn cho cả dạng varchar lẫn số
+    $formatScale = function ($areaSqm) {
+        if (empty($areaSqm)) {
+            return 'Quy mô lớn';
+        }
+        if (is_numeric($areaSqm)) {
+            return number_format((float)$areaSqm, 0, ',', '.') . ' m²';
+        }
+        return (string)$areaSqm;
+    };
+
+    // Chuẩn hóa dữ liệu riêng cho Hero Vòng xoay 3D từ biến $wheelProjects (cố định is_featured = 1)
+    $formattedWheelProjects = collect($wheelProjects ?? [])->map(function ($item, $index) use ($resolveImageUrl, $formatScale) {
+        return [
+            'id' => $item->id,
+            'number' => str_pad($index + 1, 2, '0', STR_PAD_LEFT),
+            'title' => $item->title,
+            'location' => $item->location ?? 'Đà Nẵng & Miền Trung',
+            'category' => optional($item->category)->name ?? 'Công trình trọng điểm',
+            'scale' => $formatScale($item->area_sqm),
+            'desc' => $item->description ?? $item->excerpt ?? 'Công trình thi công kiến trúc tiêu biểu, khẳng định năng lực tổng thầu uy tín của Tân Minh Nhân.',
+            'image' => $resolveImageUrl($item->cover_image),
+            'link' => route('projects.show', $item->slug ?? $item->id),
+        ];
+    })->values();
+@endphp
+
 @section('content')
+@push('preloads')
+    @if(isset($formattedWheelProjects) && $formattedWheelProjects->isNotEmpty())
+        <link rel="preload" as="image" href="{{ $formattedWheelProjects->first()['image'] }}" fetchpriority="high">
+    @endif
+@endpush
 
-<div class="page-transition">
+<div class="page-transition bg-white select-none text-slate-900">
 
-    {{-- =====================================================
-         PROJECTS HERO
-         ===================================================== --}}
-    <section class="relative overflow-hidden bg-slate-950 pt-36 text-white sm:pt-44">
+    {{-- =========================================================
+         1. HERO SECTION: VÒNG XOAY 3D TƯƠNG TÁC (3D WHEEL) - CỐ ĐỊNH DỰ ÁN TIÊU BIỂU
+         ========================================================= --}}
+    @if($formattedWheelProjects->isNotEmpty())
+        <section
+            x-data="{
+                projects: {{ Js::from($formattedWheelProjects) }},
+                total: {{ $formattedWheelProjects->count() }},
+                rotationAngle: 0,
+                activeCardIndex: 0,
+                isHovered: false,
+                isDragging: false,
+                startX: 0,
+                radius: 420,
+                timer: null,
+                intervalMs: 4500,
 
-        <div class="container-page relative z-10">
+                get angleStep() {
+                    return this.total > 0 ? (360 / this.total) : 0;
+                },
 
-            <div class="grid min-h-[560px] items-end gap-12 pb-20 lg:grid-cols-[1fr_.5fr] lg:pb-24">
+                init() {
+                    this.updateActiveIndex();
+                    this.startAutoPlay();
 
-                <div>
+                    const updateRadius = () => {
+                        this.radius = window.innerWidth < 640 ? 250 : (window.innerWidth < 1024 ? 340 : 420);
+                    };
+                    updateRadius();
+                    window.addEventListener('resize', updateRadius);
+                },
 
-                    <p class="eyebrow !text-red-400">
-                        Dữf án
-                    </p>
+                startAutoPlay() {
+                    if (this.timer) clearInterval(this.timer);
+                    this.timer = setInterval(() => {
+                        if (!this.isHovered && !this.isDragging && this.total > 1) {
+                            this.next();
+                        }
+                    }, this.intervalMs);
+                },
 
-                    <h1
-                        class="mt-7 max-w-6xl font-display text-6xl font-semibold leading-[0.88] tracking-[-0.07em] text-white sm:text-7xl lg:text-[8rem]"
-                    >
-                        DỰ ÁN
-                        <br>
-                        CÓ GIÁ TRỊ.
-                    </h1>
+                next() {
+                    this.rotationAngle -= this.angleStep;
+                    this.updateActiveIndex();
+                },
 
-                </div>
+                prev() {
+                    this.rotationAngle += this.angleStep;
+                    this.updateActiveIndex();
+                },
 
+                rotateTo(index) {
+                    this.rotationAngle = -index * this.angleStep;
+                    this.updateActiveIndex();
+                },
 
-                <div class="lg:pb-2">
+                updateActiveIndex() {
+                    if (this.total === 0) return;
+                    let normalized = ((-this.rotationAngle % 360) + 360) % 360;
+                    let earlyTrigger = (normalized + this.angleStep / 2) % 360;
+                    this.activeCardIndex = Math.floor(earlyTrigger / this.angleStep) % this.total;
+                },
 
-                    <div class="border-l border-white/20 pl-6">
+                handlePointerDown(e) {
+                    this.isDragging = true;
+                    this.startX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+                },
 
-                        <p class="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-                            Danh mục lựa chọn
-                        </p>
+                handlePointerMove(e) {
+                    if (!this.isDragging) return;
+                    const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+                    const deltaX = clientX - this.startX;
+                    this.rotationAngle += deltaX * 0.25;
+                    this.startX = clientX;
+                    this.updateActiveIndex();
+                },
 
-                        <p class="mt-4 max-w-sm text-base leading-7 text-white/55">
-                            Một sự lựa chọn các dự án kiến trúc, kỹ thuậ t và
-                            xây dựng được thực hiện trên những lĩnh vực
-                            dân cư, thương mại, công nghiệp và đểu hành.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- Architectural grid --}}
-        <div
-            class="pointer-events-none absolute inset-0 opacity-10"
-            aria-hidden="true"
+                handlePointerUp() {
+                    if (!this.isDragging) return;
+                    this.isDragging = false;
+                    const nearestIndex = Math.round(-this.rotationAngle / this.angleStep);
+                    this.rotationAngle = -nearestIndex * this.angleStep;
+                    this.updateActiveIndex();
+                }
+            }"
+            @mouseenter="isHovered = true"
+            @mouseleave="isHovered = false; startAutoPlay()"
+            @mousedown="handlePointerDown($event)"
+            @mousemove="handlePointerMove($event)"
+            @mouseup="handlePointerUp()"
+            @touchstart="handlePointerDown($event)"
+            @touchmove="handlePointerMove($event)"
+            @touchend="handlePointerUp()"
+            class="relative w-full min-h-screen pt-24 pb-14 bg-[#161E2E] text-white flex flex-col justify-center items-center overflow-hidden"
+            style="touch-action: pan-y;"
         >
-
-            <div class="absolute inset-y-0 left-[20%] w-px bg-white"></div>
-
-            <div class="absolute inset-y-0 left-[50%] w-px bg-white"></div>
-
-            <div class="absolute inset-y-0 left-[80%] w-px bg-white"></div>
-
-            <div class="absolute left-0 right-0 top-[48%] h-px bg-white"></div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         FILTER SECTION
-         ===================================================== --}}
-    <section class="border-b border-slate-200 bg-white">
-
-        <div class="container-page">
+            <div class="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+                <template x-for="(p, idx) in projects" :key="'bg-' + p.id">
+                    <div
+                        x-show="activeCardIndex === idx"
+                        x-transition:enter="transition ease-out duration-700"
+                        x-transition:enter-start="opacity-0 scale-105"
+                        x-transition:enter-end="opacity-75 scale-100"
+                        x-transition:leave="transition ease-in duration-500"
+                        x-transition:leave-start="opacity-75 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="absolute inset-0 w-full h-full"
+                    >
+                        <img
+                            :src="p.image"
+                            :alt="p.title"
+                            class="w-full h-full object-cover object-center filter blur-xs brightness-125"
+                            loading="eager"
+                            fetchpriority="high"
+                        />
+                    </div>
+                </template>
+                <div class="absolute inset-0 bg-gradient-to-t from-[#161E2E] via-[#161E2E]/45 to-[#161E2E]/20"></div>
+            </div>
 
             <div
-                x-data="{ active: '{{ request('category') ?? 'all' }}' }"
-                class="flex flex-col gap-6 py-7 lg:flex-row lg:items-center lg:justify-between"
+                class="relative w-full max-w-[1200px] h-[500px] flex items-center justify-center z-10"
+                style="perspective: 1200px;"
             >
+                <div
+                    class="relative w-full h-full flex items-center justify-center cursor-grab active:cursor-grabbing"
+                    style="transform-style: preserve-3d;"
+                >
+                    <template x-for="(item, i) in projects" :key="item.id">
+                        <div
+                            @click="rotateTo(i)"
+                            class="absolute w-[290px] sm:w-[360px] h-[450px] rounded-2xl border p-6 flex flex-col justify-between overflow-hidden backdrop-blur-md transition-all duration-300 pointer-events-auto bg-slate-900/80"
+                            :class="activeCardIndex === i
+                                ? 'border-[#EB323A] shadow-[0_20px_60px_rgba(235,50,58,0.45)] ring-2 ring-[#EB323A]/50 bg-slate-900/90'
+                                : 'border-slate-800/80 shadow-2xl bg-slate-900/75'"
+                            :style="(() => {
+                                const cardAngle = i * angleStep + rotationAngle;
+                                const rad = (cardAngle * Math.PI) / 180;
+                                const x = radius * Math.sin(rad);
+                                const z = radius * Math.cos(rad);
+                                const scale = Math.max(0.65, ((z + radius) / (2 * radius)) * 0.4 + 0.65);
+                                const opacity = z < -100 ? 0.25 : Math.max(0.35, (z + radius) / (2 * radius));
+                                const zIndex = Math.round(z + radius);
 
-                <div>
+                                return `transform: translate3d(${x}px, 0px, ${z}px) rotateY(${cardAngle}deg) scale(${scale}); opacity: ${opacity}; z-index: ${zIndex};`;
+                            })()"
+                        >
+                            <div class="absolute inset-0 w-full h-full overflow-hidden rounded-2xl pointer-events-none bg-slate-900">
+                                <template x-if="item.image">
+                                    <img
+                                        :src="item.image"
+                                        :alt="item.title"
+                                        draggable="false"
+                                        class="w-full h-full object-cover object-center transition-opacity duration-300"
+                                        :class="activeCardIndex === i ? 'opacity-100' : 'opacity-40'"
+                                    />
+                                </template>
+                                <div
+                                    class="absolute inset-0 transition-all duration-300"
+                                    :class="activeCardIndex === i
+                                        ? 'bg-gradient-to-t from-[#0B0F17]/95 via-[#0B0F17]/35 to-transparent'
+                                        : 'bg-gradient-to-t from-[#0B0F17] via-[#0B0F17]/75 to-[#0B0F17]/40'"
+                                ></div>
+                            </div>
 
-                    <p class="font-display text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">
-                        Khám phá danh mục
-                    </p>
+                            <div class="relative z-10 flex justify-between items-start pointer-events-none">
+                                <span class="text-[10px] font-bold uppercase tracking-wider text-[#EB323A] bg-black/80 backdrop-blur-md px-3 py-1 rounded-full border border-[#EB323A]/40 flex items-center gap-1.5 shadow-sm">
+                                    <svg class="w-3.5 h-3.5 text-[#EB323A]" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                                    </svg>
+                                    <span x-text="item.location"></span>
+                                </span>
 
+                                <span class="font-mono font-black text-4xl text-white/20 select-none" x-text="item.number"></span>
+                            </div>
+
+                            <div class="relative z-10 space-y-2 pointer-events-none">
+                                <p class="text-xl sm:text-2xl font-bold text-white leading-snug line-clamp-2" x-text="item.title"></p>
+
+                                <div
+                                    x-show="activeCardIndex === i"
+                                    x-transition:enter="transition ease-out duration-300"
+                                    x-transition:enter-start="opacity-0 translate-y-2"
+                                    x-transition:enter-end="opacity-100 translate-y-0"
+                                    class="pt-2 pointer-events-auto"
+                                >
+                                    <a
+                                        :href="item.link"
+                                        class="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white hover:text-[#EB323A] transition-colors group/btn"
+                                    >
+                                        <span>Khám phá công trình</span>
+                                        <span class="transition-transform group-hover/btn:translate-x-1 font-mono text-sm">→</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </section>
+    @endif
+
+    {{-- =========================================================
+         2 & 3. DANH MỤC + BỘ LỌC SERVER-SIDE (MỖI TRANG 10 DỰ ÁN)
+         ========================================================= --}}
+    <section class="py-12 sm:py-16 lg:py-20 bg-white text-slate-900">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            {{-- HEADER DANH MỤC + BỘ LỌC --}}
+            <div class="border-b border-slate-200 pb-8 mb-12 sm:mb-16">
+                <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+                    <div>
+                        <div class="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-[0.2em] text-[#EB323A] mb-1.5">
+                            <span class="w-1.5 h-1.5 bg-[#EB323A] rounded-full"></span>
+                            HỒ SƠ NĂNG LỰC THI CÔNG
+                        </div>
+                        <h2 class="text-2xl sm:text-4xl font-extrabold uppercase tracking-tight text-slate-950">
+                            Công Trình Tiêu Biểu
+                        </h2>
+                    </div>
+
+                    <!-- <div class="font-mono text-xs text-slate-500">
+                        HIỂN THỊ: <span class="font-bold text-slate-950 font-sans text-sm">{{ $projects->count() }}</span> / TỔNG SỐ <span class="font-bold text-slate-950 font-sans text-sm">{{ $projects->total() }}</span> DỰ ÁN
+                    </div> -->
                 </div>
 
-
-                <div class="flex gap-2 overflow-x-auto pb-1">
-
-                    {{-- All --}}
+                {{-- NÚT BỘ LỌC DANH MỤC --}}
+                <div class="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar pt-2" style="scrollbar-width: none;">
                     <a
-                        href="{{ route('projects.index') }}"
-                        @click="active = 'all'"
-                        class="whitespace-nowrap border px-4 py-2.5 font-display text-[10px] font-bold uppercase tracking-[0.10em] transition-all duration-200"
-                        :class="
-                            active === 'all'
-                                ? 'border-slate-950 bg-slate-950 text-white'
-                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-950 hover:text-slate-950'
-                        "
+                        href="{{ route('projects.index', array_merge(request()->except(['category', 'page']), ['page' => 1])) }}"
+                        class="whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 focus:outline-none cursor-pointer {{ !request()->filled('category') ? 'bg-[#EB323A] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900' }}"
                     >
-                        All Projects
+                        Tất cả
                     </a>
 
-
-                    {{-- Residential --}}
-                    <a
-                        href="{{ route('projects.index', ['category' => 'Residential']) }}"
-                        @click="active = 'Residential'"
-                        class="whitespace-nowrap border px-4 py-2.5 font-display text-[10px] font-bold uppercase tracking-[0.10em] transition-all duration-200"
-                        :class="
-                            active === 'Residential'
-                                ? 'border-slate-950 bg-slate-950 text-white'
-                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-950 hover:text-slate-950'
-                        "
-                    >
-                        Residential
-                    </a>
-
-
-                    {{-- Commercial --}}
-                    <a
-                        href="{{ route('projects.index', ['category' => 'Commercial']) }}"
-                        @click="active = 'Commercial'"
-                        class="whitespace-nowrap border px-4 py-2.5 font-display text-[10px] font-bold uppercase tracking-[0.10em] transition-all duration-200"
-                        :class="
-                            active === 'Commercial'
-                                ? 'border-slate-950 bg-slate-950 text-white'
-                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-950 hover:text-slate-950'
-                        "
-                    >
-                        Commercial
-                    </a>
-
-
-                    {{-- Industrial --}}
-                    <a
-                        href="{{ route('projects.index', ['category' => 'Industrial']) }}"
-                        @click="active = 'Industrial'"
-                        class="whitespace-nowrap border px-4 py-2.5 font-display text-[10px] font-bold uppercase tracking-[0.10em] transition-all duration-200"
-                        :class="
-                            active === 'Industrial'
-                                ? 'border-slate-950 bg-slate-950 text-white'
-                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-950 hover:text-slate-950'
-                        "
-                    >
-                        Industrial
-                    </a>
-
-
-                    {{-- Hospitality --}}
-                    <a
-                        href="{{ route('projects.index', ['category' => 'Hospitality']) }}"
-                        @click="active = 'Hospitality'"
-                        class="whitespace-nowrap border px-4 py-2.5 font-display text-[10px] font-bold uppercase tracking-[0.10em] transition-all duration-200"
-                        :class="
-                            active === 'Hospitality'
-                                ? 'border-slate-950 bg-slate-950 text-white'
-                                : 'border-slate-200 bg-white text-slate-500 hover:border-slate-950 hover:text-slate-950'
-                        "
-                    >
-                        Hospitality
-                    </a>
-
+                    @foreach($categories as $cat)
+                        <a
+                            href="{{ route('projects.index', array_merge(request()->except(['page']), ['category' => $cat->id, 'page' => 1])) }}"
+                            class="whitespace-nowrap px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-200 focus:outline-none cursor-pointer {{ request('category') == $cat->id || request('category') == $cat->slug ? 'bg-[#EB323A] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900' }}"
+                        >
+                            {{ $cat->name }}
+                        </a>
+                    @endforeach
                 </div>
-
             </div>
 
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         PROJECT GRID
-         ===================================================== --}}
-    <section class="section bg-white">
-
-        <div class="container-page">
-
-            @if(isset($projects) && $projects->count())
-
-                <div class="mb-10 flex items-center justify-between">
-
-                    <div>
-
-                        <p class="font-display text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">
-                            Portfolio
-                        </p>
-
-                        <p class="mt-2 font-display text-2xl font-semibold tracking-[-0.035em]">
-                            {{ $projects->total() }} projects
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                {{-- =================================================
-                     MASONRY-STYLE GRID
-                     ================================================= --}}
-                <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-12">
-
-                    @foreach($projects as $index => $project)
-
-                        @php
-                            $featured = $index % 5 === 0;
-                        @endphp
-
-
+            {{-- DANH SÁCH DỰ ÁN --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-10 lg:gap-x-14 gap-y-12 lg:gap-y-16 items-start">
+                @forelse($projects as $index => $item)
+                    @php
+                        $coverImage = !empty($item->cover_image) ? $resolveImageUrl($item->cover_image) : null;
+                        $scaleFormatted = $formatScale($item->area_sqm);
+                        $displayScale = !empty($item->area_sqm) ? 'Tổng diện tích ' . $scaleFormatted : ($item->scale ?? 'Công trình quy mô lớn');
+                        $categoryName = optional($item->category)->name ?? 'Công trình kiến trúc';
+                        $clientName = $item->client_name ?: ($item->client ?? 'Tân Minh Nhân');
+                        $projectLink = route('projects.show', $item->slug ?? $item->id);
+                        $isReverse = ($index % 2 !== 0);
+                        $isImageTop = ($index % 2 === 0);
+                    @endphp
+                    <article class="flex flex-col group {{ $isReverse ? 'md:flex-col-reverse' : '' }}">
                         <a
-                            href="{{ route('projects.show', $project->slug) }}"
-                            class="
-                                group
-                                project-card
-                                {{ $featured
-                                    ? 'lg:col-span-7'
-                                    : 'lg:col-span-5'
-                                }}
-                            "
+                            href="{{ $projectLink }}"
+                            class="relative block w-full aspect-[16/10] overflow-hidden rounded-sm bg-slate-100 group-hover:shadow-xl transition-all duration-500"
                         >
-
-                            <div
-                                class="
-                                    overflow-hidden
-                                    {{ $featured
-                                        ? 'aspect-[16/11]'
-                                        : 'aspect-[16/10]'
-                                    }}
-                                "
-                            >
-
-                                @if($project->cover_image)
-
-                                    <img
-                                        src="{{ asset('storage/' . $project->cover_image) }}"
-                                        alt="{{ $project->title }}"
-                                        class="h-full w-full object-cover transition-transform duration-[900ms] ease-out group-hover:scale-105"
-                                        loading="{{ $index < 2 ? 'eager' : 'lazy' }}"
-                                    >
-
-                                @else
-
-                                    <div class="flex h-full items-center justify-center bg-slate-200">
-
-                                        <div class="text-center">
-
-                                            <span class="font-display text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400">
-                                                Project
-                                            </span>
-
-                                            <p class="mt-2 text-sm text-slate-400">
-                                                No image available
-                                            </p>
-
-                                        </div>
-
-                                    </div>
-
-                                @endif
-
-                            </div>
-
-
-                            {{-- Overlay --}}
-                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/15 to-transparent opacity-90"></div>
-
-
-                            {{-- Content --}}
-                            <div class="project-card-content">
-
-                                <div class="flex flex-wrap items-center gap-x-4 gap-y-2">
-
-                                    <span class="tag border-white/20 bg-white/5 text-white/75">
-                                        {{ $project->category->name ?? 'Architecture' }}
-                                    </span>
-
-                                    @if($project->year)
-
-                                        <span class="font-display text-[10px] font-bold uppercase tracking-[0.12em] text-white/45">
-                                            {{ $project->year }}
-                                        </span>
-
-                                    @endif
-
+                            @if($coverImage)
+                                <img
+                                    src="{{ $coverImage }}"
+                                    alt="{{ $item->title }}"
+                                    class="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+                                    loading="lazy"
+                                />
+                            @else
+                                <div class="absolute inset-0 flex items-center justify-center bg-slate-100 text-slate-400 font-mono text-xs uppercase tracking-widest">
+                                    Tân Minh Nhân
                                 </div>
-
-
-                                <div class="mt-5 flex items-end justify-between gap-6">
-
-                                    <div>
-
-                                        <h2 class="font-display text-2xl font-semibold leading-tight tracking-[-0.035em] text-white sm:text-3xl">
-                                            {{ $project->title }}
-                                        </h2>
-
-                                        <p class="mt-2 text-sm text-white/55">
-                                            {{ $project->location ?? 'Location available on request' }}
-                                        </p>
-
-                                    </div>
-
-
-                                    <span
-                                        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/5 text-lg text-white backdrop-blur-sm transition-all duration-300 group-hover:bg-white group-hover:text-slate-950"
-                                    >
-                                        →
-                                    </span>
-
-                                </div>
-
-                            </div>
-
+                            @endif
                         </a>
 
-                    @endforeach
+                        <div class="space-y-2.5 {{ $isImageTop ? 'pt-4 sm:pt-5' : 'pb-4 sm:pb-5' }}">
+                            <h3 class="text-base sm:text-lg lg:text-xl font-bold uppercase tracking-tight text-[#1E3A8A] group-hover:text-[#EB323A] transition-colors leading-snug">
+                                <a href="{{ $projectLink }}">{{ $item->title }}</a>
+                            </h3>
 
-                </div>
+                            <div class="space-y-1.5 text-xs sm:text-[13px] text-slate-700">
+                                <div class="leading-relaxed">
+                                    <span class="text-slate-400 text-[11px] block font-medium uppercase tracking-wider">Chủ đầu tư</span>
+                                    <span class="font-semibold text-slate-900">{{ $clientName }}</span>
+                                </div>
 
+                                <div class="leading-relaxed">
+                                    <span class="text-slate-400 text-[11px] block font-medium uppercase tracking-wider">Phạm vi công việc</span>
+                                    <span class="text-slate-800">{{ $categoryName }}</span>
+                                </div>
 
-                {{-- =================================================
-                     PAGINATION
-                     ================================================= --}}
-                @if(method_exists($projects, 'links'))
+                                <div class="leading-relaxed">
+                                    <span class="text-slate-400 text-[11px] block font-medium uppercase tracking-wider">Quy mô</span>
+                                    <span class="text-slate-800">
+                                        {{ $displayScale }}
+                                        @if($item->location)
+                                            <span> • {{ $item->location }}</span>
+                                        @endif
+                                    </span>
+                                </div>
+                            </div>
 
-                    <div class="mt-14 border-t border-slate-200 pt-8">
-
-                        {{ $projects->withQueryString()->links() }}
-
+                            <div class="pt-1">
+                                <a
+                                    href="{{ $projectLink }}"
+                                    class="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#EB323A] hover:text-red-700 transition-colors"
+                                >
+                                    <span>Chi tiết dự án</span>
+                                    <span class="font-mono text-sm transition-transform group-hover:translate-x-1">→</span>
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div class="col-span-full border border-dashed border-slate-300 bg-slate-50 py-16 text-center rounded-xl my-6">
+                        <p class="font-mono text-xs text-[#EB323A] uppercase tracking-widest">// HỒ SƠ DỰ ÁN</p>
+                        <h3 class="mt-2 text-lg font-bold uppercase text-slate-900">Không tìm thấy công trình thuộc danh mục này</h3>
+                        <a
+                            href="{{ route('projects.index') }}"
+                            class="mt-5 inline-flex px-6 py-2.5 rounded-full font-mono text-xs font-bold uppercase tracking-wider text-white bg-slate-950 hover:bg-[#EB323A] transition-colors cursor-pointer"
+                        >
+                            Xem tất cả dự án
+                        </a>
                     </div>
+                @endforelse
+            </div>
 
-                @endif
+            {{-- THANH PHÂN TRANG GIAO DIỆN ICON ĐẸP MẮT --}}
+            @if($projects->hasPages())
+                <div class="mt-16 pt-8 border-t border-slate-200 flex items-center justify-center">
+                    <nav class="flex items-center gap-1.5" role="navigation" aria-label="Pagination Navigation">
+                        
+                        {{-- Nút Previous --}}
+                        @if ($projects->onFirstPage())
+                            <span class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-300 bg-slate-50 cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </span>
+                        @else
+                            <a href="{{ $projects->previousPageUrl() }}" class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-700 bg-white hover:border-[#EB323A] hover:text-[#EB323A] hover:shadow-sm transition-all">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </a>
+                        @endif
 
-            @else
+                        {{-- Các số trang --}}
+                        @foreach ($projects->getUrlRange(1, $projects->lastPage()) as $page => $url)
+                            @if ($page == $projects->currentPage())
+                                <span class="flex items-center justify-center w-10 h-10 rounded-lg bg-[#EB323A] text-white font-bold text-xs shadow-md">
+                                    {{ $page }}
+                                </span>
+                            @else
+                                <a href="{{ $url }}" class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-700 bg-white hover:border-[#EB323A] hover:text-[#EB323A] hover:shadow-sm font-medium text-xs transition-all">
+                                    {{ $page }}
+                                </a>
+                            @endif
+                        @endforeach
 
-                {{-- Empty state --}}
-                <div class="border border-dashed border-slate-300 bg-slate-50 px-8 py-24 text-center">
+                        {{-- Nút Next --}}
+                        @if ($projects->hasMorePages())
+                            <a href="{{ $projects->nextPageUrl() }}" class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-700 bg-white hover:border-[#EB323A] hover:text-[#EB323A] hover:shadow-sm transition-all">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </a>
+                        @else
+                            <span class="flex items-center justify-center w-10 h-10 rounded-lg border border-slate-200 text-slate-300 bg-slate-50 cursor-not-allowed">
+                                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </span>
+                        @endif
 
-                    <p class="eyebrow">
-                        Portfolio
-                    </p>
-
-                    <h2 class="mt-5 font-display text-3xl font-semibold tracking-[-0.04em]">
-                        No projects found.
-                    </h2>
-
-                    <p class="mx-auto mt-4 max-w-lg text-sm leading-7 text-slate-500">
-                        There are currently no projects matching the
-                        selected criteria.
-                    </p>
-
-                    <a
-                        href="{{ route('projects.index') }}"
-                        class="btn-dark mt-7"
-                    >
-                        View all projects
-                    </a>
-
+                    </nav>
                 </div>
-
             @endif
 
         </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         PROJECT STATEMENT
-         ===================================================== --}}
-    <section class="section bg-slate-50">
-
-        <div class="container-page">
-
-            <div class="grid gap-10 lg:grid-cols-[0.4fr_1.6fr]">
-
-                <div>
-
-                    <p class="eyebrow">
-                        Our standard
-                    </p>
-
-                </div>
-
-
-                <div>
-
-                    <h2 class="max-w-5xl font-display text-4xl font-semibold leading-[1] tracking-[-0.055em] sm:text-6xl">
-
-                        Every project is an opportunity
-                        to solve something better.
-
-                    </h2>
-
-                    <div class="mt-10 grid gap-8 md:grid-cols-2">
-
-                        <p class="leading-8 text-slate-500">
-                            We believe successful construction begins with
-                            clear thinking. Every decision is tested against
-                            functionality, buildability, quality and
-                            long-term value.
-                        </p>
-
-                        <p class="leading-8 text-slate-500">
-                            From residential spaces to complex commercial
-                            developments, our teams bring a consistent
-                            standard of technical discipline to every site.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         CTA
-         ===================================================== --}}
-    <section class="section section-blueprint">
-
-        <div class="container-page relative z-10">
-
-            <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
-
-                <div>
-
-                    <p class="eyebrow !text-white/60">
-                        Start your project
-                    </p>
-
-                    <h2
-                        class="mt-6 max-w-5xl font-display text-5xl font-semibold leading-[0.92] tracking-[-0.06em] text-white sm:text-7xl lg:text-8xl"
-                    >
-                        HAVE AN IDEA?
-                        <br>
-                        LET'S BUILD IT.
-                    </h2>
-
-                </div>
-
-
-                <a
-                    href="{{ route('contact.index') }}"
-                    class="btn-white group min-w-[220px]"
-                >
-
-                    Request a Quote
-
-                    <span class="transition-transform duration-300 group-hover:translate-x-1">
-                        →
-                    </span>
-
-                </a>
-
-            </div>
-
-        </div>
-
     </section>
 
 </div>

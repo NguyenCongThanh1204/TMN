@@ -15,14 +15,14 @@
         slides: [
             {
                 id: 1,
-                desktop: 'https://www.tanminhnhan.com.vn/images/ap-smart-layerslider/homepage/ANH%20WEB.jpg',
-                mobile: 'https://www.tanminhnhan.com.vn/images/ap-smart-layerslider/homepage/ANH%20WEB.jpg',
+                desktop: '/images/ANH-WEB.webp',
+                mobile: '/images/ANH-WEB.webp',
                 alt: 'Tân Minh Nhân Dự án 01'
             },
             {
                 id: 2,
-                desktop: 'https://www.tanminhnhan.com.vn/images/ap-smart-layerslider/homepage/van-phong-tan-minh-nhan-phoi-canh-tren-cao.jpg',
-                mobile: 'https://www.tanminhnhan.com.vn/images/ap-smart-layerslider/homepage/van-phong-tan-minh-nhan-phoi-canh-tren-cao.jpg',
+                desktop: '/images/van-phong-tan-minh-nhan-phoi-canh-tren-cao.jpg',
+                mobile: '/images/van-phong-tan-minh-nhan-phoi-canh-tren-cao.jpg',
                 alt: 'Tân Minh Nhân Dự án 02'
             }
         ],
@@ -98,7 +98,9 @@
                         :alt="slide.alt"
                         style="width: 100% !important; height: 100% !important; max-width: none !important; object-fit: cover !important; object-position: center !important;"
                         class="block"
-                        loading="eager"
+                        :loading="index === 0 ? 'eager' : 'lazy'"
+                        :fetchpriority="index === 0 ? 'high' : 'low'"
+                        decoding="async"
                     />
                 </picture>
             </div>

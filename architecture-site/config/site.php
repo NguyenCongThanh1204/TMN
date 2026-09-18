@@ -1,18 +1,18 @@
 <?php
 
 return [
-    'name' => env('SITE_NAME', 'Architecture & Construction'),
+    'name' => env('SITE_NAME', 'Tân Minh Nhân'),
     'tagline' => env('SITE_TAGLINE', 'Building ideas. Engineering the future.'),
     'description' => env('SITE_DESCRIPTION', 'Architecture, engineering and construction for high-performance spaces.'),
-    'phone' => env('SITE_PHONE', '+84 000 000 000'),
-    'email' => env('SITE_EMAIL', 'hello@example.com'),
-    'contact_email' => env('CONTACT_EMAIL', 'hello@example.com'),
-    'address' => env('SITE_ADDRESS', '123 Architecture Avenue, Da Nang, Vietnam'),
+    'phone' => env('SITE_PHONE', '(0236) 3 868718'),
+    'email' => env('SITE_EMAIL', 'contact@tanminhnhan.com.vn'),
+    'contact_email' => env('CONTACT_EMAIL', 'contact@tanminhnhan.com.vn'),
+    'address' => env('SITE_ADDRESS', '246-250 Lê Văn Hiến, Phường Ngũ Hành Sơn, TP. Đà Nẵng, Việt Nam.'),
     'maps_url' => env('SITE_MAPS_URL', 'https://www.google.com/maps'),
     'zalo' => env('SITE_ZALO', '#'),
     'whatsapp' => env('SITE_WHATSAPP', '#'),
     'social' => [
-        'facebook' => env('SITE_FACEBOOK', '#'),
+        'facebook' => env('SITE_FACEBOOK', 'https://www.facebook.com/tanminhnhan.corp/'),
         'linkedin' => env('SITE_LINKEDIN', '#'),
     ],
     'metrics' => [

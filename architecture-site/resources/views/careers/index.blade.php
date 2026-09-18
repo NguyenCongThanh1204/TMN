@@ -2,1133 +2,525 @@
 
 @section('content')
 
-<div class="page-transition">
-
-    {{-- =====================================================
-         CAREERS HERO
-         ===================================================== --}}
-    <section class="relative overflow-hidden bg-slate-950 pt-36 text-white sm:pt-44">
-
-        <div class="container-page relative z-10">
-
-            <div class="grid min-h-[650px] items-end gap-12 pb-20 lg:grid-cols-[1fr_.55fr] lg:pb-24">
-
-                <div>
-
-                    <p class="eyebrow !text-red-400">
-                        Tuyển dụng
-                    </p>
-
-                    <h1
-                        class="mt-7 max-w-6xl font-display text-6xl font-semibold leading-[0.88] tracking-[-0.07em] text-white sm:text-7xl lg:text-[8rem]"
-                    >
-                        XÂY DỰNG
-                        <br>
-                        TƯƠNG LAI
-                        <br>
-                        CỦA BẠN.
-                    </h1>
-
-                    <p class="mt-8 max-w-2xl text-base leading-8 text-white/55 sm:text-lg">
-                        Tham gia một đội ngành nhiều mãng nghiề đang
-                        hình thành kiến trúc, kỹ thuậ t và dự án
-                        xây dựng vỚer tậm vóc, độ chín chỼ và trách nhiệm.
-                    </p>
-
-                </div>
-
-
-                <div class="lg:pb-3">
-
-                    <div class="border-l border-white/20 pl-6">
-
-                        <p class="font-display text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">
-                            Làm việc với chúng tôi
-                        </p>
-
-                        <p class="mt-4 font-display text-2xl font-medium leading-tight tracking-[-0.035em] text-white">
-                            Các tòa nhà tuyệt vời
-                            được tạo bởi
-                            những đội ngành tuyệt vời.
-                        </p>
-
-                        <a
-                            href="#open-positions"
-                            class="mt-7 inline-flex items-center gap-3 font-display text-xs font-bold uppercase tracking-[0.1em] text-white transition-colors hover:text-red-400"
-                        >
-                            Khám phá cơ hội
-
-                            <span>
-                                ↓
-                            </span>
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-        {{-- Architectural grid --}}
-        <div
-            class="pointer-events-none absolute inset-0 opacity-[0.08]"
-            aria-hidden="true"
-        >
-
-            <div class="absolute inset-y-0 left-[20%] w-px bg-white"></div>
-            <div class="absolute inset-y-0 left-[50%] w-px bg-white"></div>
-            <div class="absolute inset-y-0 left-[80%] w-px bg-white"></div>
-
-            <div class="absolute left-0 right-0 top-[48%] h-px bg-white"></div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         INTRODUCTION
-         ===================================================== --}}
-    <section class="section bg-white">
-
-        <div class="container-page">
-
-            <div class="grid gap-14 lg:grid-cols-[0.55fr_1.45fr]">
-
-                <div>
-
-                    <p class="eyebrow">
-                        Văn hóa của chúng tôi
-                    </p>
-
-                    <p class="mt-6 max-w-sm text-sm leading-7 text-slate-500">
-                        Chúng tôi tin rằng các dự án tuyệt vời có nguồn
-                        gốc từ những người chú ĩ chi tiết,
-                        giao tiếp rõ ràng và chịu trách nhiệm
-                        với công việc họ thực hiện.
-                    </p>
-
-                </div>
-
-
-                <div>
-
-                    <h2 class="max-w-5xl font-display text-4xl font-semibold leading-[1] tracking-[-0.055em] sm:text-5xl lg:text-7xl">
-
-                        Làm việc trên các dự án có nghĩa.
-                        Học hỏi từ các đội ngành đã có kinh nghiệm.
-                        Phát triển vỚer trách nhiệm.
-
-                    </h2>
-
-                    <div class="mt-10 grid gap-8 md:grid-cols-2">
-
-                        <p class="leading-8 text-slate-500">
-                            Các đội ngành của chúng tôi làm việc trên
-                            kiến trúc, kỹ thuậ t, mua sắm và xây dựng.
-                            Mọi vai trò đều cóng hiến cho hiệu suất
-                            tổng thể của dự án.
-                        </p>
-
-                        <p class="leading-8 text-slate-500">
-                            Chúng tôi quý trọi những người đặt câu hỏi,
-                            giải quyết vấn đề và liên tục cải tiến
-                            cách thực làm việc — trên màn hình, trong văn
-                            phòng và tại nơi thi công.
-                        </p>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         WHY JOIN US
-         ===================================================== --}}
-    <section class="section bg-slate-50">
-
-        <div class="container-page">
-
-            <div class="mb-14">
-
-                <p class="eyebrow">
-                    Why join us
-                </p>
-
-                <h2 class="section-title max-w-4xl">
-                    A place to build
-                    more than buildings.
-                </h2>
-
-            </div>
-
-
-            <div class="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-
-                {{-- 01 --}}
-                <article class="process-step">
-
-                    <span class="process-step-number">
-                        01
-                    </span>
-
-                    <h3 class="process-step-title">
-                        Real projects
-                    </h3>
-
-                    <p class="process-step-description">
-                        Work directly on architecture and construction
-                        projects with real technical and operational
-                        challenges.
-                    </p>
-
-                </article>
-
-
-                {{-- 02 --}}
-                <article class="process-step">
-
-                    <span class="process-step-number">
-                        02
-                    </span>
-
-                    <h3 class="process-step-title">
-                        Learn from experts
-                    </h3>
-
-                    <p class="process-step-description">
-                        Collaborate with experienced architects,
-                        engineers, supervisors and project leaders.
-                    </p>
-
-                </article>
-
-
-                {{-- 03 --}}
-                <article class="process-step">
-
-                    <span class="process-step-number">
-                        03
-                    </span>
-
-                    <h3 class="process-step-title">
-                        Responsibility
-                    </h3>
-
-                    <p class="process-step-description">
-                        Take ownership of tasks and see how your decisions
-                        affect the finished project.
-                    </p>
-
-                </article>
-
-
-                {{-- 04 --}}
-                <article class="process-step">
-
-                    <span class="process-step-number">
-                        04
-                    </span>
-
-                    <h3 class="process-step-title">
-                        Long-term growth
-                    </h3>
-
-                    <p class="process-step-description">
-                        Build a career through continuous learning,
-                        mentorship and increasing responsibility.
-                    </p>
-
-                </article>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         SAFETY / PROFESSIONAL STANDARDS
-         ===================================================== --}}
-    <section class="section bg-slate-950 text-white">
-
-        <div class="container-page">
-
-            <div class="grid gap-14 lg:grid-cols-[0.55fr_1.45fr]">
-
-                <div>
-
-                    <p class="eyebrow !text-white/50">
-                        How we work
-                    </p>
-
-                    <p class="mt-6 max-w-sm text-sm leading-7 text-white/40">
-                        Professional discipline is part of our culture —
-                        from technical documentation to site safety.
-                    </p>
-
-                </div>
-
-
-                <div>
-
-                    <h2 class="max-w-5xl font-display text-4xl font-semibold leading-[1] tracking-[-0.055em] text-white sm:text-6xl">
-
-                        Precision in the office.
-                        Discipline on site.
-                        Respect everywhere.
-
-                    </h2>
-
-
-                    <div class="mt-12 divide-y divide-white/10 border-y border-white/10">
-
-                        <div class="grid gap-5 py-7 md:grid-cols-[100px_1fr]">
-
-                            <span class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-red-400">
-                                01
-                            </span>
-
-                            <div>
-
-                                <h3 class="font-display text-xl font-semibold text-white">
-                                    Safety first
-                                </h3>
-
-                                <p class="mt-2 max-w-2xl text-sm leading-7 text-white/40">
-                                    We expect every team member to contribute
-                                    to a safe, professional and controlled
-                                    working environment.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="grid gap-5 py-7 md:grid-cols-[100px_1fr]">
-
-                            <span class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-red-400">
-                                02
-                            </span>
-
-                            <div>
-
-                                <h3 class="font-display text-xl font-semibold text-white">
-                                    Technical excellence
-                                </h3>
-
-                                <p class="mt-2 max-w-2xl text-sm leading-7 text-white/40">
-                                    We value accurate drawings, clear
-                                    documentation, strong coordination
-                                    and attention to detail.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="grid gap-5 py-7 md:grid-cols-[100px_1fr]">
-
-                            <span class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-red-400">
-                                03
-                            </span>
-
-                            <div>
-
-                                <h3 class="font-display text-xl font-semibold text-white">
-                                    Team accountability
-                                </h3>
-
-                                <p class="mt-2 max-w-2xl text-sm leading-7 text-white/40">
-                                    Good projects depend on communication,
-                                    respect and a shared commitment to
-                                    solving problems.
-                                </p>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         OPEN POSITIONS
-         ===================================================== --}}
-    <section
-        id="open-positions"
-        class="section bg-white"
+@php
+    use Illuminate\Support\Facades\Storage;
+
+    // Bộ ảnh công trường & kỹ sư dự phòng chất lượng cao
+    $jobFallbackImages = [
+        'https://images.unsplash.com/photo-1541888946425-d0fbb1861593?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1503387762-592deb58ef4e?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1517581177682-a085bb7ffb15?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1590274853856-f22d5ee3d228?q=80&w=600&auto=format&fit=crop'
+    ];
+
+    // Helper giải quyết đường dẫn ảnh an toàn
+    $resolveCareerImage = function ($career, $index) use ($jobFallbackImages) {
+        if (!empty($career->cover_url)) {
+            return $career->cover_url;
+        }
+
+        $rawPath = $career->cover_image ?? ($career->image ?? null);
+        if (!empty($rawPath)) {
+            if (str_starts_with($rawPath, 'http://') || str_starts_with($rawPath, 'https://')) {
+                return $rawPath;
+            }
+            return Storage::disk('public')->url(ltrim($rawPath, '/'));
+        }
+
+        return $jobFallbackImages[$index % count($jobFallbackImages)];
+    };
+@endphp
+
+<div class="bg-white text-slate-800 select-none font-sans">
+
+    {{-- =========================================================
+         1. HERO SECTION
+         ========================================================= --}}
+    <section 
+        class="relative w-full min-h-[500px] sm:min-h-[560px] bg-slate-900 text-white flex items-center overflow-hidden"
+        x-data="{
+            current: 0,
+            slides: [
+                {
+                    title: 'KIẾN TẠO BIỂU TƯỢNG',
+                    sub: 'CÙNG TÂN MINH NHÂN',
+                    desc: 'Môi trường làm việc chuẩn mực, chế độ đãi ngộ xứng tầm và lộ trình sự nghiệp vững chắc cho các kỹ sư tài năng.',
+                    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1920&auto=format&fit=crop'
+                },
+                {
+                    title: 'BỨT PHÁ BẢN THÂN',
+                    sub: 'CHINH PHỤC CÔNG TRÌNH',
+                    desc: 'Trực tiếp đồng hành xây dựng các dự án nghỉ dưỡng, khách sạn 5 sao và hạ tầng quy mô lớn trên toàn quốc.',
+                    image: 'https://images.unsplash.com/photo-1541888946425-d0fbb1861593?q=80&w=1920&auto=format&fit=crop'
+                },
+                {
+                    title: 'ĐÃI NGỘ XỨNG ĐÁNG',
+                    sub: 'GẮN KẾT BỀN VỮNG',
+                    desc: 'Chính sách công tác xa minh bạch, phụ cấp chu đáo và thưởng quyết toán dự án rõ ràng cho đội ngũ cán bộ.',
+                    image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1920&auto=format&fit=crop'
+                }
+            ],
+            timer: null,
+            start() {
+                this.timer = setInterval(() => {
+                    this.current = (this.current + 1) % this.slides.length;
+                }, 5000);
+            },
+            goTo(index) {
+                this.current = index;
+                clearInterval(this.timer);
+                this.start();
+            }
+        }"
+        x-init="start()"
     >
+        <template x-for="(slide, index) in slides" :key="index">
+            <div 
+                class="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out pointer-events-none"
+                :class="current === index ? 'opacity-100 z-10' : 'opacity-0 z-0'"
+            >
+                <img :src="slide.image" :alt="slide.title" class="w-full h-full object-cover brightness-90 filter" />
+            </div>
+        </template>
 
-        <div class="container-page">
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/50 to-transparent z-10 pointer-events-none"></div>
 
-            <div class="mb-14 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-
-                <div>
-
-                    <p class="eyebrow">
-                        Opportunities
-                    </p>
-
-                    <h2 class="section-title">
-                        Open positions.
-                    </h2>
-
+        <div class="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 relative z-20 py-12 w-full">
+            <div class="max-w-3xl space-y-5">
+                
+                <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-900/60 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-mono tracking-widest text-[#EB323A] shadow-md">
+                    <span class="w-2.5 h-2.5 rounded-full bg-[#EB323A]"></span>
+                    <span>THÔNG BÁO TUYỂN DỤNG 2026</span>
                 </div>
 
-                <p class="max-w-lg text-sm leading-7 text-slate-500">
-                    Explore current opportunities across architecture,
-                    engineering, quantity surveying, BIM and project
-                    execution.
-                </p>
+                <div class="space-y-3 min-h-[160px] flex flex-col justify-center">
+                    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-white leading-[1.1] drop-shadow-md">
+                        <span x-text="slides[current].title"></span><br>
+                        <span class="text-[#EB323A]" x-text="slides[current].sub"></span>
+                    </h1>
+                    <p class="text-base sm:text-lg text-slate-100 max-w-2xl leading-relaxed pt-1 drop-shadow-sm font-medium" x-text="slides[current].desc"></p>
+                </div>
+
+                <div class="pt-2">
+                    <a 
+                        href="#jobs-list" 
+                        class="px-8 py-3.5 rounded-full bg-[#EB323A] hover:bg-red-700 text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-xl shadow-red-600/30 inline-flex items-center gap-2 group cursor-pointer"
+                    >
+                        <span>Xem vị trí tuyển dụng</span>
+                        <span class="transition-transform group-hover:translate-x-1 font-mono text-base">↓</span>
+                    </a>
+                </div>
 
             </div>
+        </div>
+
+        <div class="absolute bottom-6 right-6 sm:bottom-8 sm:right-12 z-20 flex items-center gap-2">
+            <template x-for="(slide, index) in slides" :key="'dot-' + index">
+                <button 
+                    @click="goTo(index)" 
+                    class="h-2.5 rounded-full transition-all duration-300 cursor-pointer shadow-sm"
+                    :class="current === index ? 'w-10 bg-[#EB323A]' : 'w-2.5 bg-white/60 hover:bg-white'"
+                ></button>
+            </template>
+        </div>
+    </section>
+
+    {{-- CONTAINER CHÍNH CHUẨN 1440PX --}}
+    <div class="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 py-10 sm:py-12 space-y-12 sm:space-y-14">
+
+        {{-- =========================================================
+             2. VÌ SAO LỰA CHỌN CHÚNG TÔI ? (CHỮ IN ĐẬM SANG MÀU XANH #264abc)
+             ========================================================= --}}
+        <section class="border-b border-slate-200/80 pb-12 sm:pb-14">
+            <div class="mb-7 space-y-2.5">
+                <div class="flex items-center gap-2 font-mono text-xs sm:text-sm font-bold uppercase tracking-[0.25em] text-[#EB323A]">
+                    <span class="h-0.5 w-6 bg-[#EB323A]"></span>
+                    CHÍNH SÁCH ĐÃI NGỘ & PHÁT TRIỂN
+                </div>
+                <h2 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight" style="color: #264abc !important;">
+                    Vì Sao Lại Lựa Chọn Chúng Tôi ?
+                </h2>
+                <p class="text-base sm:text-lg text-slate-600 leading-relaxed max-w-5xl pt-1">
+                    Gia nhập <strong class="font-bold" style="color: #264abc !important;">Tân Minh Nhân</strong> để cùng kiến tạo những công trình bền vững và phát triển sự nghiệp vững chắc. Chúng tôi mang đến môi trường làm việc chuyên nghiệp, cơ hội học hỏi từ các dự án thực tế, chế độ đãi ngộ cạnh tranh, phúc lợi đầy đủ và lộ trình phát triển rõ ràng. Mỗi thành viên đều được trân trọng, đồng hành và tạo điều kiện để phát huy tối đa năng lực.
+                </p>
+            </div>
+
+            {{-- 6 Khối lợi ích: Chữ in đậm màu xanh #264abc --}}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                {{-- 1. Thu nhập --}}
+                <div class="p-6 sm:p-7 rounded-sm border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-[#264abc]/60 hover:shadow-md transition-all duration-300">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="w-2.5 h-2.5 bg-[#EB323A]"></span>
+                        <h3 class="font-bold text-lg sm:text-xl uppercase tracking-tight" style="color: #264abc !important;">Thu nhập cạnh tranh</h3>
+                    </div>
+                    <ul class="text-[15px] sm:text-base text-slate-600 space-y-2.5 list-disc list-inside leading-relaxed">
+                        <li>Mức lương thỏa thuận theo đúng năng lực.</li>
+                        <li>Thưởng lễ, Tết, thưởng dự án và thưởng quyết toán công trình.</li>
+                    </ul>
+                </div>
+
+                {{-- 2. Công tác xa --}}
+                <div class="p-6 sm:p-7 rounded-sm border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-[#264abc]/60 hover:shadow-md transition-all duration-300">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="w-2.5 h-2.5 bg-[#EB323A]"></span>
+                        <h3 class="font-bold text-lg sm:text-xl uppercase tracking-tight" style="color: #264abc !important;">Chế độ công tác xa</h3>
+                    </div>
+                    <ul class="text-[15px] sm:text-base text-slate-600 space-y-2.5 list-disc list-inside leading-relaxed">
+                        <li>Sau mỗi 40 ngày công tác xa, được nghỉ 04 ngày và hưởng nguyên lương.</li>
+                        <li>Bố trí lịch nghỉ luân phiên linh hoạt, hỗ trợ tối đa việc thăm gia đình.</li>
+                    </ul>
+                </div>
+
+                {{-- 3. Chính sách --}}
+                <div class="p-6 sm:p-7 rounded-sm border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-[#264abc]/60 hover:shadow-md transition-all duration-300">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="w-2.5 h-2.5 bg-[#EB323A]"></span>
+                        <h3 class="font-bold text-lg sm:text-xl uppercase tracking-tight" style="color: #264abc !important;">Chính sách hấp dẫn</h3>
+                    </div>
+                    <ul class="text-[15px] sm:text-base text-slate-600 space-y-2.5 list-disc list-inside leading-relaxed">
+                        <li>Công ty đài thọ 100% vé máy bay khi đi công tác dự án.</li>
+                        <li>Hỗ trợ phụ cấp từ 200.000 – 300.000 VNĐ/ngày tùy khu vực.</li>
+                        <li>Hỗ trợ chỗ ở đầy đủ tiện nghi trong suốt thời gian công tác.</li>
+                    </ul>
+                </div>
+
+                {{-- 4. Cơ hội phát triển --}}
+                <div class="p-6 sm:p-7 rounded-sm border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-[#264abc]/60 hover:shadow-md transition-all duration-300">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="w-2.5 h-2.5 bg-[#EB323A]"></span>
+                        <h3 class="font-bold text-lg sm:text-xl uppercase tracking-tight" style="color: #264abc !important;">Cơ hội phát triển</h3>
+                    </div>
+                    <ul class="text-[15px] sm:text-base text-slate-600 space-y-2.5 list-disc list-inside leading-relaxed">
+                        <li>Được đào tạo bài bản, nâng cao nghiệp vụ kỹ thuật thực chiến.</li>
+                        <li>Lộ trình phát triển nghề nghiệp rõ ràng, minh bạch.</li>
+                        <li>Cơ hội trực tiếp tham gia các đại dự án quy mô lớn trên toàn quốc.</li>
+                    </ul>
+                </div>
+
+                {{-- 5. Môi trường --}}
+                <div class="p-6 sm:p-7 rounded-sm border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-[#264abc]/60 hover:shadow-md transition-all duration-300">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="w-2.5 h-2.5 bg-[#EB323A]"></span>
+                        <h3 class="font-bold text-lg sm:text-xl uppercase tracking-tight" style="color: #264abc !important;">Môi trường chuyên nghiệp</h3>
+                    </div>
+                    <ul class="text-[15px] sm:text-base text-slate-600 space-y-2.5 list-disc list-inside leading-relaxed">
+                        <li>Đồng nghiệp thân thiện, gắn kết và sẵn sàng hỗ trợ.</li>
+                        <li>Văn hóa làm việc kỷ luật, tôn trọng và đề cao tinh thần trách nhiệm.</li>
+                        <li>Luôn đặt an toàn lao động và chất lượng công trình lên hàng đầu.</li>
+                    </ul>
+                </div>
+
+                {{-- 6. Phúc lợi --}}
+                <div class="p-6 sm:p-7 rounded-sm border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-[#264abc]/60 hover:shadow-md transition-all duration-300">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="w-2.5 h-2.5 bg-[#EB323A]"></span>
+                        <h3 class="font-bold text-lg sm:text-xl uppercase tracking-tight" style="color: #264abc !important;">Chế độ phúc lợi đầy đủ</h3>
+                    </div>
+                    <ul class="text-[15px] sm:text-base text-slate-600 space-y-2.5 list-disc list-inside leading-relaxed">
+                        <li>Tham gia đầy đủ BHXH, BHYT, BHTN theo quy định pháp luật.</li>
+                        <li>Hỗ trợ chi phí điện thoại và trang bị đầy đủ bảo hộ đạt chuẩn.</li>
+                    </ul>
+                </div>
+
+            </div>
+        </section>
 
 
-            @if(isset($careers) && $careers->count())
+        {{-- =========================================================
+             3. CƠ HỘI VIỆC LÀM: SÁT LẠI VỚI NHAU & HOVER CHUYỂN ĐỎ
+             ========================================================= --}}
+        <section id="jobs-list" class="scroll-mt-16">
+            
+            <div class="flex items-center gap-3 mb-6">
+                <span class="h-1 w-8 bg-[#EB323A]"></span>
+                <h2 class="text-2xl sm:text-4xl font-black uppercase tracking-wide" style="color: #264abc !important;">
+                    CƠ HỘI VIỆC LÀM
+                </h2>
+            </div>
 
-                <div class="border-y border-slate-200">
+            @if(isset($careers) && $careers->isNotEmpty())
+                {{-- THU GỌN KHOẢNG CÁCH SÁT LẠI: gap-x-6 gap-y-6 --}}
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6">
+                    @foreach($careers as $index => $career)
+                        @php
+                            $jobImg = $resolveCareerImage($career, $index);
+                        @endphp
 
-                    @foreach($careers as $career)
+                        {{-- TỪNG Ô CÔNG VIỆC: HOVER VIỀN TRÊN CHUYỂN ĐỎ --}}
+                        <div class="border-t-2 border-slate-300 hover:border-[#EB323A] pt-4 flex items-start gap-4 group transition-colors duration-300 cursor-pointer">
+                            
+                            {{-- ẢNH VUÔNG BÊN TRÁI --}}
+                            <div class="w-28 h-28 sm:w-32 sm:h-32 shrink-0 overflow-hidden bg-slate-100 rounded-sm border border-slate-200/80 group-hover:border-[#EB323A]/50 relative shadow-xs transition-colors duration-300">
+                                <a href="{{ route('careers.show', $career->id) }}" class="block w-full h-full">
+                                    <img
+                                        src="{{ $jobImg }}"
+                                        alt="{{ $career->job_title }}"
+                                        class="w-full h-full aspect-square object-cover object-center transition-transform duration-500 ease-out group-hover:scale-105"
+                                        loading="eager"
+                                    />
+                                </a>
+                            </div>
 
-                        <article
-                            x-data="{ open: false }"
-                            class="border-b border-slate-200 last:border-b-0"
-                        >
-
-                            {{-- Job row --}}
-                            <button
-                                type="button"
-                                @click="open = !open"
-                                class="group flex w-full items-center justify-between gap-6 py-7 text-left"
-                            >
-
-                                <div class="min-w-0">
-
-                                    <div class="flex flex-wrap items-center gap-3">
-
-                                        @if($career->department)
-
-                                            <span class="tag-red tag">
-                                                {{ $career->department }}
-                                            </span>
-
-                                        @endif
-
-
-                                        @if($career->location)
-
-                                            <span class="font-display text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
-                                                {{ $career->location }}
-                                            </span>
-
-                                        @endif
-
-                                    </div>
-
-
-                                    <h3 class="mt-4 font-display text-2xl font-semibold tracking-[-0.035em] sm:text-3xl">
-                                        {{ $career->job_title }}
+                            {{-- NỘI DUNG BÊN PHẢI: MÀU XANH -> HOVER ĐỔI SANG ĐỎ --}}
+                            <div class="flex-1 min-w-0 flex flex-col justify-between min-h-[112px] sm:min-h-[128px]">
+                                
+                                <div class="space-y-1.5">
+                                    {{-- Tên vị trí: XANH -> HOVER CHUYỂN ĐỎ --}}
+                                    <h3 class="text-base sm:text-lg font-bold leading-snug line-clamp-2 transition-colors duration-300">
+                                        <a 
+                                            href="{{ route('careers.show', $career->id) }}"
+                                            class="block group-hover:!text-[#EB323A] transition-colors duration-200"
+                                            style="color: #264abc;"
+                                        >
+                                            {{ $career->job_title }}
+                                        </a>
                                     </h3>
 
+                                    {{-- Hạn nộp --}}
+                                    <div class="flex items-center gap-2 text-xs sm:text-sm text-slate-500 font-medium">
+                                        <svg class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#EB323A] transition-colors shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                        </svg>
+                                        <span>
+                                            {{ $career->deadline ? $career->deadline->format('d/m/Y') : 'Tuyển liên tục' }}
+                                        </span>
+                                    </div>
                                 </div>
 
-
-                                <span
-                                    class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-300 text-xl transition-all duration-300 group-hover:border-slate-950 group-hover:bg-slate-950 group-hover:text-white"
-                                >
-
-                                    <span
-                                        x-text="open ? '−' : '+'"
-                                    ></span>
-
-                                </span>
-
-                            </button>
-
-
-                            {{-- Job detail --}}
-                            <div
-                                x-cloak
-                                x-show="open"
-                                x-collapse
-                                class="pb-8"
-                            >
-
-                                <div class="grid gap-8 lg:grid-cols-[1fr_auto]">
-
-                                    <div>
-
-                                        @if($career->description)
-
-                                            <div class="prose prose-slate max-w-3xl">
-                                                {!! nl2br(e($career->description)) !!}
-                                            </div>
-
-                                        @else
-
-                                            <p class="text-sm leading-7 text-slate-500">
-                                                Detailed job description
-                                                will be provided by the
-                                                recruitment team.
-                                            </p>
-
-                                        @endif
-
-                                    </div>
-
-
-                                    <div class="min-w-[220px]">
-
-                                        <dl class="space-y-5">
-
-                                            @if($career->salary_range)
-
-                                                <div>
-
-                                                    <dt class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                                                        Salary
-                                                    </dt>
-
-                                                    <dd class="mt-1 font-display text-sm font-semibold">
-                                                        {{ $career->salary_range }}
-                                                    </dd>
-
-                                                </div>
-
-                                            @endif
-
-
-                                            @if($career->deadline)
-
-                                                <div>
-
-                                                    <dt class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-slate-400">
-                                                        Application deadline
-                                                    </dt>
-
-                                                    <dd class="mt-1 font-display text-sm font-semibold">
-                                                        {{ \Illuminate\Support\Carbon::parse($career->deadline)->format('d M Y') }}
-                                                    </dd>
-
-                                                </div>
-
-                                            @endif
-
-                                        </dl>
-
-
-                                        <button
-                                            type="button"
-                                            @click="window.dispatchEvent(new CustomEvent('open-career-form', { detail: { job: @js($career->job_title) } }))"
-                                            class="btn-primary mt-7 w-full"
-                                        >
-                                            Apply for this role →
-                                        </button>
-
-                                    </div>
-
+                                {{-- Link xem chi tiết: HOVER CHUYỂN ĐỎ & DỊCH CHUYỂN MŨI TÊN --}}
+                                <div class="pt-1.5">
+                                    <a
+                                        href="{{ route('careers.show', $career->id) }}"
+                                        class="text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1 group-hover:!text-[#EB323A] transition-colors duration-200"
+                                        style="color: #000;"
+                                    >
+                                        <span>Xem chi tiết</span>
+                                        <span class="font-mono text-sm group-hover:translate-x-1 transition-transform">→</span>
+                                    </a>
                                 </div>
 
                             </div>
 
-                        </article>
-
+                        </div>
                     @endforeach
-
                 </div>
-
             @else
-
-                {{-- Empty positions --}}
-                <div class="border border-dashed border-slate-300 bg-slate-50 px-8 py-20 text-center">
-
-                    <p class="eyebrow justify-center">
-                        Recruitment
-                    </p>
-
-                    <h3 class="mt-5 font-display text-3xl font-semibold tracking-[-0.04em]">
-                        No open positions right now.
-                    </h3>
-
-                    <p class="mx-auto mt-4 max-w-lg text-sm leading-7 text-slate-500">
-                        You can still send us your CV. We keep strong
-                        candidates in mind for future opportunities.
-                    </p>
-
-                    <button
-                        type="button"
-                        onclick="window.dispatchEvent(new CustomEvent('open-career-form'))"
-                        class="btn-dark mt-7"
-                    >
-                        Send your CV
-                    </button>
-
+                <div class="text-center py-12 border border-dashed border-slate-300 rounded-sm bg-slate-50">
+                    <p class="text-base text-slate-600 font-medium">Hiện tại công ty đã tuyển đủ nhân sự. Các đợt tuyển dụng mới sẽ sớm được cập nhật!</p>
                 </div>
-
             @endif
 
-        </div>
-
-    </section>
+        </section>
 
 
-    {{-- =====================================================
-         BENEFITS
-         ===================================================== --}}
-    <section class="section bg-slate-50">
-
-        <div class="container-page">
-
-            <div class="grid gap-14 lg:grid-cols-[0.55fr_1.45fr]">
-
-                <div>
-
-                    <p class="eyebrow">
-                        Employee benefits
-                    </p>
-
-                    <h2 class="mt-5 max-w-md font-display text-4xl font-semibold leading-[0.98] tracking-[-0.05em] sm:text-5xl">
-                        Support that
-                        moves with you.
-                    </h2>
-
-                    <p class="mt-6 max-w-sm text-sm leading-7 text-slate-500">
-                        We aim to create an environment where people can
-                        focus on doing meaningful work while having the
-                        practical support they need.
-                    </p>
-
+        {{-- =========================================================
+             4. HỒ SƠ ỨNG TUYỂN & NƠI NHẬN HỒ SƠ (CHỮ IN ĐẬM MÀU XANH)
+             ========================================================= --}}
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 pt-6 border-t border-slate-200/80">
+            
+            {{-- Cột Trái: Hồ sơ ứng tuyển (Accordion) --}}
+            <div class="lg:col-span-6" x-data="{ openItem: 1 }">
+                <div class="border-b-2 border-[#EB323A] pb-2 mb-5 inline-block">
+                    <h3 class="text-xl sm:text-2xl font-extrabold uppercase" style="color: #264abc !important;">
+                        Hồ sơ ứng tuyển
+                    </h3>
                 </div>
 
-
-                <div class="divide-y divide-slate-200 border-y border-slate-200">
-
-                    {{-- Benefit --}}
-                    <div class="grid gap-5 py-7 sm:grid-cols-[55px_1fr]">
-
-                        <span class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-red-600">
-                            01
-                        </span>
-
-                        <div>
-
-                            <h3 class="font-display text-xl font-semibold tracking-[-0.025em]">
-                                Competitive compensation
-                            </h3>
-
-                            <p class="mt-2 text-sm leading-7 text-slate-500">
-                                Salary based on role, experience and
-                                professional capability.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="grid gap-5 py-7 sm:grid-cols-[55px_1fr]">
-
-                        <span class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-red-600">
-                            02
-                        </span>
-
-                        <div>
-
-                            <h3 class="font-display text-xl font-semibold tracking-[-0.025em]">
-                                Bonuses & recognition
-                            </h3>
-
-                            <p class="mt-2 text-sm leading-7 text-slate-500">
-                                Performance and project contribution are
-                                recognized through company policies.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="grid gap-5 py-7 sm:grid-cols-[55px_1fr]">
-
-                        <span class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-red-600">
-                            03
-                        </span>
-
-                        <div>
-
-                            <h3 class="font-display text-xl font-semibold tracking-[-0.025em]">
-                                Insurance & benefits
-                            </h3>
-
-                            <p class="mt-2 text-sm leading-7 text-slate-500">
-                                Social insurance and applicable employee
-                                benefits according to company policy.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="grid gap-5 py-7 sm:grid-cols-[55px_1fr]">
-
-                        <span class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-red-600">
-                            04
-                        </span>
-
-                        <div>
-
-                            <h3 class="font-display text-xl font-semibold tracking-[-0.025em]">
-                                Project travel support
-                            </h3>
-
-                            <p class="mt-2 text-sm leading-7 text-slate-500">
-                                Travel, accommodation and daily allowances
-                                may apply for project assignments.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div class="grid gap-5 py-7 sm:grid-cols-[55px_1fr]">
-
-                        <span class="font-display text-[10px] font-bold uppercase tracking-[0.14em] text-red-600">
-                            05
-                        </span>
-
-                        <div>
-
-                            <h3 class="font-display text-xl font-semibold tracking-[-0.025em]">
-                                Career development
-                            </h3>
-
-                            <p class="mt-2 text-sm leading-7 text-slate-500">
-                                Exposure to real projects, technical
-                                learning and opportunities to grow.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </section>
-
-
-    {{-- =====================================================
-         APPLICATION FORM MODAL
-         ===================================================== --}}
-    <div
-        x-data="{
-            open: false,
-            job: ''
-        }"
-        @open-career-form.window="
-            open = true;
-            job = $event.detail?.job ?? '';
-            document.body.classList.add('overflow-hidden');
-        "
-        @keydown.escape.window="
-            open = false;
-            document.body.classList.remove('overflow-hidden');
-        "
-    >
-
-        {{-- Overlay --}}
-        <div
-            x-cloak
-            x-show="open"
-            x-transition.opacity
-            class="fixed inset-0 z-[300] bg-slate-950/80 backdrop-blur-sm"
-        ></div>
-
-
-        {{-- Modal --}}
-        <div
-            x-cloak
-            x-show="open"
-            x-transition:enter="transition ease-out duration-300"
-            x-transition:enter-start="translate-y-8 opacity-0"
-            x-transition:enter-end="translate-y-0 opacity-100"
-            x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="translate-y-0 opacity-100"
-            x-transition:leave-end="translate-y-8 opacity-0"
-            class="fixed inset-0 z-[310] flex items-end justify-center overflow-y-auto p-0 sm:items-center sm:p-6"
-        >
-
-            <div
-                @click.outside="
-                    open = false;
-                    document.body.classList.remove('overflow-hidden');
-                "
-                class="relative max-h-[95vh] w-full overflow-y-auto bg-white shadow-2xl sm:max-w-3xl"
-            >
-
-                {{-- Header --}}
-                <div class="sticky top-0 z-10 flex items-start justify-between border-b border-slate-200 bg-white px-6 py-6 sm:px-8">
-
-                    <div>
-
-                        <p class="eyebrow">
-                            Join our team
-                        </p>
-
-                        <h2 class="mt-3 font-display text-3xl font-semibold tracking-[-0.045em]">
-                            Apply now.
-                        </h2>
-
-                        <p
-                            x-show="job"
-                            class="mt-2 text-sm text-slate-500"
+                <div class="divide-y divide-slate-200 border-y border-slate-200 text-base">
+                    
+                    {{-- Mục 1: Thông tin ứng viên --}}
+                    <div class="py-3">
+                        <button
+                            type="button"
+                            @click="openItem = (openItem === 1 ? null : 1)"
+                            class="w-full flex items-center justify-between text-left font-bold focus:outline-none cursor-pointer hover:text-[#EB323A] transition-colors"
+                            style="color: #264abc;"
                         >
-                            Applying for:
-                            <strong
-                                class="text-slate-900"
-                                x-text="job"
-                            ></strong>
-                        </p>
-
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Thông tin ứng viên</span>
+                            </span>
+                            <svg class="w-5 h-5 text-slate-400 transition-transform" :class="openItem === 1 ? 'rotate-180 text-[#EB323A]' : ''" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div x-show="openItem === 1" x-collapse class="pt-2 pl-8 text-slate-600 text-sm sm:text-base leading-relaxed">
+                            Theo mẫu của công ty (<a href="NS-TD01-2020-thong-tin-ung-vien-v5.doc" class="text-[#EB323A] hover:underline font-semibold">tải tại đây</a>)
+                        </div>
                     </div>
 
+                    {{-- Mục 2: Sơ yếu lý lịch --}}
+                    <div class="py-3">
+                        <button
+                            type="button"
+                            @click="openItem = (openItem === 2 ? null : 2)"
+                            class="w-full flex items-center justify-between text-left font-bold focus:outline-none cursor-pointer hover:text-[#EB323A] transition-colors"
+                            style="color: #264abc;"
+                        >
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Sơ yếu lý lịch</span>
+                            </span>
+                            <span class="text-slate-400 font-mono text-base">›</span>
+                        </button>
+                        <div x-show="openItem === 2" x-collapse class="pt-2 pl-8 text-slate-600 text-sm sm:text-base leading-relaxed">
+                            Bản sơ yếu lý lịch có xác nhận của chính quyền địa phương trong vòng 6 tháng gần nhất.
+                        </div>
+                    </div>
 
-                    <button
-                        type="button"
-                        @click="
-                            open = false;
-                            document.body.classList.remove('overflow-hidden');
-                        "
-                        class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-slate-200 text-xl text-slate-600 transition-colors hover:bg-slate-950 hover:text-white"
-                        aria-label="Close application form"
-                    >
-                        ×
-                    </button>
+                    {{-- Mục 3: Đơn xin việc --}}
+                    <div class="py-3">
+                        <button
+                            type="button"
+                            @click="openItem = (openItem === 3 ? null : 3)"
+                            class="w-full flex items-center justify-between text-left font-bold focus:outline-none cursor-pointer hover:text-[#EB323A] transition-colors"
+                            style="color: #264abc;"
+                        >
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Đơn xin việc</span>
+                            </span>
+                            <span class="text-slate-400 font-mono text-base">›</span>
+                        </button>
+                        <div x-show="openItem === 3" x-collapse class="pt-2 pl-8 text-slate-600 text-sm sm:text-base leading-relaxed">
+                            Đơn xin việc nêu rõ kinh nghiệm công tác và vị trí ứng tuyển.
+                        </div>
+                    </div>
+
+                    {{-- Mục 4: Văn bằng --}}
+                    <div class="py-3">
+                        <button
+                            type="button"
+                            @click="openItem = (openItem === 4 ? null : 4)"
+                            class="w-full flex items-center justify-between text-left font-bold focus:outline-none cursor-pointer hover:text-[#EB323A] transition-colors"
+                            style="color: #264abc;"
+                        >
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a10.912 10.912 0 01.352 1.897L2.4 12.2A1 1 0 003 13.6h14a1 1 0 00.6-1.4l-3.202-2.252a10.92 10.92 0 01.352-1.897l2.644-1.131a1 1 0 000-1.84l-7-3zM3.31 16.03a1 1 0 00-.31.72V18a1 1 0 001 1h12a1 1 0 001-1v-1.25a1 1 0 00-.31-.72l-2.022-1.618a12.91 12.91 0 01-8.336 0L3.31 16.03z"></path>
+                                </svg>
+                                <span>Văn bằng chứng chỉ</span>
+                            </span>
+                            <span class="text-slate-400 font-mono text-base">›</span>
+                        </button>
+                        <div x-show="openItem === 4" x-collapse class="pt-2 pl-8 text-slate-600 text-sm sm:text-base leading-relaxed">
+                            Bản sao bằng tốt nghiệp đại học/cao đẳng và các chứng chỉ liên quan.
+                        </div>
+                    </div>
+
+                    {{-- Mục 5: Chứng minh nhân dân --}}
+                    <div class="py-3">
+                        <button
+                            type="button"
+                            @click="openItem = (openItem === 5 ? null : 5)"
+                            class="w-full flex items-center justify-between text-left font-bold focus:outline-none cursor-pointer hover:text-[#EB323A] transition-colors"
+                            style="color: #264abc;"
+                        >
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Chứng minh nhân dân / CCCD</span>
+                            </span>
+                            <span class="text-slate-400 font-mono text-base">›</span>
+                        </button>
+                        <div x-show="openItem === 5" x-collapse class="pt-2 pl-8 text-slate-600 text-sm sm:text-base leading-relaxed">
+                            Bản sao công chứng CCCD gắn chip.
+                        </div>
+                    </div>
+
+                    {{-- Mục 6: Ảnh thẻ --}}
+                    <div class="py-3">
+                        <button
+                            type="button"
+                            @click="openItem = (openItem === 6 ? null : 6)"
+                            class="w-full flex items-center justify-between text-left font-bold focus:outline-none cursor-pointer hover:text-[#EB323A] transition-colors"
+                            style="color: #264abc;"
+                        >
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Ảnh thẻ</span>
+                            </span>
+                            <span class="text-slate-400 font-mono text-base">›</span>
+                        </button>
+                        <div x-show="openItem === 6" x-collapse class="pt-2 pl-8 text-slate-600 text-sm sm:text-base leading-relaxed">
+                            02 ảnh 3x4 chụp trong vòng 6 tháng gần nhất.
+                        </div>
+                    </div>
+
+                    {{-- Mục 7: Giấy khám sức khỏe --}}
+                    <div class="py-3">
+                        <button
+                            type="button"
+                            @click="openItem = (openItem === 7 ? null : 7)"
+                            class="w-full flex items-center justify-between text-left font-bold focus:outline-none cursor-pointer hover:text-[#EB323A] transition-colors"
+                            style="color: #264abc;"
+                        >
+                            <span class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-slate-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>Giấy chứng nhận sức khỏe</span>
+                            </span>
+                            <span class="text-slate-400 font-mono text-base">›</span>
+                        </button>
+                        <div x-show="openItem === 7" x-collapse class="pt-2 pl-8 text-slate-600 text-sm sm:text-base leading-relaxed">
+                            Giấy khám sức khỏe từ bệnh viện tuyến quận/huyện trở lên cấp trong 6 tháng gần nhất.
+                        </div>
+                    </div>
 
                 </div>
-
-
-                {{-- Form --}}
-                <form
-                    action="{{ route('careers.apply') }}"
-                    method="POST"
-                    enctype="multipart/form-data"
-                    class="p-6 sm:p-8"
-                >
-
-                    @csrf
-
-                    <input
-                        type="hidden"
-                        name="job_title"
-                        :value="job"
-                    >
-
-
-                    {{-- Form errors --}}
-                    @if($errors->any())
-
-                        <div class="mb-7 bg-red-50 p-4 text-sm text-red-700">
-
-                            <p class="font-semibold">
-                                Please check the following:
-                            </p>
-
-                            <ul class="mt-2 list-disc space-y-1 pl-5">
-
-                                @foreach($errors->all() as $error)
-
-                                    <li>
-                                        {{ $error }}
-                                    </li>
-
-                                @endforeach
-
-                            </ul>
-
-                        </div>
-
-                    @endif
-
-
-                    {{-- Fields --}}
-                    <div class="grid gap-5 sm:grid-cols-2">
-
-                        <div class="sm:col-span-2">
-
-                            <label
-                                for="career-full-name"
-                                class="form-label"
-                            >
-                                Full name
-                            </label>
-
-                            <input
-                                id="career-full-name"
-                                type="text"
-                                name="full_name"
-                                value="{{ old('full_name') }}"
-                                required
-                                class="form-input"
-                                placeholder="Your full name"
-                            >
-
-                        </div>
-
-
-                        <div>
-
-                            <label
-                                for="career-email"
-                                class="form-label"
-                            >
-                                Email
-                            </label>
-
-                            <input
-                                id="career-email"
-                                type="email"
-                                name="email"
-                                value="{{ old('email') }}"
-                                required
-                                class="form-input"
-                                placeholder="you@example.com"
-                            >
-
-                        </div>
-
-
-                        <div>
-
-                            <label
-                                for="career-phone"
-                                class="form-label"
-                            >
-                                Phone
-                            </label>
-
-                            <input
-                                id="career-phone"
-                                type="tel"
-                                name="phone"
-                                value="{{ old('phone') }}"
-                                required
-                                class="form-input"
-                                placeholder="+84..."
-                            >
-
-                        </div>
-
-
-                        <div class="sm:col-span-2">
-
-                            <label
-                                for="career-position"
-                                class="form-label"
-                            >
-                                Position
-                            </label>
-
-                            <input
-                                id="career-position"
-                                type="text"
-                                name="job_title"
-                                :value="job"
-                                required
-                                class="form-input"
-                                placeholder="Position applied for"
-                            >
-
-                        </div>
-
-
-                        <div class="sm:col-span-2">
-
-                            <label
-                                for="career-portfolio"
-                                class="form-label"
-                            >
-                                Portfolio / LinkedIn
-                            </label>
-
-                            <input
-                                id="career-portfolio"
-                                type="url"
-                                name="portfolio_url"
-                                value="{{ old('portfolio_url') }}"
-                                class="form-input"
-                                placeholder="https://..."
-                            >
-
-                        </div>
-
-
-                        <div class="sm:col-span-2">
-
-                            <label
-                                for="career-cv"
-                                class="form-label"
-                            >
-                                Resume / CV
-                            </label>
-
-                            <input
-                                id="career-cv"
-                                type="file"
-                                name="cv"
-                                accept=".pdf,.doc,.docx"
-                                required
-                                class="form-input"
-                            >
-
-                            <p class="mt-2 text-xs text-slate-400">
-                                PDF, DOC or DOCX. Please upload your latest CV.
-                            </p>
-
-                        </div>
-
-
-                        <div class="sm:col-span-2">
-
-                            <label
-                                for="career-message"
-                                class="form-label"
-                            >
-                                Message
-                            </label>
-
-                            <textarea
-                                id="career-message"
-                                name="message"
-                                rows="6"
-                                class="form-input form-textarea"
-                                placeholder="Tell us about yourself, your experience and what you would like to contribute..."
-                            >{{ old('message') }}</textarea>
-
-                        </div>
-
-
-                        <div class="sm:col-span-2">
-
-                            <label class="flex items-start gap-3 text-sm leading-6 text-slate-500">
-
-                                <input
-                                    type="checkbox"
-                                    name="privacy"
-                                    value="1"
-                                    required
-                                    class="mt-1"
-                                >
-
-                                <span>
-                                    I agree that the information provided
-                                    may be used for recruitment purposes.
-                                </span>
-
-                            </label>
-
-                        </div>
-
-
-                        <div class="sm:col-span-2">
-
-                            <button
-                                type="submit"
-                                class="btn-primary w-full"
-                            >
-                                Submit application →
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </form>
-
             </div>
 
-        </div>
+            {{-- Cột Phải: Nơi nhận hồ sơ & Google Maps --}}
+            <div class="lg:col-span-6 space-y-3.5">
+                <div class="border-b-2 border-[#EB323A] pb-2 mb-5 inline-block">
+                    <h3 class="text-xl sm:text-2xl font-extrabold uppercase" style="color: #264abc !important;">
+                        Nơi nhận hồ sơ
+                    </h3>
+                </div>
+
+                <div class="space-y-2.5 text-base text-slate-700 leading-relaxed bg-white p-5 rounded-sm border border-slate-200 shadow-xs">
+                    <p class="flex items-center gap-3">
+                        <span class="font-bold min-w-[95px]" style="color: #264abc !important;">Email:</span>
+                        <a href="mailto:contact@tanminhnhan.com.vn" class="text-slate-800 hover:text-[#EB323A] font-semibold">contact@tanminhnhan.com.vn</a>
+                    </p>
+
+                    <p class="flex items-center gap-3">
+                        <span class="font-bold min-w-[95px]" style="color: #264abc !important;">Điện thoại:</span>
+                        <a href="tel:(0236) 3 958718" class="text-slate-800 hover:text-[#EB323A] font-semibold">(0236) 3 958718</a>
+                    </p>
+
+                    <p class="flex items-start gap-3">
+                        <span class="font-bold min-w-[95px] shrink-0" style="color: #264abc !important;">Địa chỉ:</span>
+                        <span>246-250 Lê Văn Hiến, Phường Khuê Mỹ, Quận Ngũ Hành Sơn, TP. Đà Nẵng, Việt Nam.</span>
+                    </p>
+                </div>
+
+                <div class="w-full aspect-[16/10] rounded-sm overflow-hidden border border-slate-200 shadow-xs mt-2">
+                    <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3834.6897623929062!2d108.24456827589188!3d16.02965744049452!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3142175af0706bff%3A0x185f7d5651d72061!2zQ8O0bmcgdHkgQ-G7lSBwaOG6p24gWMOieSBk4buxbmcgS2nhur9uIHRyw7pjIFTDom4gTWluaCBOaMOibg!5e0!3m2!1svi!2s!4v1784776803513!5m2!1svi!2s"
+                        class="w-full h-full border-0"
+                        allowfullscreen=""
+                        loading="lazy"
+                        referrerpolicy="no-referrer-when-downgrade"
+                    ></iframe>
+                </div>
+            </div>
+
+        </section>
 
     </div>
-
-
-    {{-- =====================================================
-         FINAL CTA
-         ===================================================== --}}
-    <section class="section section-blueprint">
-
-        <div class="container-page relative z-10">
-
-            <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end">
-
-                <div>
-
-                    <p class="eyebrow !text-white/60">
-                        Your next chapter
-                    </p>
-
-                    <h2 class="mt-6 max-w-5xl font-display text-5xl font-semibold leading-[0.92] tracking-[-0.06em] text-white sm:text-7xl lg:text-8xl">
-
-                        READY TO
-                        <br>
-                        BUILD?
-
-                    </h2>
-
-                    <p class="mt-7 max-w-xl text-sm leading-7 text-white/55">
-                        We are always interested in meeting talented people
-                        who care about design, engineering and construction.
-                    </p>
-
-                </div>
-
-
-                <button
-                    type="button"
-                    onclick="window.dispatchEvent(new CustomEvent('open-career-form'))"
-                    class="btn-white group min-w-[220px]"
-                >
-
-                    Send your CV
-
-                    <span class="transition-transform duration-300 group-hover:translate-x-1">
-                        →
-                    </span>
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </section>
-
 </div>
-
 @endsection

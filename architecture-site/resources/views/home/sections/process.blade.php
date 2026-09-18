@@ -1,5 +1,6 @@
 {{-- =========================================================
-     HOME — MILESTONES TIMELINE (FIX MOBILE OVERFLOW)
+     HOME — MILESTONES TIMELINE (EXPANDED 1440PX & HOVER-TRIGGERED)
+     resources/views/sections/timeline.blade.php
 ========================================================= --}}
 
 <section
@@ -15,6 +16,7 @@
         },
 
         startAutoPlay() {
+            this.stopAutoPlay();
             this.timer = setInterval(() => {
                 this.active = this.active >= this.total ? 1 : this.active + 1;
             }, this.intervalMs);
@@ -27,9 +29,11 @@
             }
         },
 
+        // Chuyển step lập tức khi hover hoặc click
         selectStep(step) {
-            this.active = step;
+            if (this.active === step) return;
             this.stopAutoPlay();
+            this.active = step;
         },
 
         steps: {
@@ -95,43 +99,49 @@
             }
         }
     }"
+    @mouseenter="stopAutoPlay()"
     @mouseleave="startAutoPlay()"
-    class="relative overflow-hidden bg-slate-50 py-16 sm:py-24 lg:py-32 select-none"
+    class="relative overflow-hidden bg-white pt-[36px] pb-[28px] md:pt-[54px] md:pb-[40px] border-b border-slate-200/80 select-none"
 >
 
-    {{-- Background Glow --}}
-    <div class="pointer-events-none absolute right-0 top-0 h-[450px] w-[450px] rounded-full bg-blue-100/50 blur-3xl"></div>
-    <div class="pointer-events-none absolute bottom-0 left-0 h-[400px] w-[400px] rounded-full bg-red-100/40 blur-3xl"></div>
+    {{-- Lớp nền Ambient Glow --}}
+    <div class="pointer-events-none absolute inset-0 overflow-hidden">
+        <div class="absolute -top-32 -right-32 w-[520px] h-[520px] bg-blue-100/40 rounded-full blur-[120px]"></div>
+        <div class="absolute -bottom-32 -left-32 w-[480px] h-[480px] bg-red-100/30 rounded-full blur-[120px]"></div>
+    </div>
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 relative">
+    {{-- Khung chứa bung rộng chuẩn 1440px --}}
+    <div class="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 relative z-10">
 
-        {{-- Header --}}
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        {{-- Header Section --}}
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-slate-200 pb-6">
             <div>
-                <div class="flex items-center gap-3">
-                    <span class="h-0.5 w-8 bg-red-600"></span>
-                    <p class="text-xs font-bold uppercase tracking-[0.25em] text-red-600">
-                        Hành trình phát triển
-                    </p>
+                <div class="inline-flex items-center gap-2.5 text-xs font-bold uppercase tracking-[0.25em] text-[#EB323A]">
+                    <span class="h-0.5 w-6 bg-[#EB323A]"></span>
+                    Hành Trình Phát Triển
                 </div>
-                <h2 class="mt-3 text-2xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-950">
-                    Dấu ấn <span class="text-slate-400 font-light">thời gian.</span>
+                <h2 class="mt-2 text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
+                    Dấu Ấn <span class="font-light text-slate-400">Thời Gian</span>
                 </h2>
             </div>
+
+            <span class="text-xs font-semibold uppercase tracking-widest text-slate-400 hidden md:block">
+                2011 — 2026
+            </span>
         </div>
 
         {{-- =========================================================
-             1. MOBILE NAVIGATION: VỪA VẶN 100% KHÔNG BỊ TRÀN HAY MẤT 2026
+             1. MOBILE NAVIGATION
              ========================================================= --}}
         <div class="mt-8 lg:hidden">
-            <div class="grid grid-cols-5 gap-1.5 p-1 bg-white rounded-xl border border-slate-200/90 shadow-sm">
+            <div class="grid grid-cols-5 gap-1.5 p-1 bg-slate-50 rounded-xl border border-slate-200 shadow-sm">
                 <template x-for="i in 5" :key="i">
                     <button
                         type="button"
                         @click="selectStep(i)"
                         class="flex flex-col items-center justify-center py-2 px-1 rounded-lg transition-all duration-300 focus:outline-none"
                         :class="active === i
-                            ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
+                            ? 'bg-[#EB323A] text-white shadow-md shadow-red-500/30'
                             : 'text-slate-500 hover:text-slate-900'"
                     >
                         <span class="font-mono text-[9px] opacity-75 font-semibold" x-text="'0' + i"></span>
@@ -141,49 +151,56 @@
             </div>
         </div>
 
-
         {{-- =========================================================
-             2. DESKTOP TIMELINE: GIỮ NGUYÊN BỐ CỤC 5 BƯỚC
+             2. DESKTOP TIMELINE: TỰ NHẢY KHI HOVER CHUỘT
              ========================================================= --}}
-        <div class="relative mt-16 hidden lg:block">
+        <div class="relative mt-14 hidden lg:block">
 
             {{-- Line chạy ngang --}}
-            <div class="absolute left-0 right-0 top-[31px] h-0.5 bg-slate-200">
+            <div class="absolute left-0 right-0 top-[35px] h-0.5 bg-slate-200">
                 <div
-                    class="relative h-full bg-gradient-to-r from-red-500 to-red-600 transition-all duration-700 ease-out"
+                    class="relative h-full transition-all duration-700 ease-out"
+                    style="background: linear-gradient(90deg, #264abc, #EB323A);"
                     :style="'width: ' + ((active - 1) / 4 * 100) + '%'"
                 >
-                    <span class="absolute -right-1.5 -top-[5px] h-3 w-3 rounded-full bg-red-600 shadow-[0_0_12px_#dc2626]">
+                    <span class="absolute -right-1.5 -top-[5px] h-3.5 w-3.5 rounded-full bg-[#EB323A] shadow-[0_0_12px_#EB323A]">
                         <span class="absolute inset-0 animate-ping rounded-full bg-red-400 opacity-75"></span>
                     </span>
                 </div>
             </div>
 
-            {{-- 5 Bước trên Desktop --}}
-            <div class="grid grid-cols-5 gap-5">
+            {{-- 5 Bước trên Desktop: Kích hoạt ngay khi @mouseenter --}}
+            <div class="grid grid-cols-5 gap-6">
                 <template x-for="i in 5" :key="i">
                     <button
                         type="button"
                         @mouseenter="selectStep(i)"
                         @click="selectStep(i)"
-                        class="group relative text-left outline-none"
+                        class="group relative text-left outline-none cursor-pointer py-1"
                     >
                         <div class="relative z-10">
+                            {{-- Khối hộp số lớn hơn (h-18 w-18) --}}
                             <div
-                                class="flex h-16 w-16 items-center justify-center border transition-all duration-500 rounded-sm"
+                                class="flex h-[72px] w-[72px] items-center justify-center border transition-all duration-500 rounded-sm"
                                 :class="active === i
-                                    ? 'border-red-600 bg-red-600 text-white shadow-xl shadow-red-600/30 scale-105'
-                                    : 'border-slate-300 bg-white text-slate-500 group-hover:border-slate-900 group-hover:text-slate-900'"
+                                    ? 'border-[#264abc] bg-[#264abc] text-white shadow-xl shadow-blue-600/25 scale-105'
+                                    : 'border-slate-200 bg-white text-slate-500 group-hover:border-[#264abc] group-hover:text-[#264abc]'"
                             >
-                                <span class="font-mono text-sm font-bold" x-text="'0' + i"></span>
+                                <span class="font-mono text-base font-bold" x-text="'0' + i"></span>
                             </div>
+
+                            {{-- Năm & Tiêu đề mốc --}}
                             <div class="mt-6">
                                 <p
                                     class="text-xs font-bold uppercase tracking-[0.18em] transition-colors duration-300"
-                                    :class="active === i ? 'text-red-600' : 'text-slate-400'"
+                                    :class="active === i ? 'text-[#EB323A]' : 'text-slate-400'"
                                     x-text="steps[i].short"
                                 ></p>
-                                <h3 class="mt-1.5 text-base font-bold text-slate-950 truncate" x-text="steps[i].title"></h3>
+                                <h3 
+                                    class="mt-1.5 text-sm sm:text-base font-bold truncate transition-colors duration-200"
+                                    :class="active === i ? 'text-slate-950' : 'text-slate-600 group-hover:text-slate-900'"
+                                    x-text="steps[i].title"
+                                ></h3>
                             </div>
                         </div>
                     </button>
@@ -191,23 +208,22 @@
             </div>
         </div>
 
-
         {{-- =========================================================
-             3. DETAIL CARD
+             3. DETAIL CARD BUNG RỘNG CÙNG KHUNG HÌNH 1440PX
              ========================================================= --}}
-        <div
-            @mouseenter="stopAutoPlay()"
-            class="mt-6 sm:mt-12 overflow-hidden rounded-2xl border border-slate-200/90 bg-white shadow-sm transition-all duration-300"
-        >
-            <div class="grid lg:grid-cols-[.32fr_1fr]">
+        <div class="mt-10 sm:mt-14 overflow-hidden rounded-sm border border-slate-200 bg-white shadow-[0_15px_40px_rgba(20,44,80,0.08)] transition-all duration-300">
+            <div class="grid lg:grid-cols-[.34fr_1fr]">
 
-                {{-- Khối Số: Ẩn trên mobile để tiết kiệm chiều dọc --}}
-                <div class="hidden lg:flex relative overflow-hidden bg-slate-950 p-12 flex-col justify-between">
+                {{-- Khối Số: Navy #0e2e60 --}}
+                <div 
+                    class="hidden lg:flex relative overflow-hidden p-10 sm:p-12 lg:p-14 flex-col justify-between"
+                    style="background-color: #0e2e60 !important;"
+                >
                     <div class="absolute -right-20 -top-20 h-64 w-64 rounded-full border border-white/10 pointer-events-none"></div>
                     <div class="absolute -bottom-32 -left-20 h-72 w-72 rounded-full border border-white/10 pointer-events-none"></div>
 
                     <div class="relative z-10">
-                        <p class="text-xs font-bold uppercase tracking-[0.2em] text-white/40">
+                        <p class="text-xs font-bold uppercase tracking-[0.2em] text-white/50">
                             Cột mốc thời gian
                         </p>
 
@@ -216,20 +232,20 @@
                             x-transition:enter="transition ease-out duration-300"
                             x-transition:enter-start="opacity-0 translate-y-3"
                             x-transition:enter-end="opacity-100 translate-y-0"
-                            class="mt-6 font-mono text-8xl font-black tracking-tight text-white"
+                            class="mt-6 font-mono text-8xl lg:text-9xl font-black tracking-tight text-white leading-none"
                             x-text="steps[active].number"
                         ></div>
 
-                        <div class="mt-6 h-0.5 w-12 bg-red-600"></div>
+                        <div class="mt-6 h-0.5 w-14 bg-[#EB323A]"></div>
 
                         <p
-                            class="mt-6 font-mono text-xl font-bold tracking-widest text-red-500"
+                            class="mt-6 font-mono text-2xl font-bold tracking-widest text-[#EB323A]"
                             x-text="steps[active].short"
                         ></p>
                     </div>
 
-                    <div class="relative z-10 font-mono text-xs text-white/30 tracking-widest uppercase">
-                        TMN / History
+                    <div class="relative z-10 font-mono text-xs text-white/40 tracking-widest uppercase">
+                        TMN / Milestones
                     </div>
                 </div>
 
@@ -239,37 +255,38 @@
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0 translate-x-2"
                     x-transition:enter-end="opacity-100 translate-x-0"
-                    class="p-6 sm:p-10 lg:p-12 flex flex-col justify-between"
+                    class="p-7 sm:p-10 lg:p-14 flex flex-col justify-between"
                 >
                     <div>
-                        {{-- Badge chỉ hiển thị trên Mobile --}}
+                        {{-- Mobile Badge --}}
                         <div class="flex items-center justify-between lg:hidden border-b border-slate-100 pb-3 mb-4">
-                            <span class="inline-flex items-center gap-1.5 font-mono text-xs font-extrabold text-red-600 bg-red-50 px-2.5 py-1 rounded-md">
+                            <span class="inline-flex items-center gap-1.5 font-mono text-xs font-extrabold text-[#EB323A] bg-red-50 px-2.5 py-1 rounded-sm">
                                 <span>Giai đoạn</span>
                                 <span x-text="steps[active].number"></span>
                                 <span class="text-slate-300">/</span>
                                 <span class="text-slate-400">05</span>
                             </span>
-                            <span class="font-mono text-xs font-extrabold text-slate-900 bg-slate-100 px-3 py-1 rounded-md" x-text="'Năm ' + steps[active].short"></span>
+                            <span class="font-mono text-xs font-extrabold text-white bg-[#264abc] px-3 py-1 rounded-sm" x-text="'Năm ' + steps[active].short"></span>
                         </div>
 
                         {{-- Tiêu đề & Mô tả --}}
                         <h3
-                            class="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-slate-950"
+                            class="text-xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight"
+                            style="color: #264abc !important;"
                             x-text="steps[active].title"
                         ></h3>
 
                         <p
-                            class="mt-3 sm:mt-4 text-xs sm:text-base leading-relaxed sm:leading-7 text-slate-600 font-normal"
+                            class="mt-4 sm:mt-5 text-sm sm:text-base lg:text-lg leading-relaxed text-slate-600 font-normal"
                             x-text="steps[active].description"
                         ></p>
                     </div>
 
                     {{-- Checklist 4 ý chính --}}
-                    <div class="mt-6 sm:mt-8 grid gap-2 sm:gap-3 sm:grid-cols-2 pt-5 sm:pt-6 border-t border-slate-100">
+                    <div class="mt-8 sm:mt-10 grid gap-3 sm:gap-4 sm:grid-cols-2 pt-6 sm:pt-7 border-t border-slate-100">
                         <template x-for="(item, idx) in steps[active].items" :key="idx">
-                            <div class="flex items-start gap-2.5 p-2 rounded-lg bg-slate-50/70 sm:bg-transparent sm:p-0">
-                                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-100 text-[10px] font-bold text-red-600 mt-0.5">
+                            <div class="flex items-start gap-3.5 p-3 rounded-sm bg-slate-50/80 border border-slate-100 sm:p-3.5">
+                                <span class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-red-50 text-[10px] font-bold text-[#EB323A] border border-red-100 mt-0.5">
                                     ✓
                                 </span>
                                 <span class="text-xs sm:text-sm font-medium text-slate-800 leading-snug" x-text="item"></span>

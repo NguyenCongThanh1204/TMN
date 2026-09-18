@@ -17,36 +17,47 @@ class ProjectController extends Controller
             ->orderBy('name')
             ->get();
 
+        // 1. Lấy cố định các dự án tiêu biểu cho Hero Vòng xoay 3D (ví dụ lấy tối đa 7 dự án)
+        $wheelProjects = Project::query()
+            ->with('category')
+            ->where('status', 'published')
+            ->where('is_featured', 1)
+            ->latest()
+            ->limit(7)
+            ->get();
+
+        // Nếu không có đủ dự án featured nào, lấy tạm các dự án mới nhất để vòng xoay không bị trống
+        if ($wheelProjects->isEmpty()) {
+            $wheelProjects = Project::query()
+                ->with('category')
+                ->where('status', 'published')
+                ->latest()
+                ->limit(7)
+                ->get();
+        }
+
+        // 2. Truy vấn danh sách dự án cho phần lưới bên dưới (có phân trang 10 dự án và lọc theo yêu cầu)
         $projects = Project::query()
             ->with('category')
             ->where('status', 'published');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Lọc danh mục
-        |--------------------------------------------------------------------------
-        */
         if ($request->filled('category')) {
-            $projects->where('category_id', $request->category);
+            $categorySlugOrId = $request->category;
+            $projects->where(function ($query) use ($categorySlugOrId) {
+                $query->where('category_id', $categorySlugOrId)
+                      ->orWhereHas('category', function ($q) use ($categorySlugOrId) {
+                          $q->where('slug', $categorySlugOrId)
+                            ->orWhere('id', $categorySlugOrId);
+                      });
+            });
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Lọc năm
-        |--------------------------------------------------------------------------
-        */
         if ($request->filled('year')) {
             $projects->where('year', $request->year);
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Tìm kiếm
-        |--------------------------------------------------------------------------
-        */
         if ($request->filled('search')) {
             $search = $request->search;
-
             $projects->where(function ($query) use ($search) {
                 $query
                     ->where('title', 'like', "%{$search}%")
@@ -57,10 +68,9 @@ class ProjectController extends Controller
 
         $projects = $projects
             ->latest()
-            ->paginate(9)
+            ->paginate(10)
             ->withQueryString();
 
-        // Đã sửa: thay published() thành where('status', 'published')
         $years = Project::query()
             ->where('status', 'published')
             ->whereNotNull('year')
@@ -72,7 +82,8 @@ class ProjectController extends Controller
         return view('projects.index', compact(
             'projects',
             'categories',
-            'years'
+            'years',
+            'wheelProjects' // Truyền biến này ra view
         ));
     }
 
@@ -86,10 +97,8 @@ class ProjectController extends Controller
             abort(404);
         }
 
-        $project->load([
-            'category',
-            'media',
-        ]);
+        // ĐÃ SỬA: Bỏ 'media' của Curator, chỉ nạp 'category'
+        $project->load(['category']);
 
         $relatedProjects = Project::query()
             ->with('category')

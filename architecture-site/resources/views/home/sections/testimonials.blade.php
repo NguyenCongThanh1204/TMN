@@ -1,5 +1,5 @@
 {{-- =========================================================
-    HOME - SECTION 8: 3D POP-OUT (CROSS-DISSOLVE & DEPTH MOTION)
+    HOME - SECTION 8: 3D POP-OUT (STATIC CARD & DEPTH MOTION)
     resources/views/home/sections/testimonials.blade.php
 ========================================================= --}}
 
@@ -13,83 +13,20 @@
             'badge' => 'Định hình văn hóa',
             'cutout_image' => asset('images/leadership/chutich.png'),
         ],
-        [
-            'name' => 'Nguyễn Thị Thu Phượng',
-            'role' => 'Phó Chủ tịch HĐQT',
-            'role_en' => 'VICE CHAIRWOMAN',
-            'quote' => 'Tầm nhìn chiến lược sáng suốt và đặt sự phát triển bền vững lên hàng đầu.',
-            'badge' => 'Tầm nhìn chiến lược',
-            'cutout_image' => asset('images/leadership/phoChuTich.png'),
-        ],
     ];
 
-    $partners = [
-        [
-            'name' => 'SUN GROUP',
-            'logo' => asset('images/doiTac/SUNGROUP.png'),
-        ],
-        [
-            'name' => 'JOTUN',
-            'logo' => asset('images/doiTac/JOTUN.png'),
-        ],
-        [
-            'name' => 'DONGTAM',
-            'logo' => asset('images/doiTac/DONGTAM.jpg'),
-        ],
-        [
-            'name' => 'VIETCERAMICS',
-            'logo' => asset('images/doiTac/VIETCERAMICS.png'),
-        ],
-        [
-            'name' => 'KNAUF',
-            'logo' => asset('images/doiTac/KNAUF.png'),
-        ],
-        [
-            'name' => 'DUFAGO',
-            'logo' => asset('images/doiTac/DUFAGO.png'),
-        ],
-    ];
+    // Lấy danh sách đối tác từ CSDL
+    $partners = \App\Models\Partner::whereNotNull('logo')->latest()->get();
 @endphp
 
 <section
     id="leadership-message"
-    class="relative overflow-hidden bg-[#f8fafc] py-24 sm:py-32 border-b border-slate-200/80 text-slate-900 select-none"
-    x-data="{
-        current: 0,
-        total: {{ count($leadership) }},
-        timer: null,
-        interval: 6000,
-        progress: 0,
-        
-        startTimer() {
-            this.progress = 0;
-            if (this.timer) clearInterval(this.timer);
-            
-            const step = 40;
-            this.timer = setInterval(() => {
-                this.progress += (step / this.interval) * 100;
-                if (this.progress >= 100) {
-                    this.next();
-                }
-            }, step);
-        },
-        
-        next() {
-            this.current = (this.current + 1) % this.total;
-            this.progress = 0;
-        },
-
-        goTo(index) {
-            this.current = index;
-            this.startTimer();
-        }
-    }"
-    x-init="startTimer()"
+    class="relative overflow-hidden bg-[#f8fafc] pt-[32px] pb-[16px] md:pt-[50px] md:pb-[20px] border-b border-slate-200/80 text-slate-900 select-none"
 >
-    <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
+    <div class="relative mx-auto max-w-[1440px] px-6 md:px-12">
 
-        {{-- Header & Thanh chỉ báo chạy liên tục --}}
-        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-slate-200/90 pb-8">
+        {{-- Header --}}
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-2">
             <div>
                 <div class="flex items-center gap-2.5 mb-2.5">
                     <span class="h-0.5 w-6 bg-[#EB323A]"></span>
@@ -101,46 +38,12 @@
                     Thông điệp <span class="font-light text-slate-400">lãnh đạo.</span>
                 </h2>
             </div>
-
-            {{-- Thanh tiến trình tự động --}}
-            <!-- <div class="flex items-center gap-4">
-                @foreach($leadership as $index => $item)
-                    <button
-                        type="button"
-                        @click="goTo({{ $index }})"
-                        class="flex flex-col items-start gap-1 py-1 focus:outline-none"
-                    >
-                        <div class="h-1.5 w-16 sm:w-20 rounded-full bg-slate-200 overflow-hidden relative">
-                            <div
-                                class="h-full bg-[#EB323A] transition-all duration-75 ease-linear"
-                                :style="current === {{ $index }} ? `width: ${progress}%` : (current > {{ $index }} ? 'width: 100%' : 'width: 0%')"
-                            ></div>
-                        </div>
-                        <span 
-                            class="text-[10px] font-mono font-bold tracking-wider transition-colors duration-300"
-                            :class="current === {{ $index }} ? 'text-slate-900' : 'text-slate-400'"
-                        >
-                            0{{ $index + 1 }}
-                        </span>
-                    </button>
-                @endforeach
-            </div> -->
         </div>
 
-        {{-- Khung hiển thị: Grid Stack cố định để 2 slide chồng khít lên nhau --}}
-        <div class="mt-20 sm:mt-24 grid grid-cols-1 relative">
-            @foreach($leadership as $index => $item)
-                <div
-                    x-show="current === {{ $index }}"
-                    x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-700"
-                    x-transition:enter-start="opacity-0 scale-[0.99]"
-                    x-transition:enter-end="opacity-100 scale-100"
-                    x-transition:leave="transition ease-in duration-400"
-                    x-transition:leave-start="opacity-100 scale-100"
-                    x-transition:leave-end="opacity-0 scale-[0.99]"
-                    class="col-start-1 row-start-1 w-full relative"
-                    style="{{ $index === 0 ? '' : 'display:none' }}"
-                >
+        {{-- Khung hiển thị: 1 Card tĩnh duy nhất --}}
+        <div class="mt-5 relative">
+            @foreach($leadership as $item)
+                <div class="w-full relative">
                     {{-- Thẻ Card Nền (Lớp chiều sâu 1) --}}
                     <div class="relative min-h-[460px] sm:min-h-[480px] rounded-2xl bg-gradient-to-br from-white via-slate-50 to-slate-100 border border-slate-200/80 shadow-[0_20px_50px_rgba(15,23,42,0.06)] overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-end">
 
@@ -170,10 +73,6 @@
                                         {{ $item['role'] }}
                                     </p>
                                 </div>
-
-                                <!-- <div class="font-mono text-xs font-bold uppercase tracking-widest text-slate-400">
-                                    TMN / Leadership
-                                </div> -->
                             </div>
                         </div>
 
@@ -184,17 +83,8 @@
 
                     </div>
 
-                    {{-- ẢNH TÁCH NỀN 3D VƯỢT KHUNG: DEPTH MOTION (TRỒI LÊN VÀ ZOOM NHẸ) --}}
-                    <div
-                        x-show="current === {{ $index }}"
-                        x-transition:enter="transition cubic-bezier(0.16, 1, 0.3, 1) duration-1000 delay-75"
-                        x-transition:enter-start="opacity-0 translate-y-6 scale-95"
-                        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                        x-transition:leave="transition ease-in duration-300"
-                        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                        x-transition:leave-end="opacity-0 translate-y-2 scale-98"
-                        class="pointer-events-none absolute right-4 sm:right-12 lg:right-14 bottom-0 z-30 flex items-end justify-center w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[480px]"
-                    >
+                    {{-- ẢNH TÁCH NỀN 3D VƯỢT KHUNG --}}
+                    <div class="pointer-events-none absolute right-4 sm:right-12 lg:right-14 bottom-0 z-30 flex items-end justify-center w-full max-w-[340px] sm:max-w-[420px] lg:max-w-[480px]">
                         <img
                             src="{{ $item['cutout_image'] }}"
                             alt="{{ $item['name'] }}"
@@ -202,13 +92,12 @@
                             onerror="this.style.display='none'"
                         />
                     </div>
-
                 </div>
             @endforeach
         </div>
 
         {{-- Đối tác chiến lược --}}
-        <div class="mt-24 border-t border-slate-200/80 pt-16">
+        <div class="mt-12 pt-4">
             <div class="mb-10 text-center">
                 <p class="text-xs font-bold uppercase tracking-[0.25em] text-slate-400">
                     Đối tác chiến lược
@@ -220,15 +109,15 @@
 
             <div class="relative overflow-hidden">
                 <div class="flex w-max items-center gap-4 partner-marquee-track">
-                    @foreach(array_merge($partners, $partners) as $partner)
+                    @foreach($partners->concat($partners) as $partner)
                         <div class="partner-card">
                             <img
-                                src="{{ $partner['logo'] }}"
-                                alt="{{ $partner['name'] }}"
-                                class="h-auto max-h-10 sm:max-h-11 w-auto max-w-[125px] object-contain transition-transform duration-300 hover:scale-105"
+                                src="{{ $partner->logo_url }}"
+                                alt="{{ $partner->name }}"
+                                class="partner-logo transition-transform duration-300 hover:scale-105"
                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
                             />
-                            <span style="display: none;">{{ $partner['name'] }}</span>
+                            <span class="text-xs font-semibold text-slate-600 text-center line-clamp-2" style="display: none;">{{ $partner->name }}</span>
                         </div>
                     @endforeach
                 </div>
@@ -239,10 +128,19 @@
 </section>
 
 <style>
+    /* CSS riêng cho logo đối tác tránh bị ảnh hưởng bởi thuộc tính cover chung */
+    .partner-logo {
+        width: auto !important;
+        height: auto !important;
+        max-height: 38px !important;
+        max-width: 120px !important;
+        object-fit: contain !important;
+        display: block;
+    }
+
     .partner-marquee-track {
         animation: partner-scroll 30s linear infinite;
     }
-    /* Đã bỏ animation-play-state: paused để chuột hover vào dải logo vẫn chạy */
     .partner-card {
         display: flex;
         min-width: 180px;
@@ -260,7 +158,6 @@
         border-color: rgb(203 213 225);
         box-shadow: 0 6px 16px -4px rgba(15, 23, 42, 0.06);
     }
-    /* Đã bỏ filter đổi màu hoặc invert để bảo toàn màu gốc */
     @keyframes partner-scroll {
         from { transform: translateX(0); }
         to { transform: translateX(-50%); }

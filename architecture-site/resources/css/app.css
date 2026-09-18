@@ -29,7 +29,7 @@
        TYPOGRAPHY
        ----------------------------------------------------- */
 
-    --font-display: "Space Grotesk", "Inter", sans-serif;
+    --font-display: "Inter", sans-serif;
     --font-sans: "Inter", sans-serif;
 
     /* -----------------------------------------------------
@@ -140,9 +140,9 @@ h6 {
 
     color: var(--brand-dark);
 
-    letter-spacing: -0.035em;
+    letter-spacing: -0.02em;
 
-    line-height: 1.08;
+    line-height: 1.2;
 }
 
 
@@ -158,11 +158,9 @@ a {
 /* Images */
 
 img {
-    display: block;
-
-    max-width: 100%;
-
-    height: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 
