@@ -73,7 +73,7 @@ FROM node:${NODE_VERSION} as node_modules_go_brrr
 RUN mkdir -p /app
 WORKDIR /app
 COPY . .
-COPY --from=base /var/www/html/vendor /app/vendor
+# COPY --from=base /var/www/html/vendor /app/vendor
 
 RUN if [ -f "vite.config.js" ] || [ -f "vite.config.ts" ]; then \
         ASSET_CMD="build"; \
