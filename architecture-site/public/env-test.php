@@ -11,6 +11,8 @@ $keys = [
     'DB_DATABASE',
 ];
 
+echo "=== getenv() ===\n";
+
 foreach ($keys as $key) {
     $value = getenv($key);
 
@@ -18,5 +20,29 @@ foreach ($keys as $key) {
         echo $key . ': ' . ($value !== false && $value !== '' ? 'SET' : 'MISSING') . "\n";
     } else {
         echo $key . ': ' . ($value === false ? 'MISSING' : $value) . "\n";
+    }
+}
+
+echo "\n=== _ENV ===\n";
+
+foreach ($keys as $key) {
+    $value = $_ENV[$key] ?? null;
+
+    if ($key === 'APP_KEY') {
+        echo $key . ': ' . ($value ? 'SET' : 'MISSING') . "\n";
+    } else {
+        echo $key . ': ' . ($value === null ? 'MISSING' : $value) . "\n";
+    }
+}
+
+echo "\n=== _SERVER ===\n";
+
+foreach ($keys as $key) {
+    $value = $_SERVER[$key] ?? null;
+
+    if ($key === 'APP_KEY') {
+        echo $key . ': ' . ($value ? 'SET' : 'MISSING') . "\n";
+    } else {
+        echo $key . ': ' . ($value === null ? 'MISSING' : $value) . "\n";
     }
 }
