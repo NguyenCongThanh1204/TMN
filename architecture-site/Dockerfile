@@ -6,6 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     COMPOSER_ALLOW_SUPERUSER=1
 
 # 1. Cài đặt các gói hệ thống, PHP 8.3, Nginx, Supervisor và các extension cần thiết
+# 1. Cài đặt các gói hệ thống, PHP 8.3, Nginx và Supervisor
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg2 ca-certificates lsb-release apt-transport-https software-properties-common curl git unzip rsync \
     nginx supervisor \
@@ -15,18 +16,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         php${PHP_VERSION}-fpm \
         php${PHP_VERSION}-cli \
         php${PHP_VERSION}-bcmath \
-        php${PHP_VERSION}-ctype \
         php${PHP_VERSION}-curl \
-        php${PHP_VERSION}-dom \
-        php${PHP_VERSION}-fileinfo \
         php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-mysql \
-        php${PHP_VERSION}-openssl \
-        php${PHP_VERSION}-pdo \
-        php${PHP_VERSION}-tokenizer \
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-zip \
         php${PHP_VERSION}-opcache \
+        php${PHP_VERSION}-intl \
+        php${PHP_VERSION}-gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 2. Cài đặt Composer từ image chính thức
