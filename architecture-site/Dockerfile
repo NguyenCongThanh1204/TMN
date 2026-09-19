@@ -35,11 +35,20 @@ COPY . .
 # 3. Cài đặt các dependency của Laravel (Production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# 4. Tạo, cấp quyền cho các thư mục cache/storage, socket PHP và chạy Seeder/Migration cho SQLite
-RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache /run/php \
-    && php artisan migrate --seed --force \
+# 4. Tạo thư mục, file SQLite, cấp quyền chuẩn xác cho www-data và chạy migration
+RUN mkdir -p database storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache /run/php \
+    && touch database/database.sqlite \
     && chown -R www-data:www-data /var/www/html /run/php \
-    && chmod -R 775 storage bootstrap/cache
+    && chmod -R 775 storage bootstrap/cache database \
+    && chmod 664 database/database.sqlite
+
+# Chạy migration dưới quyền www-data để file sqlite không bị lệch quyền sở hữu gây lỗi 500
+USER www-data
+RUN php artisan migrate --seed --force
+USER root
+
+# Xóa cache cũ để làm sạch cấu hình
+RUN php artisan config:clear && php artisan cache:clear
 
 # 5. Tự động cấu hình Nginx lắng nghe cổng 10000 dành riêng cho Render
 RUN echo 'server { \
