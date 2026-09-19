@@ -35,16 +35,16 @@ COPY . .
 # 3. Cài đặt các dependency của Laravel (Production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# 4. Tạo thư mục, file SQLite, cấp quyền chuẩn xác cho www-data và chạy migration
+# 4. Tạo thư mục, file SQLite, cấp quyền chuẩn xác cho www-data
 RUN mkdir -p database storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache /run/php \
     && touch database/database.sqlite \
     && chown -R www-data:www-data /var/www/html /run/php \
     && chmod -R 775 storage bootstrap/cache database \
     && chmod 664 database/database.sqlite
 
-# Chạy migration dưới quyền www-data để file sqlite không bị lệch quyền sở hữu gây lỗi 500
+# Chạy migration và seeder dữ liệu dưới quyền www-data để file sqlite không bị lệch quyền sở hữu gây lỗi 500
 USER www-data
-RUN php artisan migrate --seed --force
+RUN php artisan migrate:fresh --seed --force
 USER root
 
 # Xóa cache cũ để làm sạch cấu hình
