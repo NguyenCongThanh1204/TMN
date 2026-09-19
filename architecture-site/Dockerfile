@@ -5,8 +5,6 @@ ARG NODE_VERSION=20
 
 ENV DEBIAN_FRONTEND=noninteractive \
     COMPOSER_ALLOW_SUPERUSER=1 \
-    APP_ENV=production \
-    APP_DEBUG=false \
     DB_CONNECTION=sqlite \
     DB_DATABASE=/var/www/html/database/database.sqlite
 
@@ -102,26 +100,6 @@ RUN mkdir -p \
 # cố kết nối MySQL nếu Render chưa cấu hình DB.
 #
 
-RUN printf '%s\n' \
-    'APP_NAME="Tan Minh Nhan"' \
-    'APP_ENV=production' \
-    'APP_KEY=' \
-    'APP_DEBUG=false' \
-    'APP_URL=http://localhost' \
-    '' \
-    'LOG_CHANNEL=stderr' \
-    'LOG_LEVEL=error' \
-    '' \
-    'DB_CONNECTION=sqlite' \
-    'DB_DATABASE=/var/www/html/database/database.sqlite' \
-    > /var/www/html/.env
-
-
-# ============================================================
-# 7. TẠO APP KEY
-# ============================================================
-
-RUN php artisan key:generate --force
 
 
 # ============================================================
