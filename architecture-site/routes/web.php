@@ -144,17 +144,7 @@ Route::get('/leaders', [LeaderController::class, 'index'])
     ->name('leaders.index');
 
 
-/*
-|--------------------------------------------------------------------------
-| Storage / Media
-|--------------------------------------------------------------------------
-|
-| Hỗ trợ:
-| /storage/...
-| /media/...
-|
-*/
-
+    
 Route::get('/{prefix}/{path}', function (
     string $prefix,
     string $path

@@ -3,6 +3,14 @@ FROM ubuntu:22.04
 ARG PHP_VERSION=8.3
 ARG NODE_VERSION=20
 
+RUN printf '%s\n' \
+    'upload_max_filesize=20M' \
+    'post_max_size=25M' \
+    'max_file_uploads=20' \
+    'memory_limit=256M' \
+    > /etc/php/8.3/fpm/conf.d/99-upload.ini
+
+
 ENV DEBIAN_FRONTEND=noninteractive \
     COMPOSER_ALLOW_SUPERUSER=1 \
     DB_CONNECTION=sqlite \

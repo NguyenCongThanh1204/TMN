@@ -35,6 +35,7 @@ class PostRelationManager extends RelationManager
                         return "posts/{$slug}/media";
                     })
                     ->image()
+                    ->maxSize(20480)
                     ->required()
                     ->multiple() // Cho phép chọn nhiều file cùng lúc
                     ->preserveFilenames()

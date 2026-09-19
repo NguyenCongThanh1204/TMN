@@ -99,6 +99,7 @@ class PostForm
                                             ->visibility('public')
                                             ->directory('posts/thumbnails')
                                             ->image()
+                                            ->maxSize(20480)
                                             ->imageEditor()
                                             ->preserveFilenames()
                                             ->columnSpanFull(),

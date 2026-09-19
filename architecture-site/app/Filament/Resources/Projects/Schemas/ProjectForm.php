@@ -102,6 +102,7 @@ class ProjectForm
                     ->disk('public')
                     ->visibility('public')
                     ->image()
+                    ->maxSize(20480)
                     ->imageEditor()
                     ->imageEditorAspectRatios([
                         null, // Cho phép chỉnh khung linh hoạt không giới hạn tỷ lệ
