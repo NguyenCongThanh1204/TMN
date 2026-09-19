@@ -35,42 +35,17 @@ Route::get('/', HomeController::class)
 
 Route::get('/debug-home', function () {
 
-    try {
-
-        return app(HomeController::class)();
-
-    } catch (\Throwable $e) {
-
-        return response()->json([
-            'success' => false,
-
-            'message' => $e->getMessage(),
-
-            'exception' => get_class($e),
-
-            'file' => $e->getFile(),
-
-            'line' => $e->getLine(),
-
-            'app_debug' => config('app.debug'),
-
-            'app_env' => app()->environment(),
-
-            'app_url' => config('app.url'),
-
-            'db_connection' => config('database.default'),
-
-            'db_database' => config('database.connections.sqlite.database'),
-
-            'trace' => explode(
-                PHP_EOL,
-                $e->getTraceAsString()
-            ),
-        ], 500);
-    }
+    return response()->json([
+        'success' => true,
+        'message' => 'Debug route is working',
+        'app_debug' => config('app.debug'),
+        'app_env' => app()->environment(),
+        'app_url' => config('app.url'),
+        'db_connection' => config('database.default'),
+        'db_database' => config('database.connections.sqlite.database'),
+    ]);
 
 })->name('debug.home');
-
 
 /*
 |--------------------------------------------------------------------------
