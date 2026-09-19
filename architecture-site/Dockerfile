@@ -50,7 +50,7 @@ USER root
 # Xóa cache cũ để làm sạch cấu hình
 RUN php artisan config:clear && php artisan cache:clear
 
-# 5. Tự động cấu hình Nginx lắng nghe cổng 10000 dành riêng cho Render
+# 5. Tự động cấu hình Nginx lắng nghe cổng 10000 và trỏ PHP qua TCP port 9000
 RUN echo 'server { \
     listen 0.0.0.0:10000 default_server; \
     root /var/www/html/public; \
@@ -60,8 +60,9 @@ RUN echo 'server { \
         try_files $uri $uri/ /index.php?$query_string; \
     } \
     location ~ \.php$ { \
-        include snippets/fastcgi-php.conf; \
-        fastcgi_pass unix:/run/php/php8.3-fpm.sock; \
+        include fastcgi_params; \
+        fastcgi_pass 127.0.0.1:9000; \
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name; \
     } \
     location ~ /\.ht { \
         deny all; \
@@ -70,15 +71,10 @@ RUN echo 'server { \
     && rm -f /etc/nginx/sites-enabled/default \
     && ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-# 6. Cấu hình quyền cho PHP-FPM socket và Supervisor để chạy song song Nginx & PHP-FPM
-RUN sed -i 's/user = www-data/user = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf \
-    && sed -i 's/group = www-data/group = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf \
-    && sed -i 's/;listen.owner = www-data/listen.owner = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf \
-    && sed -i 's/;listen.group = www-data/listen.group = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf \
-    && sed -i 's/;listen.mode = 0660/listen.mode = 0666/g' /etc/php/8.3/fpm/pool.d/www.conf
-
+# 6. Cấu hình Supervisor (Bổ sung user=root để tránh cảnh báo và đảm bảo phân quyền tuyệt đối)
 RUN echo '[supervisord]\n\
-nodaemon=true\n\n\
+nodaemon=true\n\
+user=root\n\n\
 [program:php-fpm]\n\
 command=/usr/sbin/php-fpm8.3 -F\n\
 autostart=true\n\
