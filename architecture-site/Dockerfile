@@ -70,7 +70,13 @@ RUN echo 'server { \
     && rm -f /etc/nginx/sites-enabled/default \
     && ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-# 6. Cấu hình Supervisor để chạy song song Nginx và PHP-FPM ở chế độ foreground
+# 6. Cấu hình quyền cho PHP-FPM socket và Supervisor để chạy song song Nginx & PHP-FPM
+RUN sed -i 's/user = www-data/user = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf \
+    && sed -i 's/group = www-data/group = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf \
+    && sed -i 's/;listen.owner = www-data/listen.owner = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf \
+    && sed -i 's/;listen.group = www-data/listen.group = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf \
+    && sed -i 's/;listen.mode = 0660/listen.mode = 0666/g' /etc/php/8.3/fpm/pool.d/www.conf
+
 RUN echo '[supervisord]\n\
 nodaemon=true\n\n\
 [program:php-fpm]\n\
