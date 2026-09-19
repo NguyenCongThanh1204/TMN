@@ -35,22 +35,22 @@ COPY . .
 # 3. Cài đặt các dependency của Laravel (Production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# 4. Tạo thư mục, file SQLite, cấp quyền chuẩn xác cho www-data
+# 4. Tạo thư mục, file SQLite, cấp quyền chuẩn xác
 RUN mkdir -p database storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache /run/php \
     && touch database/database.sqlite \
     && chown -R www-data:www-data /var/www/html /run/php \
     && chmod -R 775 storage bootstrap/cache database \
     && chmod 664 database/database.sqlite
 
-# Chạy migration và seeder dữ liệu dưới quyền www-data để file sqlite không bị lệch quyền sở hữu gây lỗi 500
+# Chạy migration và seeder dữ liệu
 USER www-data
 RUN php artisan migrate:fresh --seed --force
 USER root
 
-# Xóa cache cũ để làm sạch cấu hình
+# Xóa cache cũ
 RUN php artisan config:clear && php artisan cache:clear
 
-# 5. Tự động cấu hình Nginx lắng nghe cổng 10000 và trỏ PHP qua TCP port 9000
+# 5. Cấu hình Nginx trỏ về cổng TCP 9000 của PHP-FPM
 RUN echo 'server { \
     listen 0.0.0.0:10000 default_server; \
     root /var/www/html/public; \
@@ -71,7 +71,12 @@ RUN echo 'server { \
     && rm -f /etc/nginx/sites-enabled/default \
     && ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/default
 
-# 6. Cấu hình Supervisor (Bổ sung user=root để tránh cảnh báo và đảm bảo phân quyền tuyệt đối)
+# 6. Ép PHP-FPM chuyển sang lắng nghe TCP Port 127.0.0.1:9000 thay vì dùng Socket
+RUN sed -i 's#listen = /run/php/php8.3-fpm.sock#listen = 127.0.0.1:9000#g' /etc/php/8.3/fpm/pool.d/www.conf \
+    && sed -i 's/user = www-data/user = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf \
+    && sed -i 's/group = www-data/group = www-data/g' /etc/php/8.3/fpm/pool.d/www.conf
+
+# 7. Cấu hình Supervisor chạy song song Nginx và PHP-FPM dưới quyền root
 RUN echo '[supervisord]\n\
 nodaemon=true\n\
 user=root\n\n\
@@ -94,5 +99,4 @@ stderr_logfile_maxbytes=0' > /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 10000
 
-# Khởi chạy hệ thống thông qua Supervisor
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
