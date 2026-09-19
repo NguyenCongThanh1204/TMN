@@ -107,6 +107,6 @@ RUN rsync -ar /var/www/html/public-npm/ /var/www/html/public/ \
     && chmod -R 775 storage bootstrap/cache
 
 # 5. Setup Entrypoint
-EXPOSE 8080
+EXPOSE 10000
 
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+    CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
