@@ -18,6 +18,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         php${PHP_VERSION}-curl \
         php${PHP_VERSION}-mbstring \
         php${PHP_VERSION}-mysql \
+        php${PHP_VERSION}-sqlite3 \
         php${PHP_VERSION}-xml \
         php${PHP_VERSION}-zip \
         php${PHP_VERSION}-opcache \
@@ -34,8 +35,9 @@ COPY . .
 # 3. Cài đặt các dependency của Laravel (Production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# 4. Tạo và cấp quyền cho các thư mục cache/storage và thư mục socket PHP
+# 4. Tạo, cấp quyền cho các thư mục cache/storage, socket PHP và chạy Seeder/Migration cho SQLite
 RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache /run/php \
+    && php artisan migrate --seed --force \
     && chown -R www-data:www-data /var/www/html /run/php \
     && chmod -R 775 storage bootstrap/cache
 
@@ -79,21 +81,7 @@ stdout_logfile_maxbytes=0\n\
 stderr_logfile=/dev/stderr\n\
 stderr_logfile_maxbytes=0' > /etc/supervisor/conf.d/supervisord.conf
 
-# Final image stage
-FROM base
-
-# Merge assets from node stage and ensure storage/cache directories are intact & secure
-COPY --from=node_modules_go_brrr /app/public /var/www/html/public-npm
-RUN rsync -ar /var/www/html/public-npm/ /var/www/html/public/ \
-    && rm -rf /var/www/html/public-npm \
-    && composer install --no-dev --optimize-autoloader --no-interaction \
-    && mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
-    && php artisan migrate --seed --force \
-    && chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 storage bootstrap/cache
-
-# 5. Setup Entrypoint
 EXPOSE 10000
 
-# Lệnh khởi động trực tiếp service qua supervisor hoặc lệnh của bạn
+# Khởi chạy hệ thống thông qua Supervisor
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
