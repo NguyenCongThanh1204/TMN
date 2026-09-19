@@ -99,4 +99,5 @@ stderr_logfile_maxbytes=0' > /etc/supervisor/conf.d/supervisord.conf
 
 EXPOSE 10000
 
-CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/supervisord.conf"]
+# Sửa lại dòng lệnh CMD trỏ chính xác vào file conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
