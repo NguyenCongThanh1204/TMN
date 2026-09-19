@@ -13,76 +13,27 @@ use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\LeaderController;
 
 
+/*
+|--------------------------------------------------------------------------
+| Trang chủ
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/', HomeController::class)
     ->name('home');
 
 
-Route::get('/about', [PageController::class, 'about'])
-    ->name('about');
-
-
-Route::get('/projects', [ProjectController::class, 'index'])
-    ->name('projects.index');
-
-Route::get('/projects/{project:slug}', [ProjectController::class, 'show'])
-    ->name('projects.show');
-
-
-
-Route::prefix('careers')
-    ->name('careers.')
-    ->group(function () {
-
-        Route::get('/', [CareerController::class, 'index'])
-            ->name('index');
-
-        Route::post('/apply', [CareerController::class, 'apply'])
-            ->middleware('throttle:10,1')
-            ->name('apply');
-
-        Route::get('/{career}', [CareerController::class, 'show'])
-            ->name('show');
-    });
-
-
-
-Route::get('/news', [PostController::class, 'index'])
-    ->name('news.index');
-
-Route::get('/news/{post:slug}', [PostController::class, 'show'])
-    ->name('news.show');
-
-
-
-
-Route::get('/contact', [ContactController::class, 'index'])
-    ->name('contact.index');
-
-Route::post('/contact', [ContactController::class, 'store'])
-    ->middleware('throttle:10,1')
-    ->name('contact.store');
-
-
-
-Route::get('/partners', [PartnerController::class, 'index'])
-    ->name('partners.index');
-
-Route::get('/api/partners', [PartnerController::class, 'apiList'])
-    ->name('partners.apiList');
-
-
-
-
-Route::get('/leaders', [LeaderController::class, 'index'])
-    ->name('leaders.index');
-
-
+/*
+|--------------------------------------------------------------------------
+| Debug trang chủ - TẠM THỜI
+|--------------------------------------------------------------------------
+|
+| Route này dùng để bắt chính xác exception của HomeController trên Render.
+| Sau khi sửa xong lỗi 500 thì XÓA route này.
+|
+*/
 
 Route::get('/debug-home', function () {
-
-    if (!config('app.debug')) {
-        abort(404);
-    }
 
     try {
 
@@ -101,6 +52,16 @@ Route::get('/debug-home', function () {
 
             'line' => $e->getLine(),
 
+            'app_debug' => config('app.debug'),
+
+            'app_env' => app()->environment(),
+
+            'app_url' => config('app.url'),
+
+            'db_connection' => config('database.default'),
+
+            'db_database' => config('database.connections.sqlite.database'),
+
             'trace' => explode(
                 PHP_EOL,
                 $e->getTraceAsString()
@@ -111,6 +72,112 @@ Route::get('/debug-home', function () {
 })->name('debug.home');
 
 
+/*
+|--------------------------------------------------------------------------
+| Giới thiệu
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/about', [PageController::class, 'about'])
+    ->name('about');
+
+
+/*
+|--------------------------------------------------------------------------
+| Dự án
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/projects', [ProjectController::class, 'index'])
+    ->name('projects.index');
+
+Route::get('/projects/{project:slug}', [ProjectController::class, 'show'])
+    ->name('projects.show');
+
+
+/*
+|--------------------------------------------------------------------------
+| Tuyển dụng
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('careers')
+    ->name('careers.')
+    ->group(function () {
+
+        Route::get('/', [CareerController::class, 'index'])
+            ->name('index');
+
+        Route::post('/apply', [CareerController::class, 'apply'])
+            ->middleware('throttle:10,1')
+            ->name('apply');
+
+        Route::get('/{career}', [CareerController::class, 'show'])
+            ->name('show');
+    });
+
+
+/*
+|--------------------------------------------------------------------------
+| Tin tức
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/news', [PostController::class, 'index'])
+    ->name('news.index');
+
+Route::get('/news/{post:slug}', [PostController::class, 'show'])
+    ->name('news.show');
+
+
+/*
+|--------------------------------------------------------------------------
+| Liên hệ
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/contact', [ContactController::class, 'index'])
+    ->name('contact.index');
+
+Route::post('/contact', [ContactController::class, 'store'])
+    ->middleware('throttle:10,1')
+    ->name('contact.store');
+
+
+/*
+|--------------------------------------------------------------------------
+| Đối tác
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/partners', [PartnerController::class, 'index'])
+    ->name('partners.index');
+
+Route::get('/api/partners', [PartnerController::class, 'apiList'])
+    ->name('partners.apiList');
+
+
+/*
+|--------------------------------------------------------------------------
+| Lãnh đạo
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/leaders', [LeaderController::class, 'index'])
+    ->name('leaders.index');
+
+
+/*
+|--------------------------------------------------------------------------
+| Storage / Media
+|--------------------------------------------------------------------------
+|
+| Hỗ trợ:
+| /storage/...
+| /media/...
+|
+*/
+
 Route::get('/{prefix}/{path}', function (
     string $prefix,
     string $path
@@ -118,16 +185,12 @@ Route::get('/{prefix}/{path}', function (
 
     $path = ltrim($path, '/');
 
-
-
     if (Storage::disk('public')->exists($path)) {
 
         return response()->file(
             Storage::disk('public')->path($path)
         );
     }
-
-
 
     if (Storage::disk('local')->exists($path)) {
 
@@ -141,10 +204,10 @@ Route::get('/{prefix}/{path}', function (
         'Không tìm thấy file hình ảnh.'
     );
 
-})->whereIn('prefix', [
-    'storage',
-    'media',
-])->where(
-    'path',
-    '.*'
-)->name('media.stream');
+})
+    ->whereIn('prefix', [
+        'storage',
+        'media',
+    ])
+    ->where('path', '.*')
+    ->name('media.stream');
