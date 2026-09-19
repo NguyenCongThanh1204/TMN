@@ -11,7 +11,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     COMPOSER_ALLOW_SUPERUSER=1 \
     COMPOSER_HOME=/composer \
     COMPOSER_MAX_PARALLEL_HTTP=24 \
-    PHP_PM_MAX_CHILDREN=50\
+    PHP_PM_MAX_CHILDREN=50 \
     PHP_PM_START_SERVERS=3 \
     PHP_MIN_SPARE_SERVERS=2 \
     PHP_MAX_SPARE_SERVERS=4 \
@@ -32,7 +32,7 @@ ADD .fly/php/packages/${PHP_VERSION}.txt /tmp/php-packages.txt
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends gnupg2 ca-certificates git-core curl zip unzip \
-                            rsync vim-tiny htop sqlite3 nginx supervisor cron \
+                        rsync vim-tiny htop sqlite3 nginx supervisor cron \
     && ln -sf /usr/bin/vim.tiny /etc/alternatives/vim \
     && ln -sf /etc/alternatives/vim /usr/bin/vim \
     && echo "deb http://ppa.launchpad.net/ondrej/php/ubuntu jammy main" > /etc/apt/sources.list.d/ondrej-ubuntu-php-focal.list \
