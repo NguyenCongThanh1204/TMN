@@ -1,28 +1,67 @@
-# excludes from the docker image/build
+# ============================================================
+# ENVIRONMENT
+# ============================================================
 
-# 1. Ignore Laravel-specific files we don't need
+.env
+.env.*
+!.env.example
+
+
+# ============================================================
+# LARAVEL RUNTIME
+# ============================================================
+
 bootstrap/cache/*
 storage/framework/cache/*
 storage/framework/sessions/*
 storage/framework/views/*
 storage/logs/*
-*.env*
+
+
+# ============================================================
+# DEPENDENCIES
+# ============================================================
+
+vendor
+node_modules
+
+
+# ============================================================
+# LOCAL / DEVELOPMENT
+# ============================================================
+
 .rr.yml
 rr
 frankenphp
-vendor
 
-# 2. Ignore common files/directories we don't need
 fly.toml
+
 .vscode
 .idea
-**/*node_modules
-**.git
-**.gitignore
-**.gitattributes
-**.sass-cache
+
+
+# ============================================================
+# GIT
+# ============================================================
+
+.git
+.gitignore
+.gitattributes
+
+
+# ============================================================
+# TEMPORARY / OS FILES
+# ============================================================
+
+**/.sass-cache
 **/*~
 **/*.log
 **/.DS_Store
 **/Thumbs.db
+
+
+# ============================================================
+# VITE DEVELOPMENT SERVER
+# ============================================================
+
 public/hot

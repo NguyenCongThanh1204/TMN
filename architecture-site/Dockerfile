@@ -8,6 +8,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     DB_CONNECTION=sqlite \
     DB_DATABASE=/var/www/html/database/database.sqlite
 
+
 # ============================================================
 # 1. CÀI ĐẶT HỆ THỐNG + PHP 8.3 + NGINX + SUPERVISOR
 # ============================================================
@@ -44,14 +45,27 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 
 # ============================================================
-# 2. CÀI COMPOSER
+# 2. CÀI NODE.JS 20 + NPM
+# ============================================================
+
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends nodejs \
+    && node --version \
+    && npm --version \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# ============================================================
+# 3. CÀI COMPOSER
 # ============================================================
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 
 # ============================================================
-# 3. COPY SOURCE CODE
+# 4. COPY SOURCE CODE
 # ============================================================
 
 WORKDIR /var/www/html
@@ -60,7 +74,35 @@ COPY . .
 
 
 # ============================================================
-# 4. CÀI DEPENDENCY LARAVEL
+# 5. BUILD FRONTEND VITE
+# ============================================================
+#
+# Laravel sử dụng:
+#
+# @vite([
+#     'resources/css/app.css',
+#     'resources/js/app.js'
+# ])
+#
+# Vì vậy production phải có:
+#
+# public/build/manifest.json
+#
+# npm run build sẽ tạo thư mục này.
+#
+
+RUN if [ -f package-lock.json ]; then \
+        npm ci; \
+    else \
+        npm install; \
+    fi \
+    && npm run build \
+    && test -f public/build/manifest.json \
+    && echo "Vite build OK: public/build/manifest.json exists"
+
+
+# ============================================================
+# 6. CÀI DEPENDENCY LARAVEL
 # ============================================================
 
 RUN composer install \
@@ -71,7 +113,7 @@ RUN composer install \
 
 
 # ============================================================
-# 5. TẠO SQLITE + THƯ MỤC LARAVEL
+# 7. TẠO SQLITE + THƯ MỤC LARAVEL
 # ============================================================
 
 RUN mkdir -p \
@@ -92,22 +134,32 @@ RUN mkdir -p \
 
 
 # ============================================================
-# 6. TẠO .ENV CHO SQLITE
+# 8. KHÔNG TẠO .ENV
 # ============================================================
 #
-# Render vẫn có thể override các biến ENV bằng Environment Variables.
-# Nhưng image luôn có cấu hình SQLite mặc định để tránh Laravel
-# cố kết nối MySQL nếu Render chưa cấu hình DB.
+# APP_ENV
+# APP_DEBUG
+# APP_KEY
+# APP_URL
 #
-
+# được Render cung cấp bằng Environment Variables.
+#
+# DB_CONNECTION và DB_DATABASE có ENV mặc định ở đầu Dockerfile
+# để quá trình build/seed sử dụng SQLite.
+#
+# KHÔNG tạo .env trong Docker image.
 
 
 # ============================================================
-# 8. MIGRATE + SEED DATABASE
+# 9. MIGRATE + SEED DATABASE
 # ============================================================
 #
-# DatabaseSeeder của bạn đang dùng SQLite.
-# Chạy dưới www-data để quyền file database chính xác.
+# DatabaseSeeder chạy bằng SQLite.
+#
+# DB_CONNECTION=sqlite
+# DB_DATABASE=/var/www/html/database/database.sqlite
+#
+# đã được khai báo ở ENV phía trên.
 #
 
 USER www-data
@@ -118,41 +170,57 @@ USER root
 
 
 # ============================================================
-# 9. CLEAR + CACHE LARAVEL
+# 10. CLEAR LARAVEL CACHE
 # ============================================================
 
 RUN php artisan optimize:clear
 
 
 # ============================================================
-# 10. CẤU HÌNH PHP-FPM
+# 11. CẤU HÌNH PHP-FPM
 # ============================================================
 #
-# PHP-FPM lắng nghe:
+# PHP-FPM:
 # 127.0.0.1:9000
 #
-# Nginx sẽ forward request PHP sang port này.
+# Quan trọng:
+# clear_env = no
 #
+# để PHP-FPM không xóa Environment Variables của Render.
+#
+
 RUN sed -i \
     's#^listen = .*#listen = 127.0.0.1:9000#' \
-    /etc/php/8.3/fpm/pool.d/www.conf \
+    /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf \
     && sed -i \
     's/^user = .*/user = www-data/' \
-    /etc/php/8.3/fpm/pool.d/www.conf \
+    /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf \
     && sed -i \
     's/^group = .*/group = www-data/' \
-    /etc/php/8.3/fpm/pool.d/www.conf \
+    /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf \
     && sed -i \
-    's/^;clear_env = no/clear_env = no/' \
-    /etc/php/8.3/fpm/pool.d/www.conf \
-    && grep -q '^clear_env = no' /etc/php/8.3/fpm/pool.d/www.conf \
-        || echo 'clear_env = no' >> /etc/php/8.3/fpm/pool.d/www.conf
+    '/^[;[:space:]]*clear_env[[:space:]]*=.*/d' \
+    /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf \
+    && echo 'clear_env = no' >> \
+    /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+
+
 # ============================================================
-# 11. CẤU HÌNH NGINX
+# 12. KIỂM TRA PHP-FPM CONFIG
+# ============================================================
+
+RUN echo "===== PHP-FPM CONFIG =====" \
+    && grep -E '^(listen|user|group|clear_env)' \
+    /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+
+
+# ============================================================
+# 13. CẤU HÌNH NGINX
 # ============================================================
 
 RUN rm -f /etc/nginx/sites-enabled/default \
     && cat > /etc/nginx/sites-available/default <<'NGINX'
+
 server {
     listen 0.0.0.0:10000 default_server;
     listen [::]:10000 default_server;
@@ -165,9 +233,19 @@ server {
 
     client_max_body_size 50M;
 
+
+    # ========================================================
+    # Laravel
+    # ========================================================
+
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
+
+
+    # ========================================================
+    # PHP-FPM
+    # ========================================================
 
     location ~ \.php$ {
         include fastcgi_params;
@@ -181,75 +259,110 @@ server {
         fastcgi_param PATH_INFO $fastcgi_path_info;
     }
 
+
+    # ========================================================
+    # Block hidden files
+    # ========================================================
+
     location ~ /\.ht {
         deny all;
     }
 
+
+    # ========================================================
+    # Static assets
+    # ========================================================
+
     location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|webp|woff|woff2|ttf)$ {
         expires 7d;
+
         add_header Cache-Control "public, max-age=604800";
+
         try_files $uri =404;
     }
 }
+
 NGINX
+
+
+# ============================================================
+# 14. ENABLE NGINX CONFIG
+# ============================================================
 
 RUN ln -s /etc/nginx/sites-available/default \
     /etc/nginx/sites-enabled/default
 
 
 # ============================================================
-# 12. KIỂM TRA NGINX CONFIG
+# 15. KIỂM TRA NGINX CONFIG
 # ============================================================
 
 RUN nginx -t
 
 
 # ============================================================
-# 13. CẤU HÌNH SUPERVISOR
+# 16. CẤU HÌNH SUPERVISOR
 # ============================================================
-#
-# Supervisor chạy:
-# - PHP-FPM
-# - Nginx
-#
 
 RUN cat > /etc/supervisor/conf.d/supervisord.conf <<'SUPERVISOR'
+
 [supervisord]
 nodaemon=true
 user=root
 logfile=/dev/null
 pidfile=/run/supervisord.pid
 
+
+# ============================================================
+# PHP-FPM
+# ============================================================
+
 [program:php-fpm]
 command=/usr/sbin/php-fpm8.3 -F
 directory=/var/www/html
+
 autostart=true
 autorestart=true
+
 priority=10
+
 stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
+
 stderr_logfile=/dev/stderr
 stderr_logfile_maxbytes=0
+
 stopasgroup=true
 killasgroup=true
+
+
+# ============================================================
+# NGINX
+# ============================================================
 
 [program:nginx]
 command=/usr/sbin/nginx -g "daemon off;"
 directory=/var/www/html
+
 autostart=true
 autorestart=true
+
 priority=20
+
 stdout_logfile=/dev/stdout
 stdout_logfile_maxbytes=0
+
 stderr_logfile=/dev/stderr
 stderr_logfile_maxbytes=0
+
 stopasgroup=true
 killasgroup=true
+
 SUPERVISOR
 
 
 # ============================================================
-# 14. QUYỀN LẦN CUỐI
+# 17. QUYỀN LẦN CUỐI
 # ============================================================
 
 RUN chown -R www-data:www-data \
@@ -263,14 +376,14 @@ RUN chown -R www-data:www-data \
 
 
 # ============================================================
-# 15. PORT RENDER
+# 18. PORT RENDER
 # ============================================================
 
 EXPOSE 10000
 
 
 # ============================================================
-# 16. START CONTAINER
+# 19. START CONTAINER
 # ============================================================
 
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
