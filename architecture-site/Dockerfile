@@ -5,7 +5,6 @@ ARG NODE_VERSION=20
 ENV DEBIAN_FRONTEND=noninteractive \
     COMPOSER_ALLOW_SUPERUSER=1
 
-# 1. Cài đặt các gói hệ thống, PHP 8.3, Nginx, Supervisor và các extension cần thiết
 # 1. Cài đặt các gói hệ thống, PHP 8.3, Nginx và Supervisor
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg2 ca-certificates lsb-release apt-transport-https software-properties-common curl git unzip rsync \
@@ -35,9 +34,9 @@ COPY . .
 # 3. Cài đặt các dependency của Laravel (Production)
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# 4. Tạo và cấp quyền cho các thư mục cache/storage
-RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html \
+# 4. Tạo và cấp quyền cho các thư mục cache/storage và thư mục socket PHP
+RUN mkdir -p storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache /run/php \
+    && chown -R www-data:www-data /var/www/html /run/php \
     && chmod -R 775 storage bootstrap/cache
 
 # 5. Tự động cấu hình Nginx lắng nghe cổng 10000 dành riêng cho Render
