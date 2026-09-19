@@ -133,7 +133,6 @@ RUN php artisan optimize:clear
 #
 # Nginx sẽ forward request PHP sang port này.
 #
-
 RUN sed -i \
     's#^listen = .*#listen = 127.0.0.1:9000#' \
     /etc/php/8.3/fpm/pool.d/www.conf \
@@ -142,9 +141,12 @@ RUN sed -i \
     /etc/php/8.3/fpm/pool.d/www.conf \
     && sed -i \
     's/^group = .*/group = www-data/' \
-    /etc/php/8.3/fpm/pool.d/www.conf
-
-
+    /etc/php/8.3/fpm/pool.d/www.conf \
+    && sed -i \
+    's/^;clear_env = no/clear_env = no/' \
+    /etc/php/8.3/fpm/pool.d/www.conf \
+    && grep -q '^clear_env = no' /etc/php/8.3/fpm/pool.d/www.conf \
+        || echo 'clear_env = no' >> /etc/php/8.3/fpm/pool.d/www.conf
 # ============================================================
 # 11. CẤU HÌNH NGINX
 # ============================================================

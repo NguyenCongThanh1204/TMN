@@ -2,21 +2,21 @@
 
 header('Content-Type: text/plain; charset=utf-8');
 
-echo "=== PHP ===\n";
-echo "PHP_VERSION: " . PHP_VERSION . "\n";
-echo "SAPI: " . PHP_SAPI . "\n\n";
+$keys = [
+    'APP_ENV',
+    'APP_DEBUG',
+    'APP_URL',
+    'APP_KEY',
+    'DB_CONNECTION',
+    'DB_DATABASE',
+];
 
-echo "=== ENV COUNT ===\n";
-echo "getenv(): " . count(getenv()) . "\n";
-echo "_ENV: " . count($_ENV) . "\n";
-echo "_SERVER: " . count($_SERVER) . "\n\n";
+foreach ($keys as $key) {
+    $value = getenv($key);
 
-echo "=== DB TEST ===\n";
-echo "DB_CONNECTION getenv: " . (getenv('DB_CONNECTION') ?: 'MISSING') . "\n";
-echo "DB_DATABASE getenv: " . (getenv('DB_DATABASE') ?: 'MISSING') . "\n";
-
-echo "\n=== ALL ENV NAMES ===\n";
-
-foreach (array_keys(getenv()) as $key) {
-    echo $key . "\n";
+    if ($key === 'APP_KEY') {
+        echo $key . ': ' . ($value !== false && $value !== '' ? 'SET' : 'MISSING') . "\n";
+    } else {
+        echo $key . ': ' . ($value === false ? 'MISSING' : $value) . "\n";
+    }
 }
