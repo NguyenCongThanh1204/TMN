@@ -3,14 +3,6 @@ FROM ubuntu:22.04
 ARG PHP_VERSION=8.3
 ARG NODE_VERSION=20
 
-RUN printf '%s\n' \
-    'upload_max_filesize=20M' \
-    'post_max_size=25M' \
-    'max_file_uploads=20' \
-    'memory_limit=256M' \
-    > /etc/php/8.3/fpm/conf.d/99-upload.ini
-
-
 ENV DEBIAN_FRONTEND=noninteractive \
     COMPOSER_ALLOW_SUPERUSER=1 \
     DB_CONNECTION=sqlite \
@@ -45,6 +37,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         php${PHP_VERSION}-gd \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+RUN printf '%s\n' \
+    'upload_max_filesize=20M' \
+    'post_max_size=25M' \
+    'max_file_uploads=20' \
+    'memory_limit=256M' \
+    > /etc/php/8.3/fpm/conf.d/99-upload.ini
 
 RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt-get update \
