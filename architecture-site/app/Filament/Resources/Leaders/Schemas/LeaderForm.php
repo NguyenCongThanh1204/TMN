@@ -7,6 +7,8 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Illuminate\Support\Str;
 
 class LeaderForm
 {
@@ -41,8 +43,46 @@ class LeaderForm
 
                 FileUpload::make('image')
                     ->label('Hình ảnh chân dung')
+                    ->disk('cloudinary')
+                    ->visibility('public')
                     ->image()
-                    ->directory('leaders')
+                    ->maxSize(20480)
+                    ->imageEditor()
+                    ->preserveFilenames(false)
+                    ->getUploadedFileNameForStorageUsing(
+                        function (
+                            TemporaryUploadedFile $file,
+                            $get
+                        ): string {
+                            $name = $get('name');
+
+                            $filename = Str::slug(
+                                $name ?: pathinfo(
+                                    $file->getClientOriginalName(),
+                                    PATHINFO_FILENAME
+                                )
+                            );
+
+                            if (!$filename) {
+                                $filename = 'lanh-dao';
+                            }
+
+                            $extension = strtolower(
+                                $file->getClientOriginalExtension()
+                            );
+
+                            return "{$filename}.{$extension}";
+                        }
+                    )
+                    ->directory(function ($get) {
+                        $name = $get('name');
+
+                        $filename = Str::slug(
+                            $name ?: 'lanh-dao'
+                        );
+
+                        return "leaders/{$filename}";
+                    })
                     ->columnSpanFull(),
 
                 TextInput::make('email')
@@ -54,7 +94,9 @@ class LeaderForm
                 Textarea::make('bio')
                     ->label('Tiểu sử / Giới thiệu chi tiết')
                     ->rows(4)
-                    ->placeholder('Nhập tiểu sử hiển thị khi khách hàng bấm vào xem chi tiết...')
+                    ->placeholder(
+                        'Nhập tiểu sử hiển thị khi khách hàng bấm vào xem chi tiết...'
+                    )
                     ->columnSpanFull(),
             ]);
     }

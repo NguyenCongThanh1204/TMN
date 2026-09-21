@@ -7,6 +7,8 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "cloudinary/cloudinary_php": "3.1",
+        "codebar-ag/laravel-flysystem-cloudinary": "^13.0",
         "filament/filament": "^5.8",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",

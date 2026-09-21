@@ -16,6 +16,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Notifications\Notification;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 
 class PostRelationManager extends RelationManager
@@ -28,17 +29,45 @@ class PostRelationManager extends RelationManager
             ->components([
                 Forms\Components\FileUpload::make('file_path')
                     ->label('Ảnh (Có thể chọn nhiều)')
-                    ->disk('public')
+                    ->disk('cloudinary')
+                    ->visibility('public')
                     ->directory(function () {
                         $record = $this->getOwnerRecord();
-                        $slug = $record?->slug ?: 'posts';
+
+                        $slug = $record?->slug
+                            ?: Str::slug(
+                                $record?->title ?? 'bai-viet'
+                            );
+
                         return "posts/{$slug}/media";
                     })
                     ->image()
                     ->maxSize(20480)
                     ->required()
-                    ->multiple() // Cho phép chọn nhiều file cùng lúc
-                    ->preserveFilenames()
+                    ->multiple()
+                    ->preserveFilenames(false)
+                    ->getUploadedFileNameForStorageUsing(
+                        function (
+                            TemporaryUploadedFile $file
+                        ): string {
+                            $originalName = pathinfo(
+                                $file->getClientOriginalName(),
+                                PATHINFO_FILENAME
+                            );
+
+                            $extension = strtolower(
+                                $file->getClientOriginalExtension()
+                            );
+
+                            $slug = Str::slug($originalName);
+
+                            if (!$slug) {
+                                $slug = 'anh';
+                            }
+
+                            return "{$slug}.{$extension}";
+                        }
+                    )
                     ->columnSpanFull(),
             ]);
     }
@@ -47,69 +76,159 @@ class PostRelationManager extends RelationManager
     {
         return $table
             ->recordTitleAttribute('file_path')
+
             ->columns([
                 ImageColumn::make('file_path')
-                    ->disk('public')
+                    ->disk('cloudinary')
                     ->label('Ảnh'),
 
                 TextColumn::make('file_path')
                     ->label('Tên file ảnh')
-                    ->formatStateUsing(fn ($state) => basename($state))
+                    ->formatStateUsing(
+                        fn ($state) => basename($state)
+                    )
                     ->searchable()
                     ->sortable(),
             ])
+
             ->filters([
                 //
             ])
+
             ->headerActions([
                 CreateAction::make()
-                    ->using(function (array $data, string $model): Model {
+                    ->using(function (
+                        array $data,
+                        string $model
+                    ): Model {
                         $record = $this->getOwnerRecord();
-                        $files = is_array($data['file_path']) ? $data['file_path'] : [$data['file_path']];
+
+                        $files = is_array($data['file_path'] ?? null)
+                            ? $data['file_path']
+                            : [$data['file_path'] ?? null];
+
                         $lastMedia = null;
 
+                        $slug = $record?->slug
+                            ?: Str::slug(
+                                $record?->title ?? 'bai-viet'
+                            );
+
+                        $directory = "posts/{$slug}/media";
+
                         foreach ($files as $file) {
+
+                            /*
+                             * File upload mới
+                             */
                             if ($file instanceof TemporaryUploadedFile) {
-                                $slug = $record?->slug ?: 'posts';
-                                $path = $file->store("posts/{$slug}/media", 'public');
+
+                                $originalName = pathinfo(
+                                    $file->getClientOriginalName(),
+                                    PATHINFO_FILENAME
+                                );
+
+                                $extension = strtolower(
+                                    $file->getClientOriginalExtension()
+                                );
+
+                                $filename = Str::slug(
+                                    $originalName
+                                );
+
+                                if (!$filename) {
+                                    $filename = 'anh';
+                                }
+
+                                /*
+                                 * Đảm bảo không ghi đè
+                                 * nếu 2 ảnh có cùng tên.
+                                 */
+                                $baseFilename = $filename;
+                                $counter = 1;
+
+                                $path = "{$directory}/{$filename}.{$extension}";
+
+                                while (
+                                    Storage::disk('cloudinary')
+                                        ->exists($path)
+                                ) {
+                                    $filename =
+                                        "{$baseFilename}-{$counter}";
+
+                                    $path =
+                                        "{$directory}/{$filename}.{$extension}";
+
+                                    $counter++;
+                                }
+
+                                /*
+                                 * Upload Cloudinary với
+                                 * tên file SEO mong muốn.
+                                 */
+                                $path = $file->storeAs(
+                                    $directory,
+                                    "{$filename}.{$extension}",
+                                    'cloudinary'
+                                );
+
                             } else {
-                                $path = is_string($file) ? $file : null;
+
+                                /*
+                                 * Trường hợp Filament đã trả
+                                 * về path đã upload.
+                                 */
+                                $path = is_string($file)
+                                    ? $file
+                                    : null;
                             }
 
                             if ($path) {
-                                // Sử dụng quan hệ của record để tự động gán post_id chính xác tuyệt đối
                                 $lastMedia = $record->media()->create([
                                     'file_path' => $path,
                                 ]);
                             }
                         }
 
-                        return $lastMedia ?? $record->media()->first();
+                        return $lastMedia
+                            ?? $record->media()->first();
                     }),
             ])
+
             ->actions([
                 Action::make('copyUrl')
                     ->label('Copy Link')
                     ->icon('heroicon-m-clipboard')
                     ->color('gray')
-                    ->extraAttributes(fn ($record) => [
-                        'x-on:click.stop' => "window.navigator.clipboard.writeText('/storage/" . $record->file_path . "'); \$wire.notifyCopied()"
-                    ]),
+                    ->extraAttributes(
+                        fn ($record) => [
+                            'x-on:click.stop' =>
+                                "navigator.clipboard.writeText(" .
+                                json_encode(
+                                    Storage::disk('cloudinary')
+                                        ->url($record->file_path)
+                                ) .
+                                ").then(() => \$wire.notifyCopied())",
+                        ]
+                    ),
 
                 DeleteAction::make()
                     ->before(function ($record) {
                         if ($record->file_path) {
-                            Storage::disk('public')->delete($record->file_path);
+                            Storage::disk('cloudinary')
+                                ->delete($record->file_path);
                         }
                     }),
             ])
+
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->before(function ($records) {
                             foreach ($records as $record) {
                                 if ($record->file_path) {
-                                    Storage::disk('public')->delete($record->file_path);
+                                    Storage::disk('cloudinary')
+                                        ->delete($record->file_path);
                                 }
                             }
                         }),

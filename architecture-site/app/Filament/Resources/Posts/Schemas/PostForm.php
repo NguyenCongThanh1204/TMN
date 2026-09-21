@@ -95,13 +95,37 @@ class PostForm
                                     ->schema([
                                         FileUpload::make('thumbnail')
                                             ->label('Ảnh đại diện chính (Cover Image)')
-                                            ->disk('public')
+                                            ->disk('cloudinary')
                                             ->visibility('public')
-                                            ->directory('posts/thumbnails')
                                             ->image()
                                             ->maxSize(20480)
                                             ->imageEditor()
-                                            ->preserveFilenames()
+                                            ->preserveFilenames(false)
+                                            ->getUploadedFileNameForStorageUsing(
+                                                function (
+                                                    \Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file,
+                                                    $get
+                                                ): string {
+                                                    $slug = $get('slug')
+                                                        ?: Str::slug(
+                                                            $get('title') ?? 'bai-viet'
+                                                        );
+
+                                                    $extension = strtolower(
+                                                        $file->getClientOriginalExtension()
+                                                    );
+
+                                                    return "{$slug}.{$extension}";
+                                                }
+                                            )
+                                            ->directory(function ($get) {
+                                                $slug = $get('slug')
+                                                    ?: Str::slug(
+                                                        $get('title') ?? 'bai-viet'
+                                                    );
+
+                                                return "posts/{$slug}/thumbnail";
+                                            })
                                             ->columnSpanFull(),
 
                                         Grid::make(2)->schema([
@@ -175,7 +199,7 @@ class PostForm
                                         }
 
                                         $html = '<div style="display: flex; flex-direction: column; gap: 6px; max-height: 520px; overflow-y: auto; padding-right: 2px;">';
-                                        
+
                                         foreach ($mediaItems as $mediaItem) {
                                             $fileName = basename($mediaItem->file_path);
                                             $fileUrl = '/storage/' . $mediaItem->file_path;
