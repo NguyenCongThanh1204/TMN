@@ -55,17 +55,15 @@ class PostRelationManager extends RelationManager
                                 PATHINFO_FILENAME
                             );
 
-                            $extension = strtolower(
-                                $file->getClientOriginalExtension()
-                            );
+                            $filename = Str::slug($originalName);
 
-                            $slug = Str::slug($originalName);
-
-                            if (!$slug) {
-                                $slug = 'anh';
+                            if (!$filename) {
+                                $filename = 'anh';
                             }
 
-                            return "{$slug}.{$extension}";
+                            // Không thêm extension.
+                            // Cloudinary tự thêm .jpg/.png...
+                            return $filename;
                         }
                     )
                     ->columnSpanFull(),
@@ -128,10 +126,6 @@ class PostRelationManager extends RelationManager
                                     PATHINFO_FILENAME
                                 );
 
-                                $extension = strtolower(
-                                    $file->getClientOriginalExtension()
-                                );
-
                                 $filename = Str::slug(
                                     $originalName
                                 );
@@ -141,13 +135,16 @@ class PostRelationManager extends RelationManager
                                 }
 
                                 /*
-                                 * Đảm bảo không ghi đè
-                                 * nếu 2 ảnh có cùng tên.
+                                 * Đảm bảo không ghi đè.
+                                 *
+                                 * Lưu ý:
+                                 * Không thêm .jpg/.png vào path.
+                                 * Cloudinary adapter tự xử lý extension.
                                  */
                                 $baseFilename = $filename;
                                 $counter = 1;
 
-                                $path = "{$directory}/{$filename}.{$extension}";
+                                $path = "{$directory}/{$filename}";
 
                                 while (
                                     Storage::disk('cloudinary')
@@ -157,18 +154,19 @@ class PostRelationManager extends RelationManager
                                         "{$baseFilename}-{$counter}";
 
                                     $path =
-                                        "{$directory}/{$filename}.{$extension}";
+                                        "{$directory}/{$filename}";
 
                                     $counter++;
                                 }
 
                                 /*
-                                 * Upload Cloudinary với
-                                 * tên file SEO mong muốn.
+                                 * Upload Cloudinary.
+                                 *
+                                 * Không truyền extension.
                                  */
                                 $path = $file->storeAs(
                                     $directory,
-                                    "{$filename}.{$extension}",
+                                    $filename,
                                     'cloudinary'
                                 );
 

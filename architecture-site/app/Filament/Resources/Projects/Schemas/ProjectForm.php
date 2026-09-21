@@ -192,11 +192,7 @@ class ProjectForm
                                 );
                             }
 
-                            $extension = strtolower(
-                                $file->getClientOriginalExtension()
-                            );
-
-                            return "{$slug}.{$extension}";
+                           return $slug;
                         }
                     )
 

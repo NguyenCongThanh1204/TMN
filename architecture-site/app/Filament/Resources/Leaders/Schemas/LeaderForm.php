@@ -67,11 +67,9 @@ class LeaderForm
                                 $filename = 'lanh-dao';
                             }
 
-                            $extension = strtolower(
-                                $file->getClientOriginalExtension()
-                            );
-
-                            return "{$filename}.{$extension}";
+                            // Không thêm extension.
+                            // Cloudinary adapter tự thêm .jpg/.png...
+                            return $filename;
                         }
                     )
                     ->directory(function ($get) {

@@ -230,11 +230,7 @@ class PostForm
                                                         $slug = 'bai-viet';
                                                     }
 
-                                                    $extension = strtolower(
-                                                        $file->getClientOriginalExtension()
-                                                    );
-
-                                                    return "{$slug}.{$extension}";
+                                                    return $slug;
                                                 }
                                             )
 
