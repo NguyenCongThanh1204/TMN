@@ -5,6 +5,7 @@
 /public/fonts/filament
 /public/js/filament
 /public/storage
+/public/hot
 .env
 .env.*
 !.env.example

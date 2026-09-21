@@ -178,3 +178,18 @@ Route::get('/{prefix}/{path}', function (
     ])
     ->where('path', '.*')
     ->name('media.stream');
+
+    Route::get('/download-database-backup', function () {
+    $path = database_path('database.sqlite');
+
+    abort_unless(
+        file_exists($path),
+        404,
+        'Database SQLite không tồn tại.'
+    );
+
+    return response()->download(
+        $path,
+        'render-production-backup.sqlite'
+    );
+});

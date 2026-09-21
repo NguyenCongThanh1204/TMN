@@ -4,9 +4,11 @@ ARG PHP_VERSION=8.3
 ARG NODE_VERSION=20
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    COMPOSER_ALLOW_SUPERUSER=1 \
-    DB_CONNECTION=sqlite \
-    DB_DATABASE=/var/www/html/database/database.sqlite
+    COMPOSER_ALLOW_SUPERUSER=1
+
+# =========================================================
+# 1. SYSTEM + PHP
+# =========================================================
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gnupg2 \
@@ -38,12 +40,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+
+# =========================================================
+# 2. PHP UPLOAD CONFIG
+# =========================================================
+
 RUN printf '%s\n' \
     'upload_max_filesize=20M' \
     'post_max_size=25M' \
     'max_file_uploads=20' \
     'memory_limit=256M' \
-    > /etc/php/8.3/fpm/conf.d/99-upload.ini
+    > /etc/php/${PHP_VERSION}/fpm/conf.d/99-upload.ini
+
+
+# =========================================================
+# 3. NODE.JS / NPM
+# =========================================================
 
 RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt-get update \
@@ -53,13 +65,26 @@ RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
+
+# =========================================================
+# 4. COMPOSER
+# =========================================================
+
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
+
+# =========================================================
+# 5. APPLICATION
+# =========================================================
 
 WORKDIR /var/www/html
 
 COPY . .
 
+
+# =========================================================
+# 6. FRONTEND BUILD
+# =========================================================
 
 RUN if [ -f package-lock.json ]; then \
         npm ci; \
@@ -74,6 +99,10 @@ RUN if [ -f package-lock.json ]; then \
     && echo "=========================================="
 
 
+# =========================================================
+# 7. PHP DEPENDENCIES
+# =========================================================
+
 RUN composer install \
     --no-dev \
     --optimize-autoloader \
@@ -81,9 +110,11 @@ RUN composer install \
     --prefer-dist
 
 
+# =========================================================
+# 8. LARAVEL DIRECTORIES
+# =========================================================
 
 RUN mkdir -p \
-        database \
         storage/app/public \
         storage/framework/cache/data \
         storage/framework/sessions \
@@ -92,25 +123,22 @@ RUN mkdir -p \
         bootstrap/cache \
         /run/php
 
-RUN touch /var/www/html/database/database.sqlite
 
+# =========================================================
+# 9. PERMISSIONS
+# =========================================================
 
 RUN chown -R www-data:www-data \
         /var/www/html/storage \
         /var/www/html/bootstrap/cache \
-        /var/www/html/database \
     && chown -R www-data:www-data /run/php \
     && chmod -R 775 /var/www/html/storage \
-    && chmod -R 775 /var/www/html/bootstrap/cache \
-    && chmod -R 775 /var/www/html/database \
-    && chmod 664 /var/www/html/database/database.sqlite
+    && chmod -R 775 /var/www/html/bootstrap/cache
 
-USER www-data
 
-RUN php artisan migrate:fresh --seed --force
-
-USER root
-
+# =========================================================
+# 10. STORAGE LINK
+# =========================================================
 
 RUN rm -rf public/storage \
     && php artisan storage:link \
@@ -119,12 +147,26 @@ RUN rm -rf public/storage \
     && ls -la public/storage \
     && echo "=========================================="
 
+
+# =========================================================
+# 11. CLEAR LARAVEL CACHE
+# =========================================================
+
 RUN php artisan optimize:clear
 
+
+# =========================================================
+# 12. LIVEWIRE ROUTE CHECK
+# =========================================================
 
 RUN php artisan route:list \
     | grep -i livewire \
     || true
+
+
+# =========================================================
+# 13. PHP-FPM CONFIG
+# =========================================================
 
 RUN sed -i \
     's#^listen = .*#listen = 127.0.0.1:9000#' \
@@ -149,6 +191,9 @@ RUN echo "==========================================" \
     && echo "=========================================="
 
 
+# =========================================================
+# 14. NGINX
+# =========================================================
 
 RUN rm -f /etc/nginx/sites-enabled/default \
     && cat > /etc/nginx/sites-available/default <<'NGINX'
@@ -165,25 +210,46 @@ server {
 
     client_max_body_size 50M;
 
+
+    # =====================================================
+    # LIVEWIRE
+    # =====================================================
+
     location ~ ^/livewire-[^/]+/ {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
+
+    # =====================================================
+    # STORAGE
+    # =====================================================
 
     location ^~ /storage/ {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
 
+    # =====================================================
+    # MEDIA
+    # =====================================================
+
     location ^~ /media/ {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
 
+    # =====================================================
+    # LARAVEL
+    # =====================================================
+
     location / {
         try_files $uri $uri/ /index.php?$query_string;
     }
 
+
+    # =====================================================
+    # FRONT CONTROLLER
+    # =====================================================
 
     location ~ ^/index\.php(/|$) {
 
@@ -199,15 +265,27 @@ server {
     }
 
 
+    # =====================================================
+    # BLOCK OTHER PHP FILES
+    # =====================================================
+
     location ~ \.php$ {
         return 404;
     }
 
 
+    # =====================================================
+    # BLOCK HIDDEN FILES
+    # =====================================================
+
     location ~ /\.ht {
         deny all;
     }
 
+
+    # =====================================================
+    # STATIC FILES
+    # =====================================================
 
     location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|webp|woff|woff2|ttf)$ {
 
@@ -225,7 +303,13 @@ NGINX
 RUN ln -s /etc/nginx/sites-available/default \
     /etc/nginx/sites-enabled/default
 
+
 RUN nginx -t
+
+
+# =========================================================
+# 15. SUPERVISOR
+# =========================================================
 
 RUN cat > /etc/supervisor/conf.d/supervisord.conf <<'SUPERVISOR'
 
@@ -280,17 +364,27 @@ killasgroup=true
 SUPERVISOR
 
 
+# =========================================================
+# 16. FINAL PERMISSIONS
+# =========================================================
+
 RUN chown -R www-data:www-data \
         /var/www/html/storage \
         /var/www/html/bootstrap/cache \
-        /var/www/html/database \
     && chmod -R 775 \
         /var/www/html/storage \
-        /var/www/html/bootstrap/cache \
-        /var/www/html/database
+        /var/www/html/bootstrap/cache
 
+
+# =========================================================
+# 17. PORT
+# =========================================================
 
 EXPOSE 10000
 
+
+# =========================================================
+# 18. START
+# =========================================================
 
 CMD ["/usr/bin/supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
