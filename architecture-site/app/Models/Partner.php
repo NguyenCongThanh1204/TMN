@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Partner extends Model
 {
@@ -28,7 +29,7 @@ class Partner extends Model
                     return $this->logo;
                 }
 
-                return asset('storage/' . ltrim($this->logo, '/'));
+                return Storage::disk('cloudinary')->url(ltrim($this->logo, '/'));
             }
         );
     }

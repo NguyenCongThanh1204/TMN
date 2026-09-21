@@ -24,7 +24,7 @@ class CareerForm
                 FileUpload::make('cover_image')
                     ->label('Ảnh bìa vị trí tuyển dụng')
                     ->image()
-                    ->disk('public')
+                    ->disk('cloudinary')
                     ->directory('careers/covers')
                     ->visibility('public')
                     ->imageEditor()

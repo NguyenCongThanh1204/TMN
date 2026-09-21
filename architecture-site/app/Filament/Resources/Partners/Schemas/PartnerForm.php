@@ -22,7 +22,7 @@ class PartnerForm
                 FileUpload::make('logo')
                     ->label('Ảnh logo đối tác')
                     ->image()
-                    ->disk('public')
+                    ->disk('cloudinary')
                     ->directory('partners')
                     ->visibility('public')
                     ->imageEditor()

@@ -21,7 +21,7 @@ class ProjectsTable
                 // 1. Ảnh bìa xem trước
                 ImageColumn::make('cover_image')
                     ->label('Ảnh bìa')
-                    ->disk('public')
+                    ->disk('cloudinary')
                     ->height(50)
                     ->width(80)
                     ->extraImgAttributes([

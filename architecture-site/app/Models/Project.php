@@ -55,7 +55,7 @@ class Project extends Model
             return $this->cover_image;
         }
 
-        return Storage::disk('public')->url($this->cover_image);
+        return Storage::disk('cloudinary')->url($this->cover_image);
     }
 
     /**

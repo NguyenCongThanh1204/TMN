@@ -18,6 +18,7 @@ class LeadersTable
             ->columns([
                 ImageColumn::make('image')
                     ->label('Ảnh')
+                    ->disk('cloudinary')
                     ->circular(),
 
                 TextColumn::make('name')

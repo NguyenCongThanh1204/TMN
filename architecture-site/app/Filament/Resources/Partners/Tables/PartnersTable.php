@@ -17,7 +17,7 @@ class PartnersTable
         return $table
             ->columns([
                 ImageColumn::make('logo')
-                    ->disk('public')
+                    ->disk('cloudinary')
                     ->label('Logo'),
 
                 TextColumn::make('name')

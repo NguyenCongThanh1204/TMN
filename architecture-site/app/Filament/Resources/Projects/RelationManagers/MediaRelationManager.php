@@ -95,7 +95,7 @@ class MediaRelationManager extends RelationManager
             ->columns([
                 ImageColumn::make('file_path')
                     ->label('Ảnh')
-                    ->disk('public')
+                    ->disk('cloudinary')
                     ->square(),
 
                 TextColumn::make('caption')

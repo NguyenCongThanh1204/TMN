@@ -11,6 +11,6 @@ class PostMedia extends Model
     // Tạo thuộc tính ảo 'url' để lấy link nhanh
     public function getUrlAttribute()
     {
-        return Storage::disk('public')->url($this->file_path);
+        return Storage::disk('cloudinary')->url($this->file_path);
     }
 }

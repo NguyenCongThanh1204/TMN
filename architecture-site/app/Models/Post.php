@@ -56,7 +56,7 @@ class Post extends Model
                     return $this->thumbnail;
                 }
 
-                return Storage::disk('public')->url($this->thumbnail);
+                return Storage::disk('cloudinary')->url($this->thumbnail);
             }
         );
     }
@@ -76,7 +76,7 @@ class Post extends Model
                     if (is_string($item)) {
                         $url = (str_starts_with($item, 'http://') || str_starts_with($item, 'https://'))
                             ? $item 
-                            : Storage::disk('public')->url($item);
+                            : Storage::disk('cloudinary')->url($item);
 
                         return [
                             'image'   => $url,
@@ -87,7 +87,7 @@ class Post extends Model
 
                     $img = $item['image'] ?? ($item['url'] ?? '');
                     if ($img && !str_starts_with($img, 'http://') && !str_starts_with($img, 'https://')) {
-                        $img = Storage::disk('public')->url($img);
+                        $img = Storage::disk('cloudinary')->url($img);
                     }
 
                     return [

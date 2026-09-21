@@ -45,6 +45,6 @@ class Career extends Model
             return $this->cover_image;
         }
 
-        return Storage::disk('public')->url(ltrim($this->cover_image, '/'));
+        return Storage::disk('cloudinary')->url(ltrim($this->cover_image, '/'));
     }
 }
