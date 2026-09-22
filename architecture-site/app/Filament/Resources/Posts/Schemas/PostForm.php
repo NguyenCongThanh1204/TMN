@@ -174,22 +174,6 @@ class PostForm
                                              */
                                             ->fetchFileInformation(false)
 
-                                            /*
-                                             * Khi record đã có ảnh,
-                                             * lấy URL trực tiếp từ Cloudinary.
-                                             */
-                                            ->getUploadedFileUrlUsing(
-                                                function ($file) {
-                                                    if (!$file) {
-                                                        return null;
-                                                    }
-
-                                                    return Storage::disk(
-                                                        'cloudinary'
-                                                    )->url($file);
-                                                }
-                                            )
-
                                             ->imageEditor()
 
                                             /*

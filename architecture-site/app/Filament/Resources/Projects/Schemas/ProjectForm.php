@@ -158,21 +158,6 @@ class ProjectForm
     // Không để Filament cố kiểm tra file bằng filesystem local
     ->fetchFileInformation(false)
 
-    // Lấy URL thực tế từ Cloudinary để hiển thị lại ảnh
-    ->getUploadedFileUrlUsing(
-        function ($file) {
-            if (!$file) {
-                return null;
-            }
-
-            if (str_starts_with($file, 'http://') || str_starts_with($file, 'https://')) {
-                return $file;
-            }
-
-            return Storage::disk('cloudinary')->url($file);
-        }
-    )
-
     // Tên file logic: không extension
     ->getUploadedFileNameForStorageUsing(
         function (
