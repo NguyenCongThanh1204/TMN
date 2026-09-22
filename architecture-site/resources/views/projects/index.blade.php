@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @php
-    use Illuminate\Support\Facades\Storage;
-
     // Helper closure chuẩn hóa đường dẫn ảnh công trình
     $resolveImageUrl = function ($path) {
         if (empty($path)) {
@@ -11,7 +9,7 @@
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
             return $path;
         }
-        return Storage::disk('cloudinary')->url(ltrim($path, '/'));
+        return cloudinary_image_url($path, 800);
     };
 
     // Helper format diện tích an toàn cho cả dạng varchar lẫn số

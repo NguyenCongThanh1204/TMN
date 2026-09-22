@@ -16,12 +16,7 @@
         ->take(8)
         ->values();
 
-    $getImageUrl = function ($path) {
-        if (empty($path)) return null;
-        return str_starts_with($path, 'http://') || str_starts_with($path, 'https://')
-            ? $path
-            : Storage::disk('cloudinary')->url(ltrim($path, '/'));
-    };
+    $getImageUrl = fn ($path, $width = 400) => cloudinary_image_url($path, $width);
 @endphp
 
 <section id="news" class="relative overflow-hidden bg-white pt-[36px] pb-[28px] md:pt-[54px] md:pb-[40px] select-none border-b border-slate-200/80 font-sans">
@@ -99,7 +94,7 @@
                                 
                                 @foreach($homeNews as $idx => $post)
                                     @php
-                                        $imgUrl = $getImageUrl($post->thumbnail);
+                                        $imgUrl = $getImageUrl($post->thumbnail, 800);
                                     @endphp
                                     <div 
                                         class="absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"

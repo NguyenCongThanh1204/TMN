@@ -3,8 +3,6 @@
 @section('content')
 
 @php
-    use Illuminate\Support\Facades\Storage;
-
     // Bộ ảnh công trường & kỹ sư dự phòng chất lượng cao
     $jobFallbackImages = [
         'https://images.unsplash.com/photo-1541888946425-d0fbb1861593?q=80&w=600&auto=format&fit=crop',
@@ -26,7 +24,7 @@
             if (str_starts_with($rawPath, 'http://') || str_starts_with($rawPath, 'https://')) {
                 return $rawPath;
             }
-            return Storage::disk('cloudinary')->url(ltrim($rawPath, '/'));
+            return cloudinary_image_url($rawPath, 800);
         }
 
         return $jobFallbackImages[$index % count($jobFallbackImages)];

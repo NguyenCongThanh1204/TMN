@@ -4,8 +4,6 @@
 ========================================================= --}}
 
 @php
-    use Illuminate\Support\Facades\Storage;
-
     $resolveImageUrl = function ($path) {
         if (empty($path)) {
             return asset('images/default-avatar.png');
@@ -15,7 +13,7 @@
             return $path;
         }
 
-        return Storage::disk('cloudinary')->url(ltrim($path, '/'));
+        return cloudinary_image_url($path, 400);
     };
 
     // 1. Truy vấn toàn bộ danh sách lãnh đạo từ CSDL bảng leaders

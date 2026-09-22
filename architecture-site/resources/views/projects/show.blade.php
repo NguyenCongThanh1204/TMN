@@ -3,8 +3,6 @@
 @section('content')
 
 @php
-use Illuminate\Support\Facades\Storage;
-
 // Helper chuẩn hóa đường dẫn ảnh an toàn qua Storage Facade
 $resolveImageUrl = function ($path) {
 if (empty($path)) {
@@ -13,7 +11,7 @@ return null;
 if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
 return $path;
 }
-return Storage::disk('cloudinary')->url(ltrim($path, '/'));
+return cloudinary_image_url($path, 800);
 };
 
 // Helper format diện tích an toàn cho varchar

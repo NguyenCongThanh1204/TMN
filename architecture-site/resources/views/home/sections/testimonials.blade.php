@@ -112,7 +112,7 @@
                     @foreach($partners->concat($partners) as $partner)
                         <div class="partner-card">
                             <img
-                                src="{{ $partner->logo_url }}"
+                                src="{{ cloudinary_image_url($partner->logo, 400) }}"
                                 alt="{{ $partner->name }}"
                                 class="partner-logo transition-transform duration-300 hover:scale-105"
                                 onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"

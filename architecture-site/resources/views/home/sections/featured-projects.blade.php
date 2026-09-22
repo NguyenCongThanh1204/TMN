@@ -137,7 +137,7 @@
                             @if($project->cover_image)
 
                                 <img
-                                    src="{{ $project->cover_url }}"
+                                    src="{{ cloudinary_image_url($project->cover_image, 800) }}"
                                     alt="{{ $project->title }}"
                                     loading="lazy"
                                     class="h-full w-full object-cover

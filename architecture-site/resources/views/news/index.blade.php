@@ -2,9 +2,13 @@
 
 @section('content')
 
+@php
+    $thumbnailUrl = fn ($path) => cloudinary_image_url($path, 400);
+@endphp
+
 @push('preloads')
     @if(isset($featuredPost) && $featuredPost->thumbnail)
-        <link rel="preload" as="image" href="{{ $featuredPost->thumbnail_url }}" fetchpriority="high">
+        <link rel="preload" as="image" href="{{ $thumbnailUrl($featuredPost->thumbnail) }}" fetchpriority="high">
     @endif
 @endpush
 
@@ -68,7 +72,7 @@
                             <div class="relative w-full aspect-[16/9] overflow-hidden bg-slate-100 rounded-sm">
                                 @if($featuredPost->thumbnail)
                                     <img
-                                        src="{{ $featuredPost->thumbnail_url }}"
+                                        src="{{ cloudinary_image_url($featuredPost->thumbnail, 800) }}"
                                         alt="{{ $featuredPost->title }}"
                                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         loading="eager"
@@ -140,7 +144,7 @@
                                     </span>
                                     @if($item->thumbnail)
                                         <img
-                                            src="{{ $item->thumbnail_url }}"
+                                            src="{{ $thumbnailUrl($item->thumbnail) }}"
                                             alt="{{ $item->title }}"
                                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                             loading="eager"
@@ -185,7 +189,7 @@
                             <a href="{{ route('news.show', $post->slug) }}" class="block relative aspect-[16/10] overflow-hidden bg-slate-100">
                                 @if($post->thumbnail)
                                     <img
-                                        src="{{ $post->thumbnail_url }}"
+                                        src="{{ $thumbnailUrl($post->thumbnail) }}"
                                         alt="{{ $post->title }}"
                                         class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                         loading="lazy"
