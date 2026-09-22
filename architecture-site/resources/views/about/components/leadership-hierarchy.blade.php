@@ -4,6 +4,8 @@
 ========================================================= --}}
 
 @php
+    use Illuminate\Support\Facades\Schema;
+
     $resolveImageUrl = function ($path) {
         if (empty($path)) {
             return asset('images/default-avatar.png');
@@ -17,7 +19,7 @@
     };
 
     // 1. Truy vấn toàn bộ danh sách lãnh đạo từ CSDL bảng leaders
-    $dbLeaders = class_exists(\App\Models\Leader::class) 
+    $dbLeaders = class_exists(\App\Models\Leader::class) && Schema::hasTable('leaders')
         ? \App\Models\Leader::orderBy('level_id')->orderBy('position_order')->get() 
         : collect();
 
@@ -62,18 +64,20 @@
     foreach ($hierarchyConfig as $id => $config) {
         $membersInLevel = $dbLeaders->where('level_id', $id)->values();
         
-        $config['members'] = $membersInLevel->map(function ($member) use ($resolveImageUrl) {
+        $normalizedMembers = $membersInLevel->map(function ($member) use ($resolveImageUrl) {
             $member = $member->toArray();
             $member['image_url'] = $resolveImageUrl($member['image'] ?? null);
 
             return $member;
-        })->all();
+        })->values();
+
+        $config['members'] = $normalizedMembers->all();
         $config['ceo'] = null;
         $config['deputies'] = [];
 
-        if ($config['type'] === 'tiered' && $membersInLevel->isNotEmpty()) {
-            $config['ceo'] = $membersInLevel->first();
-            $config['deputies'] = $membersInLevel->skip(1)->values()->toArray();
+        if ($config['type'] === 'tiered' && $normalizedMembers->isNotEmpty()) {
+            $config['ceo'] = $normalizedMembers->first();
+            $config['deputies'] = $normalizedMembers->skip(1)->all();
         }
 
         $hierarchyData[] = $config;

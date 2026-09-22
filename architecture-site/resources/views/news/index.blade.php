@@ -8,7 +8,7 @@
 
 @push('preloads')
     @if(isset($featuredPost) && $featuredPost->thumbnail)
-        <link rel="preload" as="image" href="{{ $thumbnailUrl($featuredPost->thumbnail) }}" fetchpriority="high">
+        <link rel="preload" as="image" href="{{ cloudinary_image_url($featuredPost->thumbnail, 800) }}" fetchpriority="high">
     @endif
 @endpush
 
