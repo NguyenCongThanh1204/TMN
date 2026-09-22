@@ -89,11 +89,13 @@ class MediaRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('caption')
             ->defaultSort('sort_order', 'asc')
+            ->defaultPaginationPageOption(10)
+            ->paginationPageOptions([10, 25, 50])
             ->reorderable('sort_order')
             ->columns([
                 ImageColumn::make('file_path')
                     ->label('Ảnh')
-                    ->disk('cloudinary')
+                    ->getStateUsing(fn ($record) => cloudinary_image_url($record->file_path, 400))
                     ->square(),
 
                 TextColumn::make('caption')

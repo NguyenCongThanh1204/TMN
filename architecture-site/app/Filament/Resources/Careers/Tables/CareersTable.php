@@ -14,6 +14,8 @@ class CareersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultPaginationPageOption(10)
+            ->paginationPageOptions([10, 25, 50])
             ->columns([
                 TextColumn::make('job_title')
                     ->label('Vị trí tuyển dụng')

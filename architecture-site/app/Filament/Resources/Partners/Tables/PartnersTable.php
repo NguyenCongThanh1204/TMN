@@ -15,9 +15,11 @@ class PartnersTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultPaginationPageOption(10)
+            ->paginationPageOptions([10, 25, 50])
             ->columns([
                 ImageColumn::make('logo')
-                    ->disk('cloudinary')
+                    ->getStateUsing(fn ($record) => cloudinary_image_url($record->logo, 400))
                     ->label('Logo'),
 
                 TextColumn::make('name')

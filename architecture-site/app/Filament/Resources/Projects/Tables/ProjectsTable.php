@@ -17,11 +17,14 @@ class ProjectsTable
     {
         return $table
             ->defaultSort('created_at', 'desc')
+            ->modifyQueryUsing(fn ($query) => $query->with('category'))
+            ->defaultPaginationPageOption(10)
+            ->paginationPageOptions([10, 25, 50])
             ->columns([
                 // 1. Ảnh bìa xem trước
                 ImageColumn::make('cover_image')
                     ->label('Ảnh bìa')
-                    ->disk('cloudinary')
+                    ->getStateUsing(fn ($record) => cloudinary_image_url($record->cover_image, 400))
                     ->height(50)
                     ->width(80)
                     ->extraImgAttributes([

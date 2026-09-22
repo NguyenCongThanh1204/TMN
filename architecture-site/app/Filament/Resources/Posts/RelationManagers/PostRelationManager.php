@@ -78,7 +78,7 @@ class PostRelationManager extends RelationManager
 
             ->columns([
                 ImageColumn::make('file_path')
-                    ->disk('cloudinary')
+                    ->getStateUsing(fn ($record) => cloudinary_image_url($record->file_path, 400))
                     ->label('Ảnh'),
 
                 TextColumn::make('file_path')
@@ -89,6 +89,8 @@ class PostRelationManager extends RelationManager
                     ->searchable()
                     ->sortable(),
             ])
+            ->defaultPaginationPageOption(10)
+            ->paginationPageOptions([10, 25, 50])
 
             ->filters([
                 //

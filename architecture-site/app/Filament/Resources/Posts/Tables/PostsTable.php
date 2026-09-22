@@ -14,6 +14,9 @@ class PostsTable
     {
         return $table
         ->defaultSort('created_at', 'desc')
+            ->modifyQueryUsing(fn ($query) => $query->with('category'))
+            ->defaultPaginationPageOption(10)
+            ->paginationPageOptions([10, 25, 50])
             ->columns([
                 TextColumn::make('category.name')
                     ->searchable(),
