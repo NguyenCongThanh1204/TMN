@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Partners\Schemas;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Storage;
 
 class PartnerForm
 {
@@ -26,6 +27,14 @@ class PartnerForm
                     ->directory('partners')
                     ->visibility('public')
                     ->imageEditor()
+                    ->fetchFileInformation(false)
+                    ->getUploadedFileUrlUsing(
+                        fn ($file) => $file
+                            ? (str_starts_with($file, 'http://') || str_starts_with($file, 'https://')
+                                ? $file
+                                : Storage::disk('cloudinary')->url($file))
+                            : null
+                    )
                     ->required()
                     ->columnSpanFull(),
             ]);

@@ -43,11 +43,11 @@ class TinyEditorUploadController extends Controller
 
         $path = $file->store(
             $directory,
-            'public'
+            'cloudinary'
         );
 
         return response()->json([
-            'location' => Storage::disk('public')->url($path),
+            'location' => Storage::disk('cloudinary')->url($path),
         ]);
     }
 }

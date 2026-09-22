@@ -43,6 +43,7 @@ class PostRelationManager extends RelationManager
                     })
                     ->image()
                     ->maxSize(20480)
+                    ->fetchFileInformation(false)
                     ->required()
                     ->multiple()
                     ->preserveFilenames(false)

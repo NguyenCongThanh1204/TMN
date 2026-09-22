@@ -10,6 +10,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectForm
 {
@@ -140,146 +141,108 @@ class ProjectForm
                 // =========================================================
 
                 FileUpload::make('cover_image')
-                    ->label('Ảnh đại diện / Ảnh bìa')
+    ->label('Ảnh đại diện / Ảnh bìa')
+    ->disk('cloudinary')
+    ->visibility('public')
+    ->image()
+    ->maxSize(20480)
+    ->imageEditor()
+    ->imageEditorAspectRatios([
+        null,
+        '16:9',
+        '4:3',
+        '1:1',
+    ])
+    ->preserveFilenames(false)
 
-                    // Upload trực tiếp lên Cloudinary
-                    ->disk('cloudinary')
+    // Không để Filament cố kiểm tra file bằng filesystem local
+    ->fetchFileInformation(false)
 
-                    // Ảnh public để website có thể hiển thị
-                    ->visibility('public')
+    // Lấy URL thực tế từ Cloudinary để hiển thị lại ảnh
+    ->getUploadedFileUrlUsing(
+        function ($file) {
+            if (!$file) {
+                return null;
+            }
 
-                    // Chỉ cho phép upload hình ảnh
-                    ->image()
+            if (str_starts_with($file, 'http://') || str_starts_with($file, 'https://')) {
+                return $file;
+            }
 
-                    // Tối đa 20 MB
-                    ->maxSize(20480)
+            return Storage::disk('cloudinary')->url($file);
+        }
+    )
 
-                    // Cho phép chỉnh sửa ảnh trước khi upload
-                    ->imageEditor()
+    // Tên file logic: không extension
+    ->getUploadedFileNameForStorageUsing(
+        function (
+            \Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file,
+            $get
+        ): string {
+            $slug = $get('slug')
+                ?: Str::slug(
+                    $get('title') ?? 'du-an-moi'
+                );
 
-                    // Tỷ lệ ảnh
-                    ->imageEditorAspectRatios([
-                        null,
-                        '16:9',
-                        '4:3',
-                        '1:1',
-                    ])
+            return $slug;
+        }
+    )
 
-                    // Không sử dụng tên file gốc
-                    ->preserveFilenames(false)
+    ->directory(function ($get) {
+        $slug = $get('slug')
+            ?: Str::slug(
+                $get('title') ?? 'du-an-moi'
+            );
 
-                    // =====================================================
-                    // ĐẶT TÊN FILE THEO SLUG CỦA PROJECT
-                    //
-                    // Ví dụ:
-                    // title = Văn phòng Tân Minh Nhân
-                    // slug  = van-phong-tan-minh-nhan
-                    //
-                    // => van-phong-tan-minh-nhan.jpg
-                    // =====================================================
+        return "projects/{$slug}/covers";
+    })
 
-                    ->getUploadedFileNameForStorageUsing(
-                        function (
-                            \Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file,
-                            $get
-                        ): string {
-                            $slug = $get('slug');
+    // Chuẩn hóa dữ liệu cũ khi mở form
+    ->afterStateHydrated(function ($component, $state) {
+        if (is_array($state)) {
+            $state = $state['path']
+                ?? $state['url']
+                ?? reset($state)
+                ?? null;
+        }
 
-                            // Nếu chưa có slug thì lấy title tạo slug
-                            if (!$slug) {
-                                $slug = Str::slug(
-                                    $get('title') ?? 'du-an-moi'
-                                );
-                            }
+        if (
+            is_string($state)
+            && str_starts_with($state, '{')
+        ) {
+            $decoded = json_decode($state, true);
 
-                           return $slug;
-                        }
-                    )
+            $state = $decoded['path']
+                ?? $decoded['url']
+                ?? null;
+        }
 
-                    // =====================================================
-                    // FOLDER CLOUDINARY
-                    //
-                    // projects/
-                    //     van-phong-tan-minh-nhan/
-                    //         covers/
-                    //             van-phong-tan-minh-nhan.jpg
-                    // =====================================================
+        $component->state($state);
+    })
 
-                    ->directory(function ($get) {
-                        $slug = $get('slug')
-                            ?: Str::slug(
-                                $get('title') ?? 'du-an-moi'
-                            );
+    ->formatStateUsing(function ($state) {
+        if (is_array($state)) {
+            return $state['path']
+                ?? $state['url']
+                ?? reset($state)
+                ?? null;
+        }
 
-                        return "projects/{$slug}/covers";
-                    })
+        if (
+            is_string($state)
+            && str_starts_with($state, '{')
+        ) {
+            $decoded = json_decode($state, true);
 
-                    // =====================================================
-                    // XỬ LÝ DỮ LIỆU CŨ
-                    // =====================================================
+            return $decoded['path']
+                ?? $decoded['url']
+                ?? null;
+        }
 
-                    ->afterStateHydrated(function (
-                        $component,
-                        $state
-                    ) {
-                        if (is_array($state)) {
-                            $component->state(
-                                $state['path']
-                                    ?? $state['url']
-                                    ?? reset($state)
-                                    ?? null
-                            );
+        return $state;
+    })
 
-                            return;
-                        }
-
-                        if (
-                            is_string($state)
-                            && str_starts_with($state, '{')
-                        ) {
-                            $decoded = json_decode(
-                                $state,
-                                true
-                            );
-
-                            $component->state(
-                                $decoded['path']
-                                    ?? $decoded['url']
-                                    ?? null
-                            );
-
-                            return;
-                        }
-
-                        $component->state($state);
-                    })
-
-                    ->formatStateUsing(function ($state) {
-                        if (is_array($state)) {
-                            return $state['path']
-                                ?? $state['url']
-                                ?? reset($state)
-                                ?? null;
-                        }
-
-                        if (
-                            is_string($state)
-                            && str_starts_with($state, '{')
-                        ) {
-                            $decoded = json_decode(
-                                $state,
-                                true
-                            );
-
-                            return $decoded['path']
-                                ?? $decoded['url']
-                                ?? null;
-                        }
-
-                        return $state;
-                    })
-
-                    ->columnSpanFull(),
+    ->columnSpanFull(),
 
                 // =========================================================
                 // HÀNG 9: MÔ TẢ CHI TIẾT

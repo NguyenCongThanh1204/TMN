@@ -33,6 +33,14 @@ class MediaRelationManager extends RelationManager
                     ->image()
                     ->maxSize(20480)
                     ->imageEditor()
+                    ->fetchFileInformation(false)
+                    ->getUploadedFileUrlUsing(
+                        fn ($file) => $file
+                            ? (str_starts_with($file, 'http://') || str_starts_with($file, 'https://')
+                                ? $file
+                                : \Illuminate\Support\Facades\Storage::disk('cloudinary')->url($file))
+                            : null
+                    )
                     ->required()
                     ->preserveFilenames(false)
                     ->getUploadedFileNameForStorageUsing(

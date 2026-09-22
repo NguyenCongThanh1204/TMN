@@ -9,6 +9,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Schemas\Schema;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class LeaderForm
 {
@@ -47,6 +48,14 @@ class LeaderForm
                     ->visibility('public')
                     ->image()
                     ->maxSize(20480)
+                    ->fetchFileInformation(false)
+                    ->getUploadedFileUrlUsing(
+                        fn ($file) => $file
+                            ? (str_starts_with($file, 'http://') || str_starts_with($file, 'https://')
+                                ? $file
+                                : Storage::disk('cloudinary')->url($file))
+                            : null
+                    )
                     ->imageEditor()
                     ->preserveFilenames(false)
                     ->getUploadedFileNameForStorageUsing(

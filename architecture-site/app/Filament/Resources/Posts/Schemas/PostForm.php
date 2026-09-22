@@ -116,16 +116,7 @@ class PostForm
                                             ->required()
                                             ->profile('full')
 
-                                            /*
-                                             * Giữ public cho TinyEditor
-                                             * để tránh phát sinh lại lỗi
-                                             * upload Livewire/TinyEditor.
-                                             *
-                                             * Có thể chuyển Cloudinary
-                                             * sau khi kiểm tra riêng
-                                             * cơ chế upload của TinyEditor.
-                                             */
-                                            ->fileAttachmentsDisk('public')
+                                            ->fileAttachmentsDisk('cloudinary')
 
                                             ->fileAttachmentsDirectory(
                                                 function (Get $get) {

@@ -21,7 +21,7 @@ class EditPost extends EditRecord
     // Xử lý lưu các file upload nhanh từ sidebar bên phải
     if (request()->hasFile('quick_uploads')) {
         foreach (request()->file('quick_uploads') as $file) {
-            $path = $file->store("posts/{$record->slug}/media", 'public');
+            $path = $file->store("posts/{$record->slug}/media", 'cloudinary');
             $record->media()->create(['file_path' => $path]);
         }
     }
