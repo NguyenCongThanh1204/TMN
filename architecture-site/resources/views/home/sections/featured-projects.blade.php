@@ -137,7 +137,7 @@
                             @if($project->cover_image)
 
                                 <img
-                                    src="{{ asset('storage/' . $project->cover_image) }}"
+                                    src="{{ $project->cover_url }}"
                                     alt="{{ $project->title }}"
                                     loading="lazy"
                                     class="h-full w-full object-cover

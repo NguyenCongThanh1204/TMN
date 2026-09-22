@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Facades\Storage;
+@endphp
+
 <div style="background: white; border-radius: 12px; padding: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb;">
     <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #f3f4f6; padding-bottom: 10px; margin-bottom: 12px;">
         <span style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: #1f2937;">Quản lý Media Nhanh</span>
@@ -68,8 +72,10 @@
             @else
                 @foreach($mediaItems as $mediaItem)
                     @php
+                        $fileUrl = str_starts_with($mediaItem->file_path, 'http://') || str_starts_with($mediaItem->file_path, 'https://')
+                            ? $mediaItem->file_path
+                            : Storage::disk('cloudinary')->url(ltrim($mediaItem->file_path, '/'));
                         $fileName = basename($mediaItem->file_path);
-                        $fileUrl = '/storage/' . $mediaItem->file_path;
                     @endphp
                     <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 8px; border-radius: 8px; background: #f9fafb; border: 1px solid #f3f4f6;">
                         <span style="font-size: 11px; font-weight: 500; color: #374151; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;" title="{{ $fileName }}">

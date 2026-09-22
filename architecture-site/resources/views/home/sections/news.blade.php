@@ -4,6 +4,8 @@
 ========================================================= --}}
 
 @php
+    use Illuminate\Support\Facades\Storage;
+
     $homeNews = isset($latestPosts) ? $latestPosts : (isset($posts) ? $posts : collect());
 
     $homeNews = $homeNews
@@ -16,7 +18,9 @@
 
     $getImageUrl = function ($path) {
         if (empty($path)) return null;
-        return str_starts_with($path, 'http') ? $path : asset('storage/' . ltrim($path, '/'));
+        return str_starts_with($path, 'http://') || str_starts_with($path, 'https://')
+            ? $path
+            : Storage::disk('cloudinary')->url(ltrim($path, '/'));
     };
 @endphp
 

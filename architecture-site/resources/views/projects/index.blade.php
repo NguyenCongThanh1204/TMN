@@ -11,7 +11,7 @@
         if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
             return $path;
         }
-        return Storage::disk('public')->url(ltrim($path, '/'));
+        return Storage::disk('cloudinary')->url(ltrim($path, '/'));
     };
 
     // Helper format diện tích an toàn cho cả dạng varchar lẫn số

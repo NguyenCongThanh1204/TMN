@@ -4,6 +4,8 @@
 ========================================================= --}}
 
 @php
+use Illuminate\Support\Facades\Storage;
+
 $displayProjects = \App\Models\Project::query()
 ->with('category')
 ->where('status', 'published')
@@ -31,8 +33,8 @@ $displayProjects = \App\Models\Project::query()
             @foreach($displayProjects as $project)
             @php
                 $cover = $project->cover_url ?? $project->cover_image;
-                if ($cover && !Illuminate\Support\Str::startsWith($cover, ['http://', 'https://', '/'])) {
-                    $cover = asset('storage/' . ltrim($cover, '/'));
+                if ($cover && !Illuminate\Support\Str::startsWith($cover, ['http://', 'https://'])) {
+                    $cover = Storage::disk('cloudinary')->url(ltrim($cover, '/'));
                 }
             @endphp
             {

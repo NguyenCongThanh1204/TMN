@@ -4,6 +4,20 @@
 ========================================================= --}}
 
 @php
+    use Illuminate\Support\Facades\Storage;
+
+    $resolveImageUrl = function ($path) {
+        if (empty($path)) {
+            return asset('images/default-avatar.png');
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        return Storage::disk('cloudinary')->url(ltrim($path, '/'));
+    };
+
     // 1. Truy vấn toàn bộ danh sách lãnh đạo từ CSDL bảng leaders
     $dbLeaders = class_exists(\App\Models\Leader::class) 
         ? \App\Models\Leader::orderBy('level_id')->orderBy('position_order')->get() 
@@ -50,7 +64,12 @@
     foreach ($hierarchyConfig as $id => $config) {
         $membersInLevel = $dbLeaders->where('level_id', $id)->values();
         
-        $config['members'] = $membersInLevel->toArray();
+        $config['members'] = $membersInLevel->map(function ($member) use ($resolveImageUrl) {
+            $member = $member->toArray();
+            $member['image_url'] = $resolveImageUrl($member['image'] ?? null);
+
+            return $member;
+        })->all();
         $config['ceo'] = null;
         $config['deputies'] = [];
 
@@ -148,9 +167,7 @@
                                     {{-- Khung ảnh vuông 600x600 tối ưu --}}
                                     <div class="aspect-square w-full relative overflow-hidden bg-slate-50">
                                         @php
-                                            $imgUrl = !empty($member['image']) 
-                                                ? (str_starts_with($member['image'], 'http') ? $member['image'] : asset('storage/' . $member['image'])) 
-                                                : asset('images/default-avatar.png');
+                                            $imgUrl = $member['image_url'];
                                         @endphp
                                         <img
                                             src="{{ $imgUrl }}"
@@ -187,9 +204,7 @@
                                 >
                                     <div class="aspect-square w-full relative overflow-hidden bg-slate-50">
                                         @php
-                                            $imgUrl = !empty($member['image']) 
-                                                ? (str_starts_with($member['image'], 'http') ? $member['image'] : asset('storage/' . $member['image'])) 
-                                                : asset('images/default-avatar.png');
+                                            $imgUrl = $member['image_url'];
                                         @endphp
                                         <img
                                             src="{{ $imgUrl }}"
@@ -226,9 +241,7 @@
                                 >
                                     <div class="aspect-square w-full relative overflow-hidden bg-slate-50">
                                         @php
-                                            $ceoImg = !empty($level['ceo']['image']) 
-                                                ? (str_starts_with($level['ceo']['image'], 'http') ? $level['ceo']['image'] : asset('storage/' . $level['ceo']['image'])) 
-                                                : asset('images/default-avatar.png');
+                                            $ceoImg = $level['ceo']['image_url'];
                                         @endphp
                                         <img
                                             src="{{ $ceoImg }}"
@@ -261,9 +274,7 @@
             >
                 <div class="aspect-square w-full relative overflow-hidden bg-slate-50">
                     @php
-                        $depImg = !empty($deputy['image']) 
-                            ? (str_starts_with($deputy['image'], 'http') ? $deputy['image'] : asset('storage/' . $deputy['image'])) 
-                            : asset('images/default-avatar.png');
+                        $depImg = $deputy['image_url'];
                     @endphp
                     <img
                         src="{{ $depImg }}"
@@ -328,9 +339,9 @@
             </button>
 
             <div class="w-full sm:w-5/12 aspect-square rounded-xl overflow-hidden bg-slate-100 relative shrink-0 shadow-sm">
-                <template x-if="selectedLeader?.image">
+                <template x-if="selectedLeader?.image_url">
                     <img
-                        :src="selectedLeader.image.startsWith('http') ? selectedLeader.image : '/storage/' + selectedLeader.image"
+                        :src="selectedLeader.image_url"
                         :alt="selectedLeader?.name"
                         class="w-full h-full object-cover object-top"
                     />

@@ -26,7 +26,7 @@
             if (str_starts_with($rawPath, 'http://') || str_starts_with($rawPath, 'https://')) {
                 return $rawPath;
             }
-            return Storage::disk('public')->url(ltrim($rawPath, '/'));
+            return Storage::disk('cloudinary')->url(ltrim($rawPath, '/'));
         }
 
         return $jobFallbackImages[$index % count($jobFallbackImages)];
