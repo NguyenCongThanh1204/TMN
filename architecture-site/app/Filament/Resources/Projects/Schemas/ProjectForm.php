@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Projects\Schemas;
 
 use App\Models\Project;
 use Filament\Forms\Components\FileUpload;
+use App\Filament\Forms\Components\CloudinaryUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -140,47 +141,11 @@ class ProjectForm
                 // HÀNG 8: ẢNH ĐẠI DIỆN / ẢNH BÌA
                 // =========================================================
 
-                FileUpload::make('cover_image')
-    ->label('Ảnh đại diện / Ảnh bìa')
-    ->disk('cloudinary')
-    ->visibility('public')
-    ->image()
-    ->maxSize(20480)
-    ->imageEditor()
-    ->imageEditorAspectRatios([
-        null,
-        '16:9',
-        '4:3',
-        '1:1',
-    ])
-    ->preserveFilenames(false)
-
-    // Không để Filament cố kiểm tra file bằng filesystem local
-    ->fetchFileInformation(false)
-
-    // Tên file logic: không extension
-    ->getUploadedFileNameForStorageUsing(
-        function (
-            \Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file,
-            $get
-        ): string {
-            $slug = $get('slug')
-                ?: Str::slug(
-                    $get('title') ?? 'du-an-moi'
-                );
-
-            return $slug;
-        }
-    )
-
-    ->directory(function ($get) {
-        $slug = $get('slug')
-            ?: Str::slug(
-                $get('title') ?? 'du-an-moi'
-            );
-
-        return "projects/{$slug}/covers";
-    })
+                CloudinaryUpload::make('cover_image')
+                    ->label('Ảnh đại diện / Ảnh bìa')
+                    ->directory('projects/covers')
+                    ->image()
+                    ->maxSize(20480)
 
     // Chuẩn hóa dữ liệu cũ khi mở form
     ->afterStateHydrated(function ($component, $state) {

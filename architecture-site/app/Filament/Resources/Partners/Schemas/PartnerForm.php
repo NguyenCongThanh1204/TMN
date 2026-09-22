@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Partners\Schemas;
 
 use Filament\Forms\Components\FileUpload;
+use App\Filament\Forms\Components\CloudinaryUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -21,14 +22,11 @@ class PartnerForm
                     ->maxLength(255)
                     ->columnSpanFull(),
 
-                FileUpload::make('logo')
+                CloudinaryUpload::make('logo')
                     ->label('Ảnh logo đối tác')
                     ->image()
-                    ->disk('cloudinary')
                     ->directory('partners')
-                    ->visibility('public')
                     ->imageEditor()
-                    ->fetchFileInformation(false)
                     ->preserveFilenames(false)
 
                     ->getUploadedFileNameForStorageUsing(

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts\RelationManagers;
 
+use App\Filament\Forms\Components\CloudinaryUpload;
 use Filament\Forms;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
@@ -27,10 +28,8 @@ class PostRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                Forms\Components\FileUpload::make('file_path')
+                CloudinaryUpload::make('file_path')
                     ->label('Ảnh (Có thể chọn nhiều)')
-                    ->disk('cloudinary')
-                    ->visibility('public')
                     ->directory(function () {
                         $record = $this->getOwnerRecord();
 

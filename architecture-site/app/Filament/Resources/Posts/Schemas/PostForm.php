@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Posts\Schemas;
 
 use App\Models\Post;
+use App\Filament\Forms\Components\CloudinaryUpload;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
@@ -152,28 +153,13 @@ class PostForm
                                 Tab::make('Hình ảnh & Thư viện')
                                     ->schema([
 
-                                        FileUpload::make('thumbnail')
+                                        CloudinaryUpload::make('thumbnail')
                                             ->label(
                                                 'Ảnh đại diện chính (Cover Image)'
                                             )
 
-                                            // Cloudinary
-                                            ->disk('cloudinary')
-                                            ->visibility('public')
-
                                             ->image()
                                             ->maxSize(20480)
-
-                                            /*
-                                             * Không yêu cầu Filament
-                                             * đọc metadata file từ disk.
-                                             *
-                                             * Quan trọng với Cloudinary:
-                                             * tránh tình trạng preview
-                                             * hiển thị "0 bytes".
-                                             */
-                                            ->fetchFileInformation(false)
-
                                             ->imageEditor()
 
                                             /*
@@ -181,6 +167,7 @@ class PostForm
                                              * Tên file sẽ được tạo theo slug.
                                              */
                                             ->preserveFilenames(false)
+                                            ->directory('posts/thumbnails')
 
                                             /*
                                              * Tên file:

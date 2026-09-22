@@ -11,6 +11,7 @@ use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\LeaderController;
+use App\Http\Controllers\CloudinarySignatureController;
 
 
 /*
@@ -21,6 +22,10 @@ use App\Http\Controllers\LeaderController;
 
 Route::get('/', HomeController::class)
     ->name('home');
+
+Route::post('/admin/cloudinary/signature', CloudinarySignatureController::class)
+    ->middleware('auth')
+    ->name('filament.cloudinary.signature');
 
 
 /*

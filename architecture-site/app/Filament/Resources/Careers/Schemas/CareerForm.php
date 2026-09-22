@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Careers\Schemas;
 
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use App\Filament\Forms\Components\CloudinaryUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -22,14 +23,11 @@ class CareerForm
                     ->required()
                     ->columnSpanFull(),
 
-                FileUpload::make('cover_image')
+                CloudinaryUpload::make('cover_image')
                     ->label('Ảnh bìa vị trí tuyển dụng')
                     ->image()
-                    ->disk('cloudinary')
                     ->directory('careers/covers')
-                    ->visibility('public')
                     ->imageEditor()
-                    ->fetchFileInformation(false)
                     ->columnSpanFull(),
 
                 TextInput::make('department')

@@ -6,6 +6,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\FileUpload;
+use App\Filament\Forms\Components\CloudinaryUpload;
 use Filament\Schemas\Schema;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Illuminate\Support\Str;
@@ -42,14 +43,12 @@ class LeaderForm
                     ->label('Chức vụ')
                     ->required(),
 
-                FileUpload::make('image')
+                CloudinaryUpload::make('image')
                     ->label('Hình ảnh chân dung')
-                    ->disk('cloudinary')
-                    ->visibility('public')
                     ->image()
                     ->maxSize(20480)
-                    ->fetchFileInformation(false)
                     ->imageEditor()
+                    ->directory('leaders')
                     ->preserveFilenames(false)
                     ->getUploadedFileNameForStorageUsing(
                         function (

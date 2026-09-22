@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Projects\RelationManagers;
 
+use App\Filament\Forms\Components\CloudinaryUpload;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -26,16 +27,11 @@ class MediaRelationManager extends RelationManager
     {
         return $schema
             ->components([
-                FileUpload::make('file_path')
+                CloudinaryUpload::make('file_path')
                     ->label('Hình ảnh công trình')
-                    ->disk('cloudinary')
-                    ->visibility('public')
                     ->image()
                     ->maxSize(20480)
-                    ->imageEditor()
-                    ->fetchFileInformation(false)
-                    ->required()
-                    ->preserveFilenames(false)
+                    ->directory('projects/gallery')
                     ->getUploadedFileNameForStorageUsing(
                         function (
                             \Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file,
