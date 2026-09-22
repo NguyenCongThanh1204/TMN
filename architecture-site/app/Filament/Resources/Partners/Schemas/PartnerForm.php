@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Partners\Schemas;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 
 class PartnerForm
@@ -28,6 +29,19 @@ class PartnerForm
                     ->visibility('public')
                     ->imageEditor()
                     ->fetchFileInformation(false)
+                    ->preserveFilenames(false)
+
+                    ->getUploadedFileNameForStorageUsing(
+                        function (
+                            \Livewire\Features\SupportFileUploads\TemporaryUploadedFile $file,
+                            $get
+                        ): string {
+                            return Str::slug(
+                                $get('name') ?? 'doi-tac'
+                            );
+                        }
+                    )
+
                     ->required()
                     ->columnSpanFull(),
             ]);
