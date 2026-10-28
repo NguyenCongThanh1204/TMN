@@ -13,7 +13,7 @@ use App\MoonShine\Resources\PostCategory\PostCategoryResource;
 use App\MoonShine\Resources\Project\ProjectResource;
 use App\MoonShine\Resources\ProjectCategory\ProjectCategoryResource;
 use MoonShine\ColorManager\ColorManager;
-use MoonShine\ColorManager\Palettes\CorporatePalette;
+use MoonShine\ColorManager\Palettes\PurplePalette;
 use MoonShine\Contracts\ColorManager\ColorManagerContract;
 use MoonShine\Contracts\ColorManager\PaletteContract;
 use MoonShine\Laravel\Layouts\AppLayout;
@@ -24,7 +24,7 @@ final class MoonShineLayout extends AppLayout
     /**
      * @var null|class-string<PaletteContract>
      */
-    protected ?string $palette = CorporatePalette::class;
+    protected ?string $palette = PurplePalette::class;
 
     protected function assets(): array
     {
