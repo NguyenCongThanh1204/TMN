@@ -101,6 +101,12 @@
                         </a>
                     </li>
                     <li>
+                        <a href="{{ route('partners.index') }}" class="hover:text-white transition-colors inline-flex items-center gap-1.5 group">
+                            <span class="h-1 w-1 rounded-full bg-red-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
+                            Đối tác
+                        </a>
+                    </li>
+                    <li>
                         <a href="{{ route('careers.index') }}" class="hover:text-white transition-colors inline-flex items-center gap-1.5 group">
                             <span class="h-1 w-1 rounded-full bg-red-500 opacity-0 group-hover:opacity-100 transition-opacity"></span>
                             Tuyển dụng

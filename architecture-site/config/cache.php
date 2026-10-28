@@ -53,6 +53,12 @@ return [
             'lock_path' => storage_path('framework/cache/data'),
         ],
 
+        'responsecache' => [
+            'driver' => 'file',
+            'path' => storage_path('framework/cache/responses'),
+            'lock_path' => storage_path('framework/cache/responses'),
+        ],
+
         'storage' => [
             'driver' => 'storage',
             'disk' => env('CACHE_STORAGE_DISK'),

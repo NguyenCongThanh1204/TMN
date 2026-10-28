@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class Project extends Model
@@ -28,7 +27,7 @@ class Project extends Model
 
     protected $casts = [
         'is_featured' => 'boolean',
-        'year'        => 'integer',
+        'year' => 'integer',
     ];
 
     protected $appends = [
@@ -55,7 +54,7 @@ class Project extends Model
             return $this->cover_image;
         }
 
-        return Storage::disk('cloudinary')->url($this->cover_image);
+        return cloudinary_image_url($this->cover_image);
     }
 
     /**
@@ -78,6 +77,7 @@ class Project extends Model
     {
         return 'slug';
     }
+
     public function media()
     {
         return $this->hasMany(ProjectMedia::class)->orderBy('sort_order', 'asc');

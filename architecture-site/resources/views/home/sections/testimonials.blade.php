@@ -15,8 +15,6 @@
         ],
     ];
 
-    // Lấy danh sách đối tác từ CSDL
-    $partners = \App\Models\Partner::whereNotNull('logo')->latest()->get();
 @endphp
 
 <section

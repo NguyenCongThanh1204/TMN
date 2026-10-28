@@ -34,31 +34,15 @@
 <div class="bg-white text-slate-800 select-none font-sans">
 
     {{-- =========================================================
-         1. HERO SECTION
+         1. HERO SECTION (FULL MÀN HÌNH - CHỈ HIỆN ẢNH NGUYÊN BẢN)
          ========================================================= --}}
     <section 
-        class="relative w-full min-h-[500px] sm:min-h-[560px] bg-slate-900 text-white flex items-center overflow-hidden"
+        class="relative w-full h-screen overflow-hidden bg-slate-900"
         x-data="{
             current: 0,
             slides: [
-                {
-                    title: 'KIẾN TẠO BIỂU TƯỢNG',
-                    sub: 'CÙNG TÂN MINH NHÂN',
-                    desc: 'Môi trường làm việc chuẩn mực, chế độ đãi ngộ xứng tầm và lộ trình sự nghiệp vững chắc cho các kỹ sư tài năng.',
-                    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1920&auto=format&fit=crop'
-                },
-                {
-                    title: 'BỨT PHÁ BẢN THÂN',
-                    sub: 'CHINH PHỤC CÔNG TRÌNH',
-                    desc: 'Trực tiếp đồng hành xây dựng các dự án nghỉ dưỡng, khách sạn 5 sao và hạ tầng quy mô lớn trên toàn quốc.',
-                    image: 'https://images.unsplash.com/photo-1541888946425-d0fbb1861593?q=80&w=1920&auto=format&fit=crop'
-                },
-                {
-                    title: 'ĐÃI NGỘ XỨNG ĐÁNG',
-                    sub: 'GẮN KẾT BỀN VỮNG',
-                    desc: 'Chính sách công tác xa minh bạch, phụ cấp chu đáo và thưởng quyết toán dự án rõ ràng cho đội ngũ cán bộ.',
-                    image: 'https://images.unsplash.com/photo-1581094794329-c8112a89af12?q=80&w=1920&auto=format&fit=crop'
-                }
+                { image: '/images/TD_TMN01.png' },
+                { image: '/images/TD_TMN02.png' }
             ],
             timer: null,
             start() {
@@ -74,52 +58,24 @@
         }"
         x-init="start()"
     >
+        {{-- Slide Ảnh --}}
         <template x-for="(slide, index) in slides" :key="index">
             <div 
                 class="absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out pointer-events-none"
                 :class="current === index ? 'opacity-100 z-10' : 'opacity-0 z-0'"
             >
-                <img :src="slide.image" :alt="slide.title" class="w-full h-full object-cover brightness-90 filter" />
+                <img :src="slide.image" alt="Hero Slide" class="w-full h-full object-cover" />
             </div>
         </template>
 
-        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/50 to-transparent z-10 pointer-events-none"></div>
-
-        <div class="max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-12 relative z-20 py-12 w-full">
-            <div class="max-w-3xl space-y-5">
-                
-                <div class="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-slate-900/60 backdrop-blur-md border border-white/20 text-xs sm:text-sm font-mono tracking-widest text-[#EB323A] shadow-md">
-                    <span class="w-2.5 h-2.5 rounded-full bg-[#EB323A]"></span>
-                    <span>THÔNG BÁO TUYỂN DỤNG 2026</span>
-                </div>
-
-                <div class="space-y-3 min-h-[160px] flex flex-col justify-center">
-                    <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tight text-white leading-[1.1] drop-shadow-md">
-                        <span x-text="slides[current].title"></span><br>
-                        <span class="text-[#EB323A]" x-text="slides[current].sub"></span>
-                    </h1>
-                    <p class="text-base sm:text-lg text-slate-100 max-w-2xl leading-relaxed pt-1 drop-shadow-sm font-medium" x-text="slides[current].desc"></p>
-                </div>
-
-                <div class="pt-2">
-                    <a 
-                        href="#jobs-list" 
-                        class="px-8 py-3.5 rounded-full bg-[#EB323A] hover:bg-red-700 text-white font-bold text-xs sm:text-sm uppercase tracking-wider transition-all duration-300 shadow-xl shadow-red-600/30 inline-flex items-center gap-2 group cursor-pointer"
-                    >
-                        <span>Xem vị trí tuyển dụng</span>
-                        <span class="transition-transform group-hover:translate-x-1 font-mono text-base">↓</span>
-                    </a>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="absolute bottom-6 right-6 sm:bottom-8 sm:right-12 z-20 flex items-center gap-2">
+        {{-- Dots điều hướng chuyển ảnh --}}
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5">
             <template x-for="(slide, index) in slides" :key="'dot-' + index">
                 <button 
+                    type="button"
                     @click="goTo(index)" 
-                    class="h-2.5 rounded-full transition-all duration-300 cursor-pointer shadow-sm"
-                    :class="current === index ? 'w-10 bg-[#EB323A]' : 'w-2.5 bg-white/60 hover:bg-white'"
+                    class="h-2.5 rounded-full transition-all duration-300 cursor-pointer shadow-md"
+                    :class="current === index ? 'w-10 bg-[#EB323A]' : 'w-2.5 bg-white/70 hover:bg-white'"
                 ></button>
             </template>
         </div>

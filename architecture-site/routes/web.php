@@ -1,17 +1,19 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Storage;
-
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\PageController;
-use App\Http\Controllers\ProjectController;
-use App\Http\Controllers\PostController;
 use App\Http\Controllers\CareerController;
 use App\Http\Controllers\ContactController;
-use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LeaderController;
-
+use App\Http\Controllers\MediaBrowseController;
+use App\Http\Controllers\MediaRecommendationController;
+use App\Http\Controllers\MoonShineMediaLibraryController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PartnerController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\TinyEditorUploadController;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,33 +24,6 @@ use App\Http\Controllers\LeaderController;
 Route::get('/', HomeController::class)
     ->name('home');
 
-
-/*
-|--------------------------------------------------------------------------
-| Debug trang chủ - TẠM THỜI
-|--------------------------------------------------------------------------
-|
-| Route này dùng để bắt chính xác exception của HomeController trên Render.
-| Sau khi sửa xong lỗi 500 thì XÓA route này.
-|
-*/
-
-Route::get('/debug-home', function () {
-    try {
-        return app(HomeController::class)();
-    } catch (\Throwable $e) {
-        return response()->json([
-            'success' => false,
-            'exception' => get_class($e),
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-            'trace' => explode(PHP_EOL, $e->getTraceAsString()),
-        ], 500);
-    }
-})->name('debug.home');
-
-
 /*
 |--------------------------------------------------------------------------
 | Giới thiệu
@@ -57,7 +32,6 @@ Route::get('/debug-home', function () {
 
 Route::get('/about', [PageController::class, 'about'])
     ->name('about');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -70,7 +44,6 @@ Route::get('/projects', [ProjectController::class, 'index'])
 
 Route::get('/projects/{project:slug}', [ProjectController::class, 'show'])
     ->name('projects.show');
-
 
 /*
 |--------------------------------------------------------------------------
@@ -93,7 +66,6 @@ Route::prefix('careers')
             ->name('show');
     });
 
-
 /*
 |--------------------------------------------------------------------------
 | Tin tức
@@ -106,6 +78,28 @@ Route::get('/news', [PostController::class, 'index'])
 Route::get('/news/{post:slug}', [PostController::class, 'show'])
     ->name('news.show');
 
+Route::post('/manager/tiny-mce/upload', TinyEditorUploadController::class)
+    ->middleware('auth:moonshine')
+    ->name('moonshine.tiny-mce.upload');
+
+Route::prefix(config('moonshine.prefix', 'manager'))
+    ->middleware('auth:moonshine')
+    ->group(function (): void {
+        Route::get('/media-library/browse', MediaBrowseController::class)
+            ->name('moonshine.media-library.browse');
+        Route::post('/media-library/folders', [MoonShineMediaLibraryController::class, 'storeFolder'])
+            ->name('moonshine.media-library.folders.store');
+        Route::patch('/media-library/folders/{folder}', [MoonShineMediaLibraryController::class, 'updateFolder'])
+            ->name('moonshine.media-library.folders.update');
+        Route::delete('/media-library/folders/{folder}', [MoonShineMediaLibraryController::class, 'destroyFolder'])
+            ->name('moonshine.media-library.folders.destroy');
+        Route::post('/media-library/upload', [MoonShineMediaLibraryController::class, 'upload'])
+            ->name('moonshine.media-library.upload');
+        Route::delete('/media-library/media/{media}', [MoonShineMediaLibraryController::class, 'destroyMedia'])
+            ->name('moonshine.media-library.media.destroy');
+        Route::post('/media-library/recommendations', MediaRecommendationController::class)
+            ->name('moonshine.media-library.recommendations');
+    });
 
 /*
 |--------------------------------------------------------------------------
@@ -120,7 +114,6 @@ Route::post('/contact', [ContactController::class, 'store'])
     ->middleware('throttle:10,1')
     ->name('contact.store');
 
-
 /*
 |--------------------------------------------------------------------------
 | Đối tác
@@ -133,7 +126,6 @@ Route::get('/partners', [PartnerController::class, 'index'])
 Route::get('/api/partners', [PartnerController::class, 'apiList'])
     ->name('partners.apiList');
 
-
 /*
 |--------------------------------------------------------------------------
 | Lãnh đạo
@@ -143,8 +135,6 @@ Route::get('/api/partners', [PartnerController::class, 'apiList'])
 Route::get('/leaders', [LeaderController::class, 'index'])
     ->name('leaders.index');
 
-
-    
 Route::get('/{prefix}/{path}', function (
     string $prefix,
     string $path
@@ -179,7 +169,7 @@ Route::get('/{prefix}/{path}', function (
     ->where('path', '.*')
     ->name('media.stream');
 
-    Route::get('/download-database-backup', function () {
+Route::get('/download-database-backup', function () {
     $path = database_path('database.sqlite');
 
     abort_unless(

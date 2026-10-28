@@ -30,7 +30,7 @@
             'number' => str_pad($index + 1, 2, '0', STR_PAD_LEFT),
             'title' => $item->title,
             'location' => $item->location ?? 'Đà Nẵng & Miền Trung',
-            'category' => optional($item->category)->name ?? 'Công trình trọng điểm',
+            'category' => $item->category_name ?? 'Công trình trọng điểm',
             'scale' => $formatScale($item->area_sqm),
             'desc' => $item->description ?? $item->excerpt ?? 'Công trình thi công kiến trúc tiêu biểu, khẳng định năng lực tổng thầu uy tín của Tân Minh Nhân.',
             'image' => $resolveImageUrl($item->cover_image),
@@ -302,7 +302,7 @@
                         $coverImage = !empty($item->cover_image) ? $resolveImageUrl($item->cover_image) : null;
                         $scaleFormatted = $formatScale($item->area_sqm);
                         $displayScale = !empty($item->area_sqm) ? 'Tổng diện tích ' . $scaleFormatted : ($item->scale ?? 'Công trình quy mô lớn');
-                        $categoryName = optional($item->category)->name ?? 'Công trình kiến trúc';
+                        $categoryName = $item->category_name ?? 'Công trình kiến trúc';
                         $clientName = $item->client_name ?: ($item->client ?? 'Tân Minh Nhân');
                         $projectLink = route('projects.show', $item->slug ?? $item->id);
                         $isReverse = ($index % 2 !== 0);

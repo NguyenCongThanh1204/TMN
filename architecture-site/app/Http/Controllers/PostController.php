@@ -15,12 +15,23 @@ class PostController extends Controller
 
         // Query cơ sở: Sử dụng scopePublished() đã định nghĩa trong Model
         $query = Post::query()
-            ->with('category')
+            ->leftJoin('post_categories as categories', 'categories.id', '=', 'posts.category_id')
+            ->select([
+                'posts.id',
+                'posts.category_id',
+                'posts.title',
+                'posts.slug',
+                'posts.thumbnail',
+                'posts.published_at',
+                'posts.views',
+                'posts.excerpt',
+                'categories.name as category_name',
+            ])
             ->published();
 
         // Lọc theo từ khóa tìm kiếm
         if ($searchTerm) {
-            $query->where('title', 'like', '%' . trim($searchTerm) . '%');
+            $query->where('title', 'like', '%'.trim($searchTerm).'%');
         }
 
         // Lọc theo danh mục
@@ -35,12 +46,20 @@ class PostController extends Controller
 
         // 2. Loại trừ bài viết tiêu điểm ra khỏi danh sách phân trang bên dưới để không bị trùng lặp
         if ($featuredPost) {
-            $query->where('id', '!=', $featuredPost->id);
+            $query->where('posts.id', '!=', $featuredPost->id);
         }
 
         // 3. Top 6 bài xem nhiều nhất: Lấy toàn hệ thống
         $topViewedPosts = Post::query()
-            ->with('category')
+            ->select([
+                'posts.id',
+                'posts.category_id',
+                'posts.title',
+                'posts.slug',
+                'posts.thumbnail',
+                'posts.published_at',
+                'posts.views',
+            ])
             ->published()
             ->orderByDesc('views')
             ->take(6)
@@ -52,7 +71,10 @@ class PostController extends Controller
             ->withQueryString();
 
         // 5. Danh sách danh mục để làm tab lọc
-        $categories = PostCategory::all();
+        $categories = PostCategory::query()
+            ->select(['id', 'name', 'slug'])
+            ->orderBy('name')
+            ->get();
 
         return view('news.index', compact(
             'posts',
@@ -67,28 +89,13 @@ class PostController extends Controller
     public function show(Post $post)
     {
         // Kiểm tra nếu bài viết chưa đến ngày xuất bản thì chặn xem
-        if (!$post->published_at || $post->published_at > now()) {
+        if (! $post->published_at || $post->published_at > now()) {
             abort(404);
         }
 
         // Tự động tăng lượt xem
         $post->increment('views');
 
-        $post->load('category');
-
-        // Lấy 3 bài viết liên quan cùng chuyên mục
-        $relatedPosts = Post::query()
-            ->with('category')
-            ->published()
-            ->where('id', '!=', $post->id)
-            ->where('category_id', $post->category_id)
-            ->latest('published_at')
-            ->take(3)
-            ->get();
-
-        return view('news.show', compact(
-            'post',
-            'relatedPosts'
-        ));
+        return view('news.show', compact('post'));
     }
 }

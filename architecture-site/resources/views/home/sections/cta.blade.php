@@ -10,7 +10,7 @@
     | CTA configuration
     |--------------------------------------------------------------------------
     | Tạm thời sử dụng config().
-    | Sau này có thể đưa toàn bộ dữ liệu này vào database / Nova.
+    | Sau này có thể đưa toàn bộ dữ liệu này vào database và quản lý qua MoonShine.
     */
 
     $companyName = config('site.name', 'Architecture & Construction');

@@ -16,7 +16,7 @@ class TinyEditorUploadController extends Controller
                 'required',
                 'image',
                 'mimes:jpg,jpeg,png,gif,webp',
-                'max:10240',
+                'max:20480',
             ],
         ]);
 
@@ -35,7 +35,7 @@ class TinyEditorUploadController extends Controller
          * Khi đang tạo bài viết mới mà slug chưa có,
          * sử dụng thư mục tạm.
          */
-        if (!$slug) {
+        if (! $slug) {
             $slug = 'bai-viet-moi';
         }
 

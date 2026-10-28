@@ -3,13 +3,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>{{ $title ?? config('site.name') }}</title>
-    <meta name="description" content="{{ $description ?? config('site.description') }}">
+    <title>@yield('title', $title ?? config('site.name'))</title>
+    <meta name="description" content="@yield('description', $description ?? config('site.description'))">
     <link rel="icon" type="image/png" href="{{ asset('favicon.png') }}">   
     <link rel="canonical" href="{{ url()->current() }}">
-    <meta property="og:title" content="{{ $title ?? config('site.name') }}">
-    <meta property="og:description" content="{{ $description ?? config('site.description') }}">
+    <meta property="og:title" content="@yield('title', $title ?? config('site.name'))">
+    <meta property="og:description" content="@yield('description', $description ?? config('site.description'))">
     <meta property="og:type" content="website">
+    @stack('seo')
 
     {{-- Thêm stack này để hỗ trợ đẩy thẻ preload ảnh LCP từ các view con --}}
     @stack('preloads')

@@ -2,77 +2,84 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Partner;
 use App\Models\Post;
-use App\Models\PostCategory;
 use App\Models\Project;
-use App\Models\ProjectCategory;
+use Illuminate\Contracts\View\View;
 
 class HomeController extends Controller
 {
-    public function __invoke()
+    public function __invoke(): View
     {
-        /*
-        |--------------------------------------------------------------------------
-        | FEATURED PROJECTS
-        |--------------------------------------------------------------------------
-        */
-
-       $featuredProjects = Project::query()
-        ->with('category')
-        ->where('status', 'published')
-        ->latest('created_at') // Hoặc ->orderByDesc('year')->latest('created_at')
-        ->take(6)              // Lấy 6 dự án mới nhất
-        ->get();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | PROJECT CATEGORIES
-        |--------------------------------------------------------------------------
-        */
-
-        $projectCategories = ProjectCategory::query()
-            ->orderBy('name')
-            ->get();
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | LATEST NEWS
-        |--------------------------------------------------------------------------
-        */
-
         $latestPosts = Post::query()
-            ->with('category')
-            ->whereNotNull('published_at')
-            ->where('published_at', '<=', now())
+            ->leftJoin('post_categories as categories', 'categories.id', '=', 'posts.category_id')
+            ->select([
+                'posts.id',
+                'posts.category_id',
+                'posts.title',
+                'posts.slug',
+                'posts.thumbnail',
+                'posts.published_at',
+                'categories.name as category_name',
+            ])
+            ->published()
             ->latest('published_at')
-            ->take(8)
+            ->limit(8)
             ->get();
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | NEWS CATEGORIES
-        |--------------------------------------------------------------------------
-        */
-
-        $newsCategories = PostCategory::query()
-            ->orderBy('name')
+        $partners = Partner::query()
+            ->select(['id', 'name', 'logo'])
+            ->whereNotNull('logo')
+            ->latest()
             ->get();
 
+        $displayProjects = Project::query()
+            ->leftJoin('project_categories as categories', 'categories.id', '=', 'projects.category_id')
+            ->select([
+                'projects.id',
+                'projects.category_id',
+                'projects.title',
+                'projects.slug',
+                'projects.location',
+                'projects.year',
+                'projects.area_sqm',
+                'projects.cover_image',
+                'projects.status',
+                'projects.is_featured',
+                'projects.updated_at',
+                'projects.created_at',
+                'categories.name as category_name',
+            ])
+            ->published()
+            ->featured()
+            ->latest('projects.updated_at')
+            ->limit(5)
+            ->get();
 
-        /*
-        |--------------------------------------------------------------------------
-        | HOME VIEW
-        |--------------------------------------------------------------------------
-        */
+        if ($displayProjects->isEmpty()) {
+            $displayProjects = Project::query()
+                ->leftJoin('project_categories as categories', 'categories.id', '=', 'projects.category_id')
+                ->select([
+                    'projects.id',
+                    'projects.category_id',
+                    'projects.title',
+                    'projects.slug',
+                    'projects.location',
+                    'projects.year',
+                    'projects.area_sqm',
+                    'projects.cover_image',
+                    'projects.status',
+                    'projects.is_featured',
+                    'projects.updated_at',
+                    'projects.created_at',
+                    'categories.name as category_name',
+                ])
+                ->published()
+                ->latest('projects.created_at')
+                ->limit(5)
+                ->get();
+        }
 
-        return view('home.index', compact(
-            'featuredProjects',
-            'projectCategories',
-            'latestPosts',
-            'newsCategories'
-        ));
+        return view('home.index', compact('displayProjects', 'latestPosts', 'partners'));
     }
 }

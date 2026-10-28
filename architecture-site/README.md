@@ -1,48 +1,34 @@
-# Architecture & Construction — Laravel 13 + Tailwind + Alpine + Nova
+# Architecture & Construction — Laravel 13 + Tailwind + Alpine + MoonShine
 
-Production-oriented starter source for a high-end architecture/construction corporate website.
+Laravel website for an architecture and construction company, with MoonShine CMS, Turso/libSQL and Cloudinary.
 
 ## Stack
 - Laravel 13.x
 - Blade + Tailwind CSS v4 via Vite
 - Alpine.js
-- Laravel Nova 5.x (optional but recommended for CMS)
-- MySQL
+- MoonShine 4.x admin
+- Turso/libSQL database
+- Cloudinary media storage
 
 ## Bootstrap
 ```bash
-laravel new architecture-construction
-cd architecture-construction
-# copy this package's app/, database/, resources/, routes/ and config/ into the Laravel app
-composer require laravel/nova:"^5.9"
-npm install
-npm install tailwindcss @tailwindcss/vite alpinejs
+composer install
 cp .env.example .env
 php artisan key:generate
-php artisan storage:link
-php artisan migrate --seed
-npm run dev
-php artisan serve
-```
-
-Nova requires an active license/account and its official Composer repository access. After installing Nova:
-```bash
-php artisan nova:install
-php artisan migrate
+npm ci
+npm run build
+php artisan migrate --force
 ```
 
 ## Required .env values
 ```env
-APP_NAME="Architecture & Construction"
-APP_URL=http://127.0.0.1:8000
-DB_CONNECTION=mysql
-DB_HOST=127.0.0.1
-DB_PORT=3306
-DB_DATABASE=architecture
-DB_USERNAME=root
-DB_PASSWORD=
-MAIL_MAILER=log
-CONTACT_EMAIL=hello@example.com
+DB_CONNECTION=turso
+DB_URL=https://<database-host>
+DB_ACCESS_TOKEN=<turso-auth-token>
+FILESYSTEM_DISK=cloudinary
+CLOUDINARY_CLOUD_NAME=<cloud-name>
+CLOUDINARY_API_KEY=<api-key>
+CLOUDINARY_API_SECRET=<api-secret>
 ```
 
 ## Included
@@ -55,13 +41,12 @@ CONTACT_EMAIL=hello@example.com
 - JSON-LD for LocalBusiness, Project and Article
 - Pagination and basic SEO metadata
 - Seed data with demo content
-- Nova resources scaffold
+- MoonShine resources and Cloudinary Media Library
 
 ## Production checklist
 1. Configure SMTP / queue / cache / file storage.
-2. Replace demo images and company information in `config/site.php` and seeders.
-3. Add authorization for Nova resources.
-4. Use object storage/CDN for production media.
-5. Build with `npm run build` and cache Laravel config/routes/views.
-6. Add image transformations / WebP or AVIF pipeline.
-7. Configure real Google Maps embed URL and analytics/Search Console.
+2. Supply Turso and Cloudinary credentials through the deployment platform's secret store.
+3. Replace demo images and company information in `config/site.php` and seeders.
+4. Build with `npm run build` and cache Laravel config/routes/views.
+5. If running multiple application instances, use shared storage for sessions and full-page cache.
+6. Configure real Google Maps embed URL and analytics/Search Console.

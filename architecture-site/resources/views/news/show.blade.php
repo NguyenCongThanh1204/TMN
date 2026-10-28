@@ -1,10 +1,59 @@
+@php
+    $pageTitle = $post->title.' | '.config('site.name');
+    $pageDescription = \Illuminate\Support\Str::limit(
+        strip_tags($post->excerpt ?: $post->content),
+        160,
+    );
+    $coverImage = $post->thumbnail
+        ? cloudinary_image_url($post->thumbnail, 1200)
+        : asset('favicon.png');
+    $coverAlt = $post->thumbnail_alt ?: $post->title;
+@endphp
+
+@section('title', $pageTitle)
+@section('description', $pageDescription)
+
+@push('seo')
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:image" content="{{ $coverImage }}">
+    <meta property="og:image:alt" content="{{ $coverAlt }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ $pageTitle }}">
+    <meta name="twitter:description" content="{{ $pageDescription }}">
+    <meta name="twitter:image" content="{{ $coverImage }}">
+    <link rel="preload" as="image" href="{{ $coverImage }}">
+    <script type="application/ld+json">
+        {!! json_encode([
+            '@context' => 'https://schema.org',
+            '@type' => 'Article',
+            'headline' => $post->title,
+            'description' => $pageDescription,
+            'image' => [$coverImage],
+            'datePublished' => optional($post->published_at)->toIso8601String(),
+            'dateModified' => optional($post->updated_at)->toIso8601String(),
+            'author' => [
+                '@type' => 'Person',
+                'name' => $post->author_name ?: config('site.name'),
+            ],
+            'publisher' => [
+                '@type' => 'Organization',
+                'name' => config('site.name'),
+            ],
+            'mainEntityOfPage' => url()->current(),
+        ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}
+    </script>
+@endpush
+
 @extends('layouts.app')
 
 @section('content')
 
 <div class="min-h-screen bg-white pt-20 pb-20">
     {{-- Khung chứa bài viết 1050px --}}
-    <div class="w-full max-w-[1050px] mx-auto px-4 sm:px-0">
+    <div class="w-full max-w-[1150px] mx-auto px-4 sm:px-0">
 
         {{-- THANH TIÊU ĐỀ: MARGIN DƯỚI 50PX, TIÊU ĐỀ TO RÕ VÀ NÉT NHẸ NHÀNG --}}
         <div class="post-header-bar flex items-center gap-4 pb-4 mt-[50px] mb-[50px] border-b border-gray-200">
@@ -37,9 +86,7 @@
         {{ $post->title }}
     </h1>
 </div>
-
-        {{-- VÙNG NỘI DUNG NGUYÊN BẢN TỪ FILAMENT --}}
-        <article id="article-content" class="raw-filament-content">
+        <article id="article-content" class="raw-post-content">
             @if($post->content)
                 {!! $post->content !!}
             @else
@@ -77,7 +124,7 @@
     }
 
     /* 2. Môi trường nội dung: Giữ nguyên tùy biến của bạn */
-    .raw-filament-content {
+    .raw-post-content {
         width: 100%;
         word-wrap: break-word;
         font-size: 15px;
@@ -85,27 +132,27 @@
         color: #333333;
     }
 
-    .raw-filament-content * {
+    .raw-post-content * {
         max-width: 100%;
     }
 
     /* Đoạn văn: Thoáng dòng, không bị ép gắt */
-    .raw-filament-content p {
+    .raw-post-content p {
         margin-top: 0;
         margin-bottom: 1.2rem;
         line-height: 1.7;
     }
 
     /* Khung ảnh tối đa 900px, căn chính giữa */
-    .raw-filament-content figure {
+    .raw-post-content figure {
         margin: 1.75rem auto !important;
         display: table !important;
         text-align: center;
         max-width: 900px !important;
     }
 
-    .raw-filament-content figure img,
-    .raw-filament-content img {
+    .raw-post-content figure img,
+    .raw-post-content img {
         display: block;
         margin-left: auto;
         margin-right: auto;
@@ -114,7 +161,7 @@
     }
 
     /* Chú thích chân ảnh (Caption) */
-    .raw-filament-content figcaption {
+    .raw-post-content figcaption {
         caption-side: bottom;
         display: table-caption;
         margin-top: 8px;
@@ -126,7 +173,7 @@
     }
 
     /* Bảng dữ liệu */
-    .raw-filament-content table {
+    .raw-post-content table {
         width: 100%;
         border-collapse: collapse;
         margin: 1rem 0;

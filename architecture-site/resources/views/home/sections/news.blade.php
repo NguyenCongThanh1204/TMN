@@ -128,10 +128,10 @@
                                         </a>
 
                                         {{-- Danh mục bài viết (Badge) --}}
-                                        @if(optional($post->category)->name)
+                                        @if($post->category_name)
                                             <div class="absolute top-4 left-4 z-10 pointer-events-none">
                                                 <span class="rounded-xs bg-[#EB323A] px-3.5 py-1.5 text-[11px] font-extrabold uppercase tracking-wider text-white shadow-md">
-                                                    {{ $post->category->name }}
+                                                    {{ $post->category_name }}
                                                 </span>
                                             </div>
                                         @endif

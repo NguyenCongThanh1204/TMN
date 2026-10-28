@@ -5,8 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class Post extends Model
 {
@@ -31,15 +32,28 @@ class Post extends Model
 
     protected $casts = [
         'published_at' => 'datetime',
-        'views'        => 'integer',
-        'is_featured'  => 'boolean',
-        'gallery'      => 'array',
+        'views' => 'integer',
+        'is_featured' => 'boolean',
+        'gallery' => 'array',
     ];
 
     protected $appends = [
         'thumbnail_url',
         'gallery_items',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (self $post): void {
+            if (filled($post->slug)) {
+                $post->slug = trim($post->slug, '/ ');
+            }
+
+            if (blank($post->slug) && filled($post->title)) {
+                $post->slug = Str::slug($post->title);
+            }
+        });
+    }
 
     /**
      * Accessor lấy URL ảnh đại diện chính
@@ -56,7 +70,7 @@ class Post extends Model
                     return $this->thumbnail;
                 }
 
-                return Storage::disk('cloudinary')->url($this->thumbnail);
+                return cloudinary_image_url($this->thumbnail, 1200);
             }
         );
     }
@@ -68,32 +82,32 @@ class Post extends Model
     {
         return Attribute::make(
             get: function () {
-                if (empty($this->gallery) || !is_array($this->gallery)) {
+                if (empty($this->gallery) || ! is_array($this->gallery)) {
                     return [];
                 }
 
                 return array_map(function ($item) {
                     if (is_string($item)) {
                         $url = (str_starts_with($item, 'http://') || str_starts_with($item, 'https://'))
-                            ? $item 
+                            ? $item
                             : Storage::disk('cloudinary')->url($item);
 
                         return [
-                            'image'   => $url,
+                            'image' => $url,
                             'caption' => null,
-                            'alt'     => null,
+                            'alt' => null,
                         ];
                     }
 
                     $img = $item['image'] ?? ($item['url'] ?? '');
-                    if ($img && !str_starts_with($img, 'http://') && !str_starts_with($img, 'https://')) {
+                    if ($img && ! str_starts_with($img, 'http://') && ! str_starts_with($img, 'https://')) {
                         $img = Storage::disk('cloudinary')->url($img);
                     }
 
                     return [
-                        'image'   => $img,
+                        'image' => $img,
                         'caption' => $item['caption'] ?? null,
-                        'alt'     => $item['alt'] ?? null,
+                        'alt' => $item['alt'] ?? null,
                     ];
                 }, $this->gallery);
             }
@@ -109,6 +123,7 @@ class Post extends Model
     {
         return 'slug';
     }
+
     public function media(): HasMany
     {
         return $this->hasMany(PostMedia::class, 'post_id');

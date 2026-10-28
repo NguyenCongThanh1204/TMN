@@ -25,3 +25,10 @@ if (! function_exists('cloudinary_image_url')) {
         ) ?: $url;
     }
 }
+
+if (! function_exists('cloudinary_storage_path')) {
+    function cloudinary_storage_path(string $path): string
+    {
+        return trim($path, '/');
+    }
+}

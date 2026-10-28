@@ -85,7 +85,7 @@
                                 @endif
                                 <div class="absolute top-4 left-4">
                                     <span class="rounded-xs bg-[#EB323A] px-3.5 py-1 text-[11px] font-bold uppercase tracking-wider text-white shadow-md">
-                                        {{ $featuredPost->category->name ?? 'Tin tức' }}
+                                        {{ $featuredPost->category_name ?? 'Tin tức' }}
                                     </span>
                                 </div>
                             </div>
@@ -201,7 +201,7 @@
                                 @endif
                                 <div class="absolute top-3 left-3">
                                     <span class="rounded-xs bg-white/95 px-3.5 py-1 text-[11px] font-bold uppercase tracking-[0.15em] text-slate-900 shadow-sm border border-slate-200/80 backdrop-blur-sm">
-                                        {{ $post->category->name ?? 'Tin tức' }}
+                                        {{ $post->category_name ?? 'Tin tức' }}
                                     </span>
                                 </div>
                             </a>

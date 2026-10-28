@@ -81,6 +81,9 @@ RUN composer install \
     --no-interaction \
     --prefer-dist
 
+RUN php artisan vendor:publish --tag=laravel-assets --ansi --force
+RUN test -f public/vendor/tinymce/tinymce.min.js
+
 RUN mkdir -p \
         storage/app/public \
         storage/framework/cache/data \

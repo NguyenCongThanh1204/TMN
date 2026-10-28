@@ -3,20 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Partner;
-use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
 
 class PartnerController extends Controller
 {
     /**
      * Hiển thị danh sách đối tác trên website
      */
-    public function index()
+    public function index(): View
     {
         $partners = Partner::whereNotNull('logo')
             ->latest()
-            ->get();
+            ->get(['id', 'name', 'logo']);
 
-        return view('partners.index', compact('partners'));
+        return view('partners.index', ['partners' => $partners]);
     }
 
     /**
@@ -30,7 +30,7 @@ class PartnerController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $partners,
+            'data' => $partners,
         ]);
     }
 }

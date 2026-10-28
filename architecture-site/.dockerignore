@@ -38,6 +38,16 @@ fly.toml
 
 .vscode
 .idea
+.claude
+.qodo
+tests
+README.md
+DEPLOYMENT.md
+AGENTS.md
+CLAUDE.md
+.mcp.json
+boost.json
+.phpunit.result.cache
 
 
 # ============================================================

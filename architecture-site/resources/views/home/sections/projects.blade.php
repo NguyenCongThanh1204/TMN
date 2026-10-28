@@ -4,22 +4,7 @@
 ========================================================= --}}
 
 @php
-$displayProjects = \App\Models\Project::query()
-->with('category')
-->where('status', 'published')
-->where('is_featured', true)
-->latest('updated_at')
-->take(5)
-->get();
-
-if ($displayProjects->isEmpty()) {
-$displayProjects = \App\Models\Project::query()
-->with('category')
-->where('status', 'published')
-->latest('created_at')
-->take(5)
-->get();
-}
+$displayProjects = $displayProjects ?? collect();
 @endphp
 
 <section
@@ -41,7 +26,7 @@ $displayProjects = \App\Models\Project::query()
                 id: {{ $project->id }},
                 title: '{{ addslashes($project->title) }}',
                 location: '{{ addslashes($project->location ?? 'Đà Nẵng') }}',
-                category: '{{ optional($project->category)->name ?? 'Tổng thầu thi công' }}',
+                category: '{{ $project->category_name ?? 'Tổng thầu thi công' }}',
                 year: '{{ $project->year ?? '' }}',
                 area: '{{ $project->area_sqm ? (is_numeric($project->area_sqm) ? number_format((float)$project->area_sqm, 0, ',', '.') . ' m²' : addslashes($project->area_sqm)) : '' }}',
                 image: '{{ $cover ?? 'https://images.unsplash.com/photo-1541888946425-d0fbb186156f?auto=format&fit=crop&w=1600&q=80' }}',
