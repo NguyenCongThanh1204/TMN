@@ -127,7 +127,15 @@ RUN sed -i \
     && sed -i \
     '/^[;[:space:]]*clear_env[[:space:]]*=.*/d' \
     /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf \
+    && sed -i \
+    '/^[;[:space:]]*catch_workers_output[[:space:]]*=.*/d' \
+    /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf \
+    && sed -i \
+    's#^[;[:space:]]*error_log[[:space:]]*=.*#error_log = /proc/self/fd/2#' \
+    /etc/php/${PHP_VERSION}/fpm/php-fpm.conf \
     && echo 'clear_env = no' >> \
+    /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf \
+    && printf '\ncatch_workers_output = yes\ndecorate_workers_output = no\n' >> \
     /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
 
 
@@ -146,6 +154,9 @@ server {
     listen [::]:10000 default_server;
 
     server_name _;
+
+    access_log /dev/stdout;
+    error_log /dev/stderr warn;
 
     root /var/www/html/public;
 
