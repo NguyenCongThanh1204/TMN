@@ -11,8 +11,8 @@
         ],
         [
             'id' => 2,
-            'image' => 'https://sunparadiseland.com/_next/image?url=https%3A%2F%2Fsun-ecommerce-cdn.azureedge.net%2Fecommerce%2Fservice-sites%2Fasset%2FSunParadiseLandPhuQuoc%2Fgoogle-doc%2Fpost_id_13826%2FAD_4nXfIqa0nuIpmvb94PHoYb7e0CIyPJ4TnFSOjom37ap3-nRmZYfj5hcd4-NvrfDcsZFEdibsRxpsnJGU22RP6hCnB3QqUpqh2U2d0kd-c3irjDOhJpGmTZuXSmeCdrpondtc7SFYoA6z_Khvc4Vj2g_M8VpgVs2ZWlgSxePGUdmu_eGHi.webp&w=1200&q=80',
-            'title' => 'Sun Paradise Land Phú Quốc',
+            'image' => 'https://sun-ecommerce-cdn.azureedge.net/ecommerce/service-sites/thumbnail/SunGroup/B%C3%A0i%20vi%E1%BA%BFt%202025/Th%C3%A1ng%2010%20-2025/Thumb/22002/image-thumb__22002__1600/B%E1%BA%A3n%20sao%20c%E1%BB%A7a%20Nh%C3%A0%20ga%20T2.jpg',
+            'title' => 'Sân bay Phú Quốc',
         ],
         [
             'id' => 3,
