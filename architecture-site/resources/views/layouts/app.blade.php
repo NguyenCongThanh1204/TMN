@@ -10,6 +10,7 @@
     <meta property="og:title" content="@yield('title', $title ?? config('site.name'))">
     <meta property="og:description" content="@yield('description', $description ?? config('site.description'))">
     <meta property="og:type" content="website">
+    <meta name="google-site-verification" content="3D63edkhWGkI6Il6HJJ_Fj-MUbyhSHVxC0uItYFDrzc" />
     @stack('seo')
 
     {{-- Thêm stack này để hỗ trợ đẩy thẻ preload ảnh LCP từ các view con --}}
