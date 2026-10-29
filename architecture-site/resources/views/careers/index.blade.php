@@ -453,7 +453,7 @@
 
                     <p class="flex items-center gap-3">
                         <span class="font-bold min-w-[95px]" style="color: #264abc !important;">Điện thoại:</span>
-                        <a href="tel:(0236) 3 958718" class="text-slate-800 hover:text-[#EB323A] font-semibold">(0236) 3 958718</a>
+                        <a href="tel:(0935) 374 127" class="text-slate-800 hover:text-[#EB323A] font-semibold">(0935) 374 127</a>
                     </p>
 
                     <p class="flex items-start gap-3">

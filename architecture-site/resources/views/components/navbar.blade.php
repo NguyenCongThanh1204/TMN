@@ -210,7 +210,7 @@
         {{-- Footer Mobile Menu --}}
         <div class="border-t border-white/10 px-6 py-5 bg-[#0B0F17] shrink-0">
             <p class="text-xs font-mono text-slate-400">
-                Hotline hỗ trợ: <a href="tel:(0236) 3 958718" class="!text-white font-bold hover:!text-[#EB323A]">(0236) 3 958718</a>
+                Hotline hỗ trợ: <a href="tel:(0935) 374 127" class="!text-white font-bold hover:!text-[#EB323A]">(0935) 374 127</a>
             </p>
         </div>
     </div>

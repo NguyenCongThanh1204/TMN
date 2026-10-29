@@ -63,7 +63,7 @@
                     <div class="bg-black/20 hover:bg-black/30 p-2.5 border border-white/10 rounded-sm transition-colors">
                         <span class="text-[9px] uppercase tracking-wider text-slate-400 block font-semibold">Hotline</span>
                         <a href="tel:{{ config('site.phone') }}" class="text-xs font-semibold text-white hover:text-red-400 transition-colors mt-0.5 block">
-                            (0236) 3 958718
+                            (0935) 374 127
                         </a>
                     </div>
                     <div class="bg-black/20 hover:bg-black/30 p-2.5 border border-white/10 rounded-sm transition-colors">

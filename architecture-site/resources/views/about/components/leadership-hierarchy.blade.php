@@ -202,7 +202,7 @@
                             @foreach($level['members'] as $member)
                                 <div
                                     @click="openModal({{ json_encode($member) }})"
-                                    class="w-[220px] sm:w-[250px] bg-white border border-slate-200/90 rounded-2xl overflow-hidden cursor-pointer hover:border-[#EB323A] hover:shadow-[0_12px_30px_rgba(235,50,58,0.15)] transition-all duration-300 hover:-translate-y-1 group shadow-xs"
+                                    class="{{ $level['levelId'] === 3 ? 'w-full max-w-[280px]' : 'w-[220px] sm:w-[250px]' }} bg-white border border-slate-200/90 rounded-2xl overflow-hidden cursor-pointer hover:border-[#EB323A] hover:shadow-[0_12px_30px_rgba(235,50,58,0.15)] transition-all duration-300 hover:-translate-y-1 group shadow-xs"
                                 >
                                     <div class="aspect-square w-full relative overflow-hidden bg-slate-50">
                                         @php
@@ -219,7 +219,7 @@
                                         <h4 class="font-extrabold text-sm sm:text-base uppercase text-[#264abc] group-hover:text-[#EB323A] transition-colors line-clamp-1">
                                             {{ $member['name'] ?? '' }}
                                         </h4>
-                                        <p class="text-xs sm:text-sm font-semibold text-slate-600 mt-1 line-clamp-1">
+                                        <p class="text-xs sm:text-sm font-semibold text-slate-600 mt-1 {{ $level['levelId'] === 3 ? 'leading-relaxed whitespace-normal break-words' : 'line-clamp-1' }}">
                                             {{ $member['title'] ?? '' }}
                                         </p>
                                     </div>
@@ -268,7 +268,7 @@
 
                         {{-- Hàng 2: Các Phó Tổng Giám Đốc --}}
                         @if(count($level['deputies']) > 0)
-    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8 w-full justify-items-center">
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 sm:gap-8 w-full justify-items-center">
         @foreach($level['deputies'] as $deputy)
             <div
                 @click="openModal({{ json_encode($deputy) }})"

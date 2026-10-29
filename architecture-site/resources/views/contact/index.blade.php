@@ -79,8 +79,8 @@
                                 </div>
                                 <div>
                                     <span class="text-[11px] text-slate-500 block font-mono">Tel</span>
-                                    <a href="tel:02363958718" class="text-sm font-semibold text-[#0F172A] hover:text-[#EB323A] transition-colors">
-                                        (0236) 3 958718
+                                    <a href="tel:0935374127" class="text-sm font-semibold text-[#0F172A] hover:text-[#EB323A] transition-colors">
+                                        (0935) 374 127
                                     </a>
                                 </div>
                             </div>
@@ -95,7 +95,7 @@
                                 <div>
                                     <span class="text-[11px] text-slate-500 block font-mono">Fax</span>
                                     <p class="text-sm font-semibold text-[#0F172A] leading-snug">
-                                        (0236) 3 868718
+                                        (0935) 374 127
                                     </p>
                                 </div>
                             </div>
