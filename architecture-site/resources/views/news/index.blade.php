@@ -3,12 +3,12 @@
 @section('content')
 
 @php
-    $thumbnailUrl = fn ($path) => cloudinary_image_url($path, 400);
+    $thumbnailUrl = fn ($path, $width = 800) => cloudinary_image_url($path, $width);
 @endphp
 
 @push('preloads')
     @if(isset($featuredPost) && $featuredPost->thumbnail)
-        <link rel="preload" as="image" href="{{ cloudinary_image_url($featuredPost->thumbnail, 800) }}" fetchpriority="high">
+        <link rel="preload" as="image" href="{{ cloudinary_image_url($featuredPost->thumbnail, 1600) }}" fetchpriority="high">
     @endif
 @endpush
 
@@ -72,7 +72,7 @@
                             <div class="relative w-full aspect-[16/9] overflow-hidden bg-slate-100 rounded-sm">
                                 @if($featuredPost->thumbnail)
                                     <img
-                                        src="{{ cloudinary_image_url($featuredPost->thumbnail, 800) }}"
+                                        src="{{ cloudinary_image_url($featuredPost->thumbnail, 1600) }}"
                                         alt="{{ $featuredPost->title }}"
                                         class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                                         loading="eager"
@@ -144,7 +144,7 @@
                                     </span>
                                     @if($item->thumbnail)
                                         <img
-                                            src="{{ $thumbnailUrl($item->thumbnail) }}"
+                                            src="{{ $thumbnailUrl($item->thumbnail, 400) }}"
                                             alt="{{ $item->title }}"
                                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                                             loading="eager"

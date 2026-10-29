@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Support\Str;
 
 class Project extends Model
 {
@@ -47,11 +46,6 @@ class Project extends Model
     {
         if (! $this->cover_image) {
             return null;
-        }
-
-        // Nếu là URL bên ngoài (Unsplash, link ngoài) thì giữ nguyên
-        if (Str::startsWith($this->cover_image, ['http://', 'https://'])) {
-            return $this->cover_image;
         }
 
         return cloudinary_image_url($this->cover_image);

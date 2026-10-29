@@ -15,12 +15,7 @@ $displayProjects = $displayProjects ?? collect();
         projects: [
             @foreach($displayProjects as $project)
             @php
-                $cover = $project->cover_url ?? $project->cover_image;
-                if ($cover && !Illuminate\Support\Str::startsWith($cover, ['http://', 'https://'])) {
-                    $cover = cloudinary_image_url($cover, 800);
-                } elseif ($cover) {
-                    $cover = cloudinary_image_url($cover, 800);
-                }
+                $cover = cloudinary_image_url($project->cover_image, 1600);
             @endphp
             {
                 id: {{ $project->id }},

@@ -6,10 +6,7 @@
         if (empty($path)) {
             return null;
         }
-        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
-            return $path;
-        }
-        return cloudinary_image_url($path, 800);
+        return cloudinary_image_url($path, 1600);
     };
 
     // Helper format diện tích an toàn cho cả dạng varchar lẫn số
@@ -159,7 +156,7 @@
                         <img
                             :src="p.image"
                             :alt="p.title"
-                            class="w-full h-full object-cover object-center filter blur-xs brightness-125"
+                            class="w-full h-full object-cover object-center blur-[1px] brightness-125"
                             loading="eager"
                             fetchpriority="high"
                         />

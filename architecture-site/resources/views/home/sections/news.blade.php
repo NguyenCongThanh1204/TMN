@@ -94,7 +94,7 @@
                                 
                                 @foreach($homeNews as $idx => $post)
                                     @php
-                                        $imgUrl = $getImageUrl($post->thumbnail, 800);
+                                        $imgUrl = $getImageUrl($post->thumbnail, 1600);
                                     @endphp
                                     <div 
                                         class="absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"

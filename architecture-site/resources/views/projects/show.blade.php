@@ -8,10 +8,7 @@ $resolveImageUrl = function ($path) {
 if (empty($path)) {
 return null;
 }
-if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
-return $path;
-}
-return cloudinary_image_url($path, 800);
+return cloudinary_image_url($path, 1600);
 };
 
 // Helper format diện tích an toàn cho varchar

@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('cloudinary_image_url')) {
-    function cloudinary_image_url(?string $path, int $width = 800): ?string
+    function cloudinary_image_url(?string $path, int $width = 1600): ?string
     {
         if (blank($path)) {
             return null;
@@ -17,9 +17,9 @@ if (! function_exists('cloudinary_image_url')) {
             return $url;
         }
 
-        return preg_replace(
-            '#/upload/#',
-            "/upload/w_{$width}/f_auto/q_auto/",
+        return preg_replace_callback(
+            '#(/upload/)(?:(?:w_\d+|f_auto|q_auto(?::[^/]+)?)/)*#',
+            static fn (array $matches): string => $matches[1]."w_{$width}/f_auto/q_auto:best/",
             $url,
             1
         ) ?: $url;
